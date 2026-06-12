@@ -21,7 +21,7 @@
           fontconfig.defaultFonts = {
             sansSerif = [ "Atkinson Hyperlegible Next" ];
             serif = [ "Liberation Serif" ];
-            monospace = [ "Maple Mono NF" ];
+            monospace = [ "Iosevka Chimera" ];
             emoji = [ "OpenMoji Color" ];
           };
         };

@@ -1,5 +1,5 @@
 {
-  description = "Quasigod's NixOS config";
+  description = "oxce5's NixOS config";
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake {inherit inputs;} (inputs.import-tree ./modules);
 
@@ -53,6 +53,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    helix = {
+      url = "github:helix-editor/helix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     kopuz.url = "github:temidaradev/kopuz";
     elyprism-launcher.url = "github:elyprismlauncher/elyprismlauncher";
     dw-proton.url = "github:imaviso/dwproton-flake";
@@ -66,7 +71,7 @@
       "https://devenv.cachix.org"
       "https://niri.cachix.org"
       "https://kopuz.cachix.org"
-      "https://llama-cpp.cachix.org"
+      "https://helix.cachix.org"
     ];
     extra-trusted-public-keys = [
       "chaotic-nyx.cachix.org-1:HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8="
@@ -77,7 +82,7 @@
       "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
       "adithyagenie.cachix.org-1:h6BSMboeVfxyrULWuRQqAyweo4AJRATekb88xotfQwc="
       "kopuz.cachix.org-1:J2X3AnAYhKTJW5S3aCLoA1ckonQXVNZMQvhZA0YAufw="
-      "llama-cpp.cachix.org-1:H75X+w83wUKTIPSO1KWy9ADUrzThyGs8P5tmAbkWhQc="
+      "helix.cachix.org-1:ejp9KQpR1FBI2onstMQ34yogDm4OgU2ru6lIwPvuCVs="
     ];
   };
 }

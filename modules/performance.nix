@@ -1,5 +1,4 @@
-{ chimera, ... }:
-{
+{chimera, ...}: {
   chimera.performance = {
     nixos.boot = {
       kernel.sysctl = {
@@ -13,7 +12,7 @@
     };
     provides = {
       responsive = {
-        includes = [ chimera.performance ];
+        includes = [chimera.performance];
         nixos = {
           boot = {
             kernel.sysctl."vm.swappiness" = 5;
@@ -37,7 +36,7 @@
         };
       };
       max = {
-        includes = [ chimera.performance._.responsive ];
+        includes = [chimera.performance._.responsive];
         nixos.boot.kernelParams = [
           "usbcore.autosuspend=60"
           "workqueue.power_efficient=false"

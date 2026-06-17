@@ -1,11 +1,8 @@
-{ withSystem, ... }:
-{
-  perSystem =
-    { pkgs, ... }:
-    {
-      packages.iosevka-chimera = pkgs.iosevka.override {
-        set = "Chimera";
-        privateBuildPlan = ''
+{withSystem, ...}: {
+  perSystem = {pkgs, ...}: {
+    packages.iosevka-chimera = pkgs.iosevka.override {
+      set = "Chimera";
+      privateBuildPlan = ''
         [buildPlans.IosevkaChimera]
         family = "Iosevka Chimera"
         spacing = "normal"
@@ -40,7 +37,7 @@
         shape = "italic"
         menu = "italic"
         css = "italic"
-        '';
-      };
+      '';
     };
+  };
 }

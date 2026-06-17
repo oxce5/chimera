@@ -62,14 +62,15 @@
           sessionVariables = {
             EDITOR = "nvim";
           };
-          packages = with pkgs; [ xwayland-satellite ];
+          packages = with pkgs; [xwayland-satellite];
         };
 
-        xdg.portal = { 
+        xdg.portal = {
           enable = true;
-          extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
+          extraPortals = with pkgs; [xdg-desktop-portal-gtk xdg-desktop-portal-gnome ];
           config.niri = {
-            "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+            "org.freedesktop.impl.portal.ScreenCast"  = ["gnome"];
+            "org.freedesktop.impl.portal.FileChooser" = ["gtk"];
           };
         };
 

@@ -2,7 +2,7 @@
   den.aspects.oxce5 = {
     includes = [
       <den/primary-user>
-      <chimera/helix>
+      # <chimera/helix/with-tools>
       # <chimera/nushell>
       <chimera/shell>
     ];

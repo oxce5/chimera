@@ -31,21 +31,17 @@
     }: {
       facter.reportPath = ./_facter.json;
       imports = [];
-      # hardware.framework.enableKmod = false;
 
       boot = {
-        # kernelPackages =
-        #   inputs.chaotic.legacyPackages.${pkgs.stdenv.hostPlatform.system}.linuxPackages_cachyos;
+        kernelPackages = pkgs.linuxPackages_zen;
         loader.systemd-boot.enable = true;
         # kernelParams = ["acpi_backlight=native"];
-        # plymouth.enable = true;
         # binfmt.emulatedSystems = [ "aarch64-linux" ];
       };
 
       # networking.hostName = "chimera";
       networking.networkmanager.enable = true;
 
-      # environment.sessionVariables.COSMIC_DISABLE_DIRECT_SCANOUT = 1; # TODO fix crashes
 
       services = {
         xserver.videoDrivers = ["nvidia"];
@@ -55,7 +51,7 @@
       hardware.nvidia = {
         modesetting.enable = true;
         powerManagement.enable = false;
-        open = false;
+        open = true;
         nvidiaSettings = true;
         prime = {
           offload = {
@@ -78,7 +74,6 @@
 
       virtualisation.docker.enable = true;
       hardware.nvidia-container-toolkit.enable = true;
-
     };
   };
 }

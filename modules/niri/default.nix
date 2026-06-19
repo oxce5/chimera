@@ -62,7 +62,10 @@
           sessionVariables = {
             EDITOR = "nvim";
           };
-          packages = with pkgs; [xwayland-satellite];
+          packages = with pkgs; [
+            xwayland-satellite
+            kitty
+          ];
         };
 
         xdg.portal = {

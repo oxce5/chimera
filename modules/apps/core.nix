@@ -54,7 +54,6 @@
       # REMOVE
       neovim
       tree-sitter
-      kitty
     ];
   };
 }

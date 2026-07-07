@@ -50,10 +50,6 @@
       waypipe
       wget
       whois
-
-      # REMOVE
-      neovim
-      tree-sitter
     ];
   };
 }

@@ -1,4 +1,9 @@
-{inputs, ...}: {
+{
+  config,
+  lib,
+  inputs,
+  ...
+}: {
   den.default = {
     nixos = {
       imports = [inputs.nix-index-database.nixosModules.nix-index];
@@ -15,6 +20,7 @@
           keep-derivations = true;
           use-xdg-base-directories = true;
           auto-optimise-store = true;
+          trusted-users = ["@wheel"];
         };
       };
     };
@@ -27,7 +33,7 @@
     #     };
     #     to = {
     #       type = "git";
-    #       url = "https://tangled.org/quasigod.xyz/quix";
+    #       url = "";
     #     };
     #   };
     # };

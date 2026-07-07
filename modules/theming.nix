@@ -10,6 +10,7 @@
         packages = with pkgs; [
           maple-mono.NF
           (withSystem pkgs.stdenv.hostPlatform.system (p: p.config.packages.iosevka-chimera))
+          # (self'.packages.iosevka-chimera)
           montserrat
           libertine
           inter
@@ -27,17 +28,5 @@
         };
       };
     };
-
-    # homeManager =
-    #   { pkgs, ... }:
-    #   {
-    #     home = {
-    #       pointerCursor = {
-    #         package = pkgs.posy-cursors;
-    #         name = "Posy_Cursor";
-    #         gtk.enable = true;
-    #       };
-    #     };
-    #   };
   };
 }

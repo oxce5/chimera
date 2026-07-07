@@ -1,21 +1,19 @@
-{
-  den,
-  __findFile,
-  ...
-}: {
+{ den, __findFile, ...}: {
   chimera = {
-    workstation = den.lib.parametric.atLeast {
+    workstation = {
       includes = [
         <chimera/boot>
+        <chimera/dev>
         <chimera/networking>
         <chimera/theming>
         <chimera/wayland/niri>
-        # <chimera/tailscale>
+        <chimera/easyeffects>
+        <chimera/tailscale>
         <chimera/flatpak>
         <chimera/xdg>
       ];
     };
-    laptop = den.lib.parametric.atLeast {
+    laptop = {
       includes = [
         <chimera/boot/graphical>
         # <chimera/boot/secure>

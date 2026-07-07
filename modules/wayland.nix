@@ -16,7 +16,7 @@
         systemPackages = [pkgs.wl-clipboard];
         sessionVariables = {
           NIXOS_OZONE_WL = "1";
-          XCURSOR_SIZE = lib.mkForce (builtins.ceil (32 * host.primaryDisplay.scaling));
+          # XCURSOR_SIZE = lib.mkForce (builtins.ceil (32 * host.primaryDisplay.scaling));
         };
       };
     };

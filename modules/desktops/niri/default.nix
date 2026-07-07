@@ -70,9 +70,9 @@
 
         xdg.portal = {
           enable = true;
-          extraPortals = with pkgs; [xdg-desktop-portal-gtk xdg-desktop-portal-gnome ];
+          extraPortals = with pkgs; [xdg-desktop-portal-gtk xdg-desktop-portal-gnome];
           config.niri = {
-            "org.freedesktop.impl.portal.ScreenCast"  = ["gnome"];
+            "org.freedesktop.impl.portal.ScreenCast" = ["gnome"];
             "org.freedesktop.impl.portal.FileChooser" = ["gtk"];
           };
         };
@@ -118,6 +118,9 @@
               hotkey-overlay.skip-at-startup = true;
               environment = {
                 EDITOR = "nvim";
+              };
+              input.mouse = {
+                accel-speed = -0.6;
               };
               #
               # outputs."eDP-1" = {

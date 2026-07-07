@@ -31,25 +31,25 @@
               steamtinkerlaunch
             ];
           };
-          gamescope = {
-            enable = true;
-            args = [
-              "-W ${toString host.primaryDisplay.width}"
-              "-H ${toString host.primaryDisplay.height}"
-              "-r ${toString host.primaryDisplay.refresh}"
-              "-O ${host.primaryDisplay.name}"
-              "-f"
-              "--adaptive-sync"
-              "--mangoapp"
-            ];
-          };
+          # gamescope = {
+          #   enable = true;
+          #   args = [
+          #     "-W ${toString host.primaryDisplay.width}"
+          #     "-H ${toString host.primaryDisplay.height}"
+          #     "-r ${toString host.primaryDisplay.refresh}"
+          #     "-O ${host.primaryDisplay.name}"
+          #     "-f"
+          #     "--adaptive-sync"
+          #     "--mangoapp"
+          #   ];
+          # };
         };
       };
     };
 
-    max = den.lib.parametric {
+    max = {
       includes = [
-        # chimera.gaming._.replays
+        chimera.gaming._.replays
         chimera.gaming._.min
       ];
       nixos = {pkgs, ...}: {
@@ -75,7 +75,6 @@
         environment.systemPackages = with pkgs; [
           # Utility
           deadlock-mod-manager
-          goverlay
           gpu-screen-recorder-gtk
           lsfg-vk
           lsfg-vk-ui
@@ -83,7 +82,6 @@
           mangohud
           protonplus
           protontricks
-          r2modman
           winetricks
         ];
       };

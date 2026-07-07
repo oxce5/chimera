@@ -10,8 +10,8 @@
       version = "5.2.0-beta";
 
       src = pkgs.fetchurl {
-        url = "https://cdn.builder.blender.org/download/daily/blender-5.2.0-beta+v52.774d60f65050-linux.x86_64-release.tar.xz";
-        hash = "sha256-ZA1EEY6h8eBl663TKXg3KDKkx7CYoWyuvp5/iGr04zo=";
+        url = "https://cdn.builder.blender.org/download/daily/blender-5.2.0-beta+v52.23d7ca056249-linux.x86_64-release.tar.xz";
+        hash = "sha256-f2tIMjbzGMtQTUv4A4psZ/qoEOJDBItc0yDp23PN0i8=";
       };
 
       buildInputs = [pkgs.makeWrapper];

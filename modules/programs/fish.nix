@@ -18,6 +18,7 @@
           ls = "eza";
           ll = "eza -la";
           lt = "eza -Ta";
+          bssh = "ssh -t administrator@bastion --";
         };
         shellAbbrs = {
           gs = "git status";

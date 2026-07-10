@@ -4,13 +4,21 @@
       <den/primary-user>
       <chimera/shell>
       (den.batteries.user-shell "fish")
+
+      <chimera/wayland/niri>
+      <chimera/easyeffects>
+      <chimera/tailscale>
+      <chimera/flatpak>
+      <chimera/xdg>
+
+      <chimera/fish>
+      <chimera/apps/coreutils>
+      <chimera/apps/blender>
+      <chimera/dev>
+      <chimera/apps/gui>
+      <chimera/apps/git>
+      <chimera/apps/yazi>
     ];
-    user = {
-      extraGroups = [
-        "docker"
-        "wireshark"
-      ];
-    };
   };
   den.hosts.x86_64-linux.overlord.users.oxce5 = {};
 }

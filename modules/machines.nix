@@ -6,11 +6,6 @@
         <chimera/dev>
         <chimera/networking>
         <chimera/theming>
-        <chimera/wayland/niri>
-        <chimera/easyeffects>
-        <chimera/tailscale>
-        <chimera/flatpak>
-        <chimera/xdg>
       ];
     };
     laptop = {

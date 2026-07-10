@@ -1,27 +1,19 @@
 {
 chimera,
-config,
 inputs,
-den,
-lib,
-__findFile,
 ...
 }:
-let
-  inherit (den.lib.policy) include;
-in {
-  den.aspects.overlord.policies.to-users = { host, user, ... }: [
-    (include {
-      includes = lib.optionals (user.userName == "oxce5") [ 
-        <chimera/laptop>
-        <chimera/gaming/max>
-      ];
-    })
-  ];
+{
+  den.aspects.overlord = {
+    includes = with chimera; [
+      laptop
+      gaming._.max
+    ];
+  };
 
-  den.aspects.overlord.includes = [
-    den.aspects.overlord.policies.to-users
-  ];
+  den.hosts.x86_64-linux.overlord = {
+    users.oxce5.classes = [ "homeManager" ];
+  };
 
   den.aspects.overlord.nixos = { pkgs, config, ... }: {
     facter.reportPath = ./_facter.json;

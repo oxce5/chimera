@@ -1,4 +1,8 @@
-{ den, __findFile, ...}: {
+{
+  den,
+  __findFile,
+  ...
+}: {
   chimera = {
     workstation = {
       includes = [

@@ -22,6 +22,7 @@
           bash-language-server
           dockerfile-language-server
           yaml-language-server
+          jdt-language-server
           basedpyright
           clang-tools
           lua-language-server

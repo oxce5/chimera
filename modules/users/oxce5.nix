@@ -1,4 +1,8 @@
-{ den, __findFile, ...}: {
+{
+  den,
+  __findFile,
+  ...
+}: {
   den.aspects.oxce5 = {
     includes = [
       <den/primary-user>
@@ -6,6 +10,7 @@
       (den.batteries.user-shell "fish")
 
       <chimera/wayland/niri>
+      <chimera/wayland/dms>
       <chimera/easyeffects>
       <chimera/tailscale>
       <chimera/flatpak>

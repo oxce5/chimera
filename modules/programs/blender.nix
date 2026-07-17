@@ -45,10 +45,4 @@
       meta.mainProgram = "blender";
     };
   };
-  chimera.apps._.blender.homeManager = {pkgs, ...}: {
-    # Reference the package via withSystem just like WezTerm
-    home.packages = [
-      (withSystem pkgs.stdenv.hostPlatform.system (p: p.config.packages.blender-beta))
-    ];
-  };
 }

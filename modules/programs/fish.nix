@@ -33,7 +33,9 @@
           set fish_greeting
         '';
 
-        plugins = [
+        plugins = let
+          mkPlugin = name: src: { inherit name src; };
+        in [
           {
             name = "replay";
             src = pkgs.fetchFromGitHub {
@@ -43,30 +45,12 @@
               hash = "sha256-TzQ97h9tBRUg+A7DSKeTBWLQuThicbu19DHMwkmUXdg=";
             };
           }
-          {
-            name = "pisces";
-            src = pkgs.fishPlugins.pisces;
-          }
-          {
-            name = "fzf";
-            src = pkgs.fishPlugins.fzf-fish;
-          }
-          {
-            name = "bass";
-            src = pkgs.fishPlugins.bass;
-          }
-          {
-            name = "done";
-            src = pkgs.fishPlugins.done;
-          }
-          {
-            name = "you-should-use";
-            src = pkgs.fishPlugins.fish-you-should-use;
-          }
-          {
-            name = "z";
-            src = pkgs.fishPlugins.z;
-          }
+          (mkPlugin "pisces"         pkgs.fishPlugins.pisces)
+          (mkPlugin "fzf"            pkgs.fishPlugins.fzf-fish)
+          (mkPlugin "bass"           pkgs.fishPlugins.bass)
+          (mkPlugin "done"           pkgs.fishPlugins.done)
+          (mkPlugin "you-should-use" pkgs.fishPlugins.fish-you-should-use)
+          (mkPlugin "z"              pkgs.fishPlugins.z)
         ];
       };
     };

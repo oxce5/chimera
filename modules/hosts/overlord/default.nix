@@ -26,6 +26,8 @@
     };
     networking.networkmanager.enable = true;
     virtualisation.docker.enable = true;
+
+    users.privilegedGroups = [ "docker" ];
     hardware.nvidia-container-toolkit.enable = true;
   };
 }

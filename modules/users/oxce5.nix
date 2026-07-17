@@ -8,6 +8,7 @@
       <den/primary-user>
       <chimera/shell>
       (den.batteries.user-shell "fish")
+      <chimera/batteries/privileged-user>
 
       <chimera/wayland/niri>
       <chimera/wayland/dms>

@@ -153,6 +153,7 @@
                 "outputs"
                 "wpblur"
                 "blur"
+                "windowrules"
               ];
             };
           };

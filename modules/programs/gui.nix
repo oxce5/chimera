@@ -1,4 +1,4 @@
-{inputs, __findFile, ...}: {
+{inputs, __findFile, withSystem, ...}: {
   chimera.apps._.gui = {
     includes = [ <chimera/browser/firefox> ];
     homeManager = {pkgs, ...}: {

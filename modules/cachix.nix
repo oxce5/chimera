@@ -2,7 +2,7 @@
   den.default.nixos = {lib, ...}: let
     mkCachix = name: key: {
       url = "https://${name}.cachix.org";
-      inherit key;
+      key = "${name}.cachix.org-1:${key}";
     };
     cachix = {
       chaotic-nyx    = mkCachix "chaotic-nyx" "HfnXSw4pj95iI/n17rIDy40agHj12WfF+Gqk6SonIT8=";
@@ -19,4 +19,4 @@
       extra-trusted-public-keys = lib.mapAttrsToList (_: v: v.key) cachix;
     };
   };
-};
+}

@@ -35,12 +35,15 @@
       home-manager.useUserPackages = true;
       home-manager.useGlobalPkgs = true;
       boot.initrd.systemd.enable = true;
+      nixpkgs.config.permittedInsecurePackages = [
+        "electron-40.10.5"
+      ];
     };
     homeManager = {
       programs.home-manager.enable = true;
       home = {
         sessionPath = ["$HOME/.local/bin"];
-        stateVersion = "22.05";
+        stateVersion = "26.05";
       };
     };
   };

@@ -37,7 +37,7 @@ den,
 
               # Access Restrictions
               BlockAboutConfig              = false;
-              BlockAboutProfiles            = true;
+              BlockAboutProfiles            = false;
               BlockAboutSupport             = false;
 
               # UI and Behavior
@@ -55,15 +55,13 @@ den,
                   updates_disabled  = true;
                 };
               in {
-                ExtensionSettings = {
-                  "*".installation_mode = "blocked";
-                  "uBlock0@raymondhill.net"       = mkExtension "ublock-origin";
-                  "addon@darkreader.org"          = mkExtension "darkreader";
-                  "{73a6fe31-595d-460b-a920-fcc0f8843232}" = mkExtension "noscript";
-                  "vpn@proton.ch"                 = mkExtension "proton-vpn"; 
-                  "78272b6fa58f4a1abaac99321d503a20@proton.me" = mkExtension "proton-pass";
-                  "{f1ec051a-61c9-4613-a6bc-17253b7b3bf3}" = mkExtension "teto";
-                };
+                "*".installation_mode = "blocked";
+                "uBlock0@raymondhill.net"       = mkExtension "ublock-origin";
+                "addon@darkreader.org"          = mkExtension "darkreader";
+                "{73a6fe31-595d-460b-a920-fcc0f8843232}" = mkExtension "noscript";
+                "vpn@proton.ch"                 = mkExtension "proton-vpn-firefox-extension"; 
+                "78272b6fa58f4a1abaac99321d503a20@proton.me" = mkExtension "proton-pass";
+                "{f1ec051a-61c9-4613-a6bc-17253b7b3bf3}" = mkExtension "teto";
               };
 
               # Extension configuration 

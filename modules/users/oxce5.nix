@@ -19,7 +19,6 @@
 
       <chimera/fish>
       <chimera/apps/coreutils>
-      <chimera/apps/blender>
       <chimera/dev>
       <chimera/apps/gui>
       <chimera/apps/git>

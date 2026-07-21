@@ -46,16 +46,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    noctalia.url = "github:noctalia-dev/noctalia/cachix";
+
     helium = {
       url = "github:AlvaroParker/helium-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    kopuz = {
-      url = "github:temidaradev/kopuz";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
+    kopuz.url = "github:temidaradev/kopuz";
     elyprism-launcher.url = "github:elyprismlauncher/elyprismlauncher";
     dw-proton.url = "github:imaviso/dwproton-flake";
   };

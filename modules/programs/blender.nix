@@ -1,4 +1,4 @@
-{withSystem, ...}: {
+{
   perSystem = {pkgs, ...}: let
     libs =
       [pkgs.wayland pkgs.libdecor pkgs.libx11 pkgs.libxi pkgs.libxxf86vm pkgs.libxfixes pkgs.libxrender pkgs.libxkbcommon pkgs.libGLU pkgs.libglvnd pkgs.numactl pkgs.SDL2 pkgs.libdrm pkgs.ocl-icd pkgs.stdenv.cc.cc.lib pkgs.openal pkgs.alsa-lib pkgs.pulseaudio]
@@ -10,8 +10,8 @@
       version = "5.2.0-beta";
 
       src = pkgs.fetchurl {
-        url = "https://cdn.builder.blender.org/download/daily/blender-5.2.0-beta+v52.23d7ca056249-linux.x86_64-release.tar.xz";
-        hash = "sha256-f2tIMjbzGMtQTUv4A4psZ/qoEOJDBItc0yDp23PN0i8=";
+        url = "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz";
+        hash = "sha256-lvbBgaMPSVBgeDnchNQqNUslDYoCMbCYtZt7xpw1HEg=";
       };
 
       buildInputs = [pkgs.makeWrapper];

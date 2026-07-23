@@ -1,5 +1,5 @@
 {
-  den.aspects.overlord.nixos = {
+  den.aspects.machina-mori.nixos = {
     fileSystems."/" = {
       device = "/dev/disk/by-label/ROOT";
       fsType = "ext4";

@@ -16,7 +16,7 @@
 
     nixos-hardware.url = "github:nixos/nixos-hardware";
     nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
-    # wrapper-manager.url = "github:viperML/wrapper-manager";
+    wrapper-manager.url = "github:viperML/wrapper-manager";
 
     nix-gaming = {
       url = "github:fufexan/nix-gaming";

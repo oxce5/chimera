@@ -1,8 +1,4 @@
-{
-  den,
-  __findFile,
-  ...
-}: {
+{__findFile, ...}: {
   chimera = {
     workstation = {
       includes = [
@@ -18,6 +14,13 @@
         # <chimera/boot/secure>
         <chimera/performance/responsive>
         <chimera/power-mgmt>
+        <chimera/workstation>
+      ];
+    };
+    vm = {
+      includes = [
+        <chimera/boot/graphical>
+        <chimera/pwn>
         <chimera/workstation>
       ];
     };

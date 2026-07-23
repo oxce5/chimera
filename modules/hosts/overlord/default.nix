@@ -27,7 +27,7 @@
     networking.networkmanager.enable = true;
     virtualisation.docker.enable = true;
 
-    users.privilegedGroups = [ "docker" ];
+    users.privilegedGroups = [ "audio" "docker" ];
     hardware.nvidia-container-toolkit.enable = true;
   };
 }

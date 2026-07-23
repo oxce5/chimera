@@ -24,10 +24,15 @@
       kernelPackages = pkgs.linuxPackages_zen;
       loader.systemd-boot.enable = true;
     };
-    networking.networkmanager.enable = true;
+    networking = {
+      networkmanager.enable = true;
+      hosts = {
+        "192.168.1.254" = ["bastion"];
+      };
+    };
     virtualisation.docker.enable = true;
 
-    users.privilegedGroups = [ "audio" "docker" ];
+    users.privilegedGroups = ["audio" "docker"];
     hardware.nvidia-container-toolkit.enable = true;
   };
 }

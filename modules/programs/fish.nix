@@ -34,7 +34,7 @@
         '';
 
         plugins = let
-          mkPlugin = name: src: { inherit name src; };
+          mkPlugin = name: src: {inherit name src;};
         in [
           {
             name = "replay";
@@ -45,12 +45,12 @@
               hash = "sha256-TzQ97h9tBRUg+A7DSKeTBWLQuThicbu19DHMwkmUXdg=";
             };
           }
-          (mkPlugin "pisces"         pkgs.fishPlugins.pisces)
-          (mkPlugin "fzf"            pkgs.fishPlugins.fzf-fish)
-          (mkPlugin "bass"           pkgs.fishPlugins.bass)
-          (mkPlugin "done"           pkgs.fishPlugins.done)
+          (mkPlugin "pisces" pkgs.fishPlugins.pisces)
+          (mkPlugin "fzf" pkgs.fishPlugins.fzf-fish)
+          (mkPlugin "bass" pkgs.fishPlugins.bass)
+          (mkPlugin "done" pkgs.fishPlugins.done)
           (mkPlugin "you-should-use" pkgs.fishPlugins.fish-you-should-use)
-          (mkPlugin "z"              pkgs.fishPlugins.z)
+          (mkPlugin "z" pkgs.fishPlugins.z)
         ];
       };
     };

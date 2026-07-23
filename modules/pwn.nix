@@ -6,9 +6,6 @@
   ...
 }: {
   chimera.pwn = {
-    includes = [
-      <chimera/workstation>
-    ];
     nixos = {
       environment.etc.hosts.mode = "0644";
       programs.wireshark.enable = true;

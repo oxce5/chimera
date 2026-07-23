@@ -10,7 +10,8 @@
       (den.batteries.user-shell "fish")
       <chimera/batteries/privileged-user>
 
-      <chimera/desktop-shells/dms>
+      <chimera/wayland/niri>
+      <chimera/desktop-shells/noctalia>
       <chimera/easyeffects>
       <chimera/tailscale>
       <chimera/flatpak>

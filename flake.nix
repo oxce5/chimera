@@ -35,11 +35,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    niri = {
-      url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.xwayland-satellite-unstable.follows = "niri/xwayland-satellite-stable";
-    };
+    niri-nix.url = "git+https://codeberg.org/bananad3v/niri-nix.git";
 
     dms = {
       url = "github:AvengeMedia/DankMaterialShell";
@@ -47,6 +43,7 @@
     };
 
     noctalia.url = "github:noctalia-dev/noctalia/cachix";
+    noctalia-greeter.url = "github:noctalia-dev/noctalia-greeter";
 
     helium = {
       url = "github:AlvaroParker/helium-nix";

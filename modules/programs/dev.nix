@@ -1,9 +1,4 @@
 {
-  chimera,
-  inputs,
-  den,
-  ...
-}: {
   chimera.dev = {
     nixos = {
       programs.neovim = {
@@ -24,9 +19,11 @@
           yaml-language-server
           jdt-language-server
           basedpyright
+          nil
           clang-tools
           lua-language-server
           stylua
+          alejandra
         ];
       };
       # Allow imperative management of neovim luaconfig

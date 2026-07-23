@@ -1,7 +1,6 @@
 {
   chimera,
   inputs,
-  den,
   ...
 }: {
   chimera.gaming.provides = {

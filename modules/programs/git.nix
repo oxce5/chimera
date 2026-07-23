@@ -1,4 +1,4 @@
-{...}: {
+{
   chimera.apps._.git.homeManager = {
     lib,
     pkgs,

@@ -1,7 +1,5 @@
 {
   inputs,
-  den,
-  lib,
   __findFile,
   ...
 }: {

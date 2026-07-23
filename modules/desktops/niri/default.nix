@@ -1,110 +1,367 @@
 {
-  chimera,
-  inputs,
-  lib,
-  niri-lib,
-  den,
-  ...
+chimera,
+inputs,
+...
 }: {
   chimera.wayland.provides = {
     host,
     user,
     ...
-  }: {
-    includes = [chimera.wayland._.base];
+    }: {
+      includes = [chimera.wayland._.base];
 
-    niri = {
-      nixos = {
-        config,
-        pkgs,
-        ...
-      }: {
-        imports = [inputs.niri.nixosModules.niri];
-        nixpkgs.overlays = [inputs.niri.overlays.niri];
+      niri = {
+        nixos = {
+          config,
+          pkgs,
+          ...
+          }: {
+            imports = [ inputs.niri-nix.nixosModules.default ];
+            nixpkgs.overlays = [ inputs.niri-nix.overlays.niri-nix ];
 
-        systemd.user.services.niri-flake-polkit.enable = false;
-
-        programs.niri = {
-          enable = true;
-          package = pkgs.niri-unstable;
-        };
-        niri-flake.cache.enable = true;
-      };
-      homeManager = {
-        config,
-        lib,
-        pkgs,
-        host,
-        ...
-      }: {
-        home = {
-          sessionVariables = {
-            EDITOR = "nvim";
-          };
-          packages = with pkgs; [
-            xwayland-satellite
-            kitty
-          ];
-        };
-
-        xdg.portal = {
-          enable = true;
-          extraPortals = with pkgs; [xdg-desktop-portal-gtk xdg-desktop-portal-gnome];
-          config.niri = {
-            "org.freedesktop.impl.portal.ScreenCast" = ["gnome"];
-            "org.freedesktop.impl.portal.FileChooser" = ["gtk"];
-          };
-        };
-
-        programs.niri = {
-          settings = {
-            prefer-no-csd = true;
-            hotkey-overlay.skip-at-startup = true;
-            environment = {
-              EDITOR = "nvim";
+            programs.niri = {
+              enable = true;
+              package = pkgs.niri-unstable;
+              useNautilus = false;
             };
-            input.mouse = {
-              accel-speed = -0.6;
+          };
+        homeManager = {
+          config,
+          lib,
+          pkgs,
+          host,
+          ...
+          }: {
+            imports = [ inputs.niri-nix.homeModules.default ];
+            xdg.portal = {
+              extraPortals = with pkgs; [xdg-desktop-portal-gtk xdg-desktop-portal-gnome];
+              config.common = {
+                "org.freedesktop.impl.portal.ScreenCast" = ["gnome"];
+                "org.freedesktop.impl.portal.FileChooser" = ["gtk"];
+              };
             };
-            #
-            # outputs."eDP-1" = {
-            #   mode = {
-            #     width = host.primaryDisplay.width;
-            #     height = host.primaryDisplay.height;
-            #   };
-            #   scale = 1.0;
-            #   position.x = 0;
-            #   position.y = 0;
-            # };
-            #
-            # outputs."HDMI-A-5" = {
-            #   mode = {
-            #     width = hostConfig.primaryDisplay.width;
-            #     height = hostConfig.primaryDisplay.height;
-            #   };
-            #   scale = 1.0;
-            #   position.x = 0;
-            #   position.y = 0;
-            # };
-            #
-            overview.workspace-shadow.enable = false;
-            spawn-at-startup = [
-              {command = ["sway-audio-idle-inhibit"];}
-              {command = ["easyeffects"];}
-              {
-                command = [
-                  "systemctl"
-                  "--user"
-                  "restart"
-                  "xdg-desktop-portal-gtk"
+
+            services.cliphist.enable = true;
+
+            wayland.windowManager.niri = {
+              enable = true;
+              settings = {
+                input = {
+                  keyboard = {
+                    xkb = {
+                      layout = "";
+                      model = "";
+                      rules = "";
+                      variant = "";
+                    };
+                    repeat-delay = 600;
+                    repeat-rate = 25;
+                    track-layout = "global";
+                  };
+                  touchpad = {
+                    tap = [];
+                    natural-scroll = [];
+                  };
+                  mouse = {
+                    accel-speed = -0.600000;
+                  };
+                };
+
+                screenshot-path = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png";
+                prefer-no-csd = [];
+
+                overview = {
+                  workspace-shadow.off = [];
+                };
+
+                layout = {
+                  gaps = 16;
+                  struts = {
+                    left = 0;
+                    right = 0;
+                    top = 0;
+                    bottom = 0;
+                  };
+                  focus-ring = {
+                    width = 4;
+                  };
+                  border.off = [];
+                  default-column-width = [];
+                  center-focused-column = "never";
+                };
+
+                cursor = {
+                  xcursor-theme = "default";
+                  xcursor-size = 24;
+                };
+
+                hotkey-overlay.skip-at-startup = [];
+
+                environment.EDITOR = "nvim";
+
+                spawn-at-startup = [
+                  "noctalia"
+                  "easyeffects"
                 ];
-              }
-            ];
+
+                binds = {
+                  # === System & Overview ===
+                  "Mod+D" = { _props.repeat = false; toggle-overview = []; };
+                  "Mod+Tab" = { _props.repeat = false; toggle-overview = []; };
+                  "Mod+Shift+Slash" = { show-hotkey-overlay = []; };
+
+                  # === Application Launchers ===
+                  "Mod+T" = { _props.hotkey-overlay-title = "Open Terminal"; spawn = "kitty"; };
+                  "Mod+B" = { _props.hotkey-overlay-title = "Open Browser"; spawn = "firefox"; };
+                  "Mod+Space" = {
+                    _props.hotkey-overlay-title = "Application Launcher";
+                    spawn = ["noctalia" "msg" "panel-toggle" "launcher"];
+                  };
+                  "Mod+V" = {
+                    _props.hotkey-overlay-title = "Clipboard Manager";
+                    spawn = ["noctalia" "msg" "panel-toggle" "clipboard"];
+                  };
+                  "Mod+M" = {
+                    _props.hotkey-overlay-title = "Task Manager";
+                    spawn = ["noctalia" "msg" "panel-toggle" "processlist"];
+                  };
+
+                  "Super+X" = {
+                    _props.hotkey-overlay-title = "Power Menu: Toggle";
+                    spawn = ["noctalia" "msg" "panel-toggle" "powermenu"];
+                  };
+                  "Mod+Comma" = {
+                    _props.hotkey-overlay-title = "Settings";
+                    spawn = ["noctalia" "msg" "settings-toggle"];
+                  };
+                  "Mod+Y" = {
+                    _props.hotkey-overlay-title = "Browse Wallpapers";
+                    spawn = ["noctalia" "msg" "panel-toggle" "wallpaper"];
+                  };
+                  "Mod+N" = {
+                    _props.hotkey-overlay-title = "Notification Center";
+                    spawn = ["noctalia" "msg" "panel-toggle" "notifications"];
+                  };
+                  "Mod+Shift+N" = {
+                    _props.hotkey-overlay-title = "Notepad";
+                    spawn = ["noctalia" "msg" "panel-toggle" "notepad"];
+                  };
+
+                  # === Security ===
+                  "Mod+Alt+L" = {
+                    _props.hotkey-overlay-title = "Lock Screen";
+                    spawn = ["noctalia" "msg" "session" "lock"];
+                  };
+                  "Mod+Shift+E" = { quit = []; };
+                  "Ctrl+Alt+Delete" = {
+                    _props.hotkey-overlay-title = "Task Manager";
+                    spawn = ["noctalia" "msg" "panel-toggle" "processlist"];
+                  };
+
+                  # === Audio Controls ===
+                  XF86AudioRaiseVolume = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "volume-up" "3"];
+                  };
+                  XF86AudioLowerVolume = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "volume-down" "3"];
+                  };
+                  XF86AudioMute = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "volume-mute"];
+                  };
+                  XF86AudioMicMute = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "mic-mute"];
+                  };
+                  XF86AudioPause = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "media" "toggle"];
+                  };
+                  XF86AudioPlay = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "media" "toggle"];
+                  };
+                  XF86AudioPrev = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "media" "previous"];
+                  };
+                  XF86AudioNext = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "media" "next"];
+                  };
+                  "Ctrl+XF86AudioRaiseVolume" = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "volume-up" "3"];
+                  };
+                  "Ctrl+XF86AudioLowerVolume" = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "volume-down" "3"];
+                  };
+
+                  # === Brightness Controls ===
+                  XF86MonBrightnessUp = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "brightness-up" "5"];
+                  };
+                  XF86MonBrightnessDown = {
+                    _props.allow-when-locked = true;
+                    spawn = ["noctalia" "msg" "brightness-down" "5"];
+                  };
+
+                  # === Window Management ===
+                  "Mod+Q" = { _props.repeat = false; close-window = []; };
+                  "Mod+F" = { maximize-column = []; };
+                  "Mod+Shift+F" = { fullscreen-window = []; };
+                  "Mod+Shift+T" = { toggle-window-floating = []; };
+                  "Mod+Shift+V" = { switch-focus-between-floating-and-tiling = []; };
+                  "Mod+W" = { toggle-column-tabbed-display = []; };
+                  "Mod+Shift+W" = {
+                    _props.hotkey-overlay-title = "Create window rule";
+                    spawn = ["noctalia" "msg" "panel-toggle" "window-rules"];
+                  };
+
+                  # === Focus Navigation ===
+                  "Mod+Left"  = { focus-column-left = []; };
+                  "Mod+Down"  = { focus-window-down = []; };
+                  "Mod+Up"    = { focus-window-up = []; };
+                  "Mod+Right" = { focus-column-right = []; };
+                  "Mod+H"     = { focus-column-left = []; };
+                  "Mod+J"     = { focus-window-down = []; };
+                  "Mod+K"     = { focus-window-up = []; };
+                  "Mod+L"     = { focus-column-right = []; };
+
+                  # === Window Movement ===
+                  "Mod+Shift+Left"  = { move-column-left = []; };
+                  "Mod+Shift+Down"  = { move-window-down = []; };
+                  "Mod+Shift+Up"    = { move-window-up = []; };
+                  "Mod+Shift+Right" = { move-column-right = []; };
+                  "Mod+Shift+H"     = { move-column-left = []; };
+                  "Mod+Shift+J"     = { move-window-down = []; };
+                  "Mod+Shift+K"     = { move-window-up = []; };
+                  "Mod+Shift+L"     = { move-column-right = []; };
+
+                  # === Column Navigation ===
+                  "Mod+Home" = { focus-column-first = []; };
+                  "Mod+End"  = { focus-column-last = []; };
+                  "Mod+Ctrl+Home" = { move-column-to-first = []; };
+                  "Mod+Ctrl+End"  = { move-column-to-last = []; };
+
+                  # === Monitor Navigation ===
+                  "Mod+Ctrl+Left"  = { focus-monitor-left = []; };
+                  # "Mod+Ctrl+Down"  = { focus-monitor-down = []; };
+                  # "Mod+Ctrl+Up"    = { focus-monitor-up = []; };
+                  "Mod+Ctrl+Right" = { focus-monitor-right = []; };
+                  "Mod+Ctrl+H"     = { focus-monitor-left = []; };
+                  "Mod+Ctrl+J"     = { focus-monitor-down = []; };
+                  "Mod+Ctrl+K"     = { focus-monitor-up = []; };
+                  "Mod+Ctrl+L"     = { focus-monitor-right = []; };
+
+                  # === Move to Monitor ===
+                  "Mod+Shift+Ctrl+Left"  = { move-column-to-monitor-left = []; };
+                  "Mod+Shift+Ctrl+Down"  = { move-column-to-monitor-down = []; };
+                  "Mod+Shift+Ctrl+Up"    = { move-column-to-monitor-up = []; };
+                  "Mod+Shift+Ctrl+Right" = { move-column-to-monitor-right = []; };
+                  "Mod+Shift+Ctrl+H"     = { move-column-to-monitor-left = []; };
+                  "Mod+Shift+Ctrl+J"     = { move-column-to-monitor-down = []; };
+                  "Mod+Shift+Ctrl+K"     = { move-column-to-monitor-up = []; };
+                  "Mod+Shift+Ctrl+L"     = { move-column-to-monitor-right = []; };
+
+                  # === Workspace Navigation ===
+                  "Mod+Page_Down" = { focus-workspace-down = []; };
+                  "Mod+Page_Up"   = { focus-workspace-up = []; };
+                  "Mod+U"         = { focus-workspace-down = []; };
+                  "Mod+I"         = { focus-workspace-up = []; };
+                  "Mod+Ctrl+Down" = { move-column-to-workspace-down = []; };
+                  "Mod+Ctrl+Up"   = { move-column-to-workspace-up = []; };
+                  "Mod+Ctrl+U"    = { move-column-to-workspace-down = []; };
+                  "Mod+Ctrl+I"    = { move-column-to-workspace-up = []; };
+
+                  # === Workspace Management ===
+                  "Ctrl+Shift+R" = {
+                    _props.hotkey-overlay-title = "Rename Workspace";
+                    spawn = ["noctalia" "msg" "panel-open" "workspace-rename"];
+                  };
+
+                  # === Move Workspaces ===
+                  "Mod+Shift+Page_Down" = { move-workspace-down = []; };
+                  "Mod+Shift+Page_Up"   = { move-workspace-up = []; };
+                  "Mod+Shift+U"         = { move-workspace-down = []; };
+                  "Mod+Shift+I"         = { move-workspace-up = []; };
+
+                  # === Mouse Wheel Navigation ===
+                  "Mod+WheelScrollDown"      = { _props.cooldown-ms = 150; focus-workspace-down = []; };
+                  "Mod+WheelScrollUp"        = { _props.cooldown-ms = 150; focus-workspace-up = []; };
+                  "Mod+Ctrl+WheelScrollDown" = { _props.cooldown-ms = 150; move-column-to-workspace-down = []; };
+                  "Mod+Ctrl+WheelScrollUp"   = { _props.cooldown-ms = 150; move-column-to-workspace-up = []; };
+
+                  "Mod+WheelScrollRight"      = { focus-column-right = []; };
+                  "Mod+WheelScrollLeft"       = { focus-column-left = []; };
+                  "Mod+Ctrl+WheelScrollRight" = { move-column-right = []; };
+                  "Mod+Ctrl+WheelScrollLeft"  = { move-column-left = []; };
+
+                  "Mod+Shift+WheelScrollDown"      = { focus-column-right = []; };
+                  "Mod+Shift+WheelScrollUp"        = { focus-column-left = []; };
+                  "Mod+Ctrl+Shift+WheelScrollDown" = { move-column-right = []; };
+                  "Mod+Ctrl+Shift+WheelScrollUp"   = { move-column-left = []; };
+
+                  # === Numbered Workspaces ===
+                  "Mod+1" = { focus-workspace = 1; };
+                  "Mod+2" = { focus-workspace = 2; };
+                  "Mod+3" = { focus-workspace = 3; };
+                  "Mod+4" = { focus-workspace = 4; };
+                  "Mod+5" = { focus-workspace = 5; };
+                  "Mod+6" = { focus-workspace = 6; };
+                  "Mod+7" = { focus-workspace = 7; };
+                  "Mod+8" = { focus-workspace = 8; };
+                  "Mod+9" = { focus-workspace = 9; };
+
+                  # === Move to Numbered Workspaces ===
+                  "Mod+Shift+1" = { move-column-to-workspace = 1; };
+                  "Mod+Shift+2" = { move-column-to-workspace = 2; };
+                  "Mod+Shift+3" = { move-column-to-workspace = 3; };
+                  "Mod+Shift+4" = { move-column-to-workspace = 4; };
+                  "Mod+Shift+5" = { move-column-to-workspace = 5; };
+                  "Mod+Shift+6" = { move-column-to-workspace = 6; };
+                  "Mod+Shift+7" = { move-column-to-workspace = 7; };
+                  "Mod+Shift+8" = { move-column-to-workspace = 8; };
+                  "Mod+Shift+9" = { move-column-to-workspace = 9; };
+
+                  # === Column Management ===
+                  "Mod+BracketLeft"  = { consume-or-expel-window-left = []; };
+                  "Mod+BracketRight" = { consume-or-expel-window-right = []; };
+                  "Mod+Period" = { expel-window-from-column = []; };
+
+                  # === Sizing & Layout ===
+                  "Mod+R" = { switch-preset-column-width = []; };
+                  "Mod+Shift+R" = { switch-preset-window-height = []; };
+                  "Mod+Ctrl+R" = { reset-window-height = []; };
+                  "Mod+Ctrl+F" = { expand-column-to-available-width = []; };
+                  "Mod+C" = { center-column = []; };
+                  "Mod+Ctrl+C" = { center-visible-columns = []; };
+
+                  # === Manual Sizing ===
+                  "Mod+Minus" = { set-column-width = "-10%"; };
+                  "Mod+Equal" = { set-column-width = "+10%"; };
+                  "Mod+Shift+Minus" = { set-window-height = "-10%"; };
+                  "Mod+Shift+Equal" = { set-window-height = "+10%"; };
+
+                  # === Screenshots ===
+                  "Mod+P" = { screenshot = []; };
+                  "Mod+Alt+P" = { screenshot-screen = []; };
+                  "Alt+P" = { screenshot-window = []; };
+                  Print = { screenshot = []; };
+                  "Ctrl+Print" = { screenshot-screen = []; };
+                  "Alt+Print" = { screenshot-window = []; };
+
+                  # === System Controls ===
+                  "Mod+Escape" = { _props.allow-inhibiting = false; toggle-keyboard-shortcuts-inhibit = []; };
+                  "Mod+Shift+P" = { power-off-monitors = []; };
+                };
+              };
+            };
           };
-        };
-        services.cliphist.enable = true;
       };
     };
-
-  };
 }

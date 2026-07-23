@@ -1,4 +1,4 @@
-{withSystem, ...}: {
+{
   perSystem = {pkgs, ...}: {
     packages.iosevka-chimera = pkgs.iosevka.override {
       set = "Chimera";

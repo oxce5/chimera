@@ -1,4 +1,3 @@
-{ chimera, den, ... }:
 {
   chimera.batteries._.privileged-user =
     { user, ... }:

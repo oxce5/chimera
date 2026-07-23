@@ -1,9 +1,6 @@
 {
 chimera,
 inputs,
-lib,
-niri-lib,
-den,
 ...
 }: {
   chimera.desktop-shells.provides = {
@@ -11,9 +8,9 @@ den,
     user,
     ...
     }: {
-      dms = {
-        includes = [chimera.wayland._.niri];
+      includes = [chimera.wayland._.niri];
 
+      dms = {
         nixos = {pkgs, ...}: {
           services.displayManager.dms-greeter = {
             enable = true;
@@ -75,14 +72,18 @@ den,
         nixos = {
           imports = [
             inputs.noctalia.nixosModules.default
+            inputs.noctalia-greeter.nixosModules.default
           ];
 
-          programs.noctalia = {
-            enable = true;
+            programs = {
+              noctalia = {
+                enable = true;
 
-            # Enables NetworkManager, Bluetooth, UPower, and a power profile service.
-            recommendedServices.enable = true;
-            systemd.enable = true;
+                # Enables NetworkManager, Bluetooth, UPower, and a power profile service.
+                recommendedServices.enable = true;
+                systemd.enable = true;
+              };
+              noctalia-greeter.enable = true;
           };
         };
       };

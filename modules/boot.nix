@@ -1,8 +1,4 @@
 {
-  inputs,
-  lib,
-  ...
-}: {
   chimera.boot.provides = {
     # secure.nixos = {
     #   imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];

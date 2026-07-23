@@ -1,4 +1,4 @@
-{lib, ...}: {
+{
   chimera.easyeffects.homeManager = {
     # systemd.user.services.easyeffects.Service.Restart = lib.mkForce "never";
     services.easyeffects = {

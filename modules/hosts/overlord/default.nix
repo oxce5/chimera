@@ -7,6 +7,7 @@
     includes = with chimera; [
       laptop
       gaming._.max
+      virt._.qemu
     ];
   };
 

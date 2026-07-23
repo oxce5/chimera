@@ -4,6 +4,7 @@
     homeManager = {pkgs, ...}: {
       
       home.packages = with pkgs; [
+        kitty
         libreoffice
         hunspell
         hunspellDicts.en_US-large

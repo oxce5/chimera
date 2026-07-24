@@ -1,13 +1,10 @@
-{
-  chimera,
-  inputs,
-  ...
-}: {
+{chimera, ...}: {
   den.aspects.overlord = {
     includes = with chimera; [
       laptop
       gaming._.max
-      virt._.qemu
+      virt._.host
+      virt._.docker
     ];
   };
 
@@ -31,7 +28,6 @@
         "192.168.1.254" = ["bastion"];
       };
     };
-    virtualisation.docker.enable = true;
 
     users.privilegedGroups = ["audio" "docker"];
     hardware.nvidia-container-toolkit.enable = true;

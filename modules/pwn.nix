@@ -7,6 +7,11 @@
 }: {
   chimera.pwn = {
     nixos = {
+      imports = [inputs.chimera-pkgs.nixosModules.sliver];
+
+      services.sliver = {
+        enable = true;
+      };
       environment.etc.hosts.mode = "0644";
       programs.wireshark.enable = true;
       virtualisation.docker.enable = true;
@@ -28,6 +33,9 @@
       in [
         # general
         wordlists
+
+        # C2
+        (inputs.chimera-pkgs.packages.${pkgs.stdenv.hostPlatform.system}.sliver-client)
         # Information Gathering
         nmap
         theharvester

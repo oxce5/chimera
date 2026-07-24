@@ -1,6 +1,6 @@
 {chimera, ...}: {
   chimera.virt.provides = {
-    qemu = {
+    host = {
       nixos = {pkgs, ...}: {
         users.privilegedGroups = ["kvm"];
         networking.firewall.trustedInterfaces = ["virbr0"];
@@ -8,10 +8,19 @@
         environment.systemPackages = with pkgs; [
           virglrenderer
         ];
-        services.qemuGuest.enable = true;
         virtualisation = {
           libvirtd.enable = true;
           spiceUSBRedirection.enable = true;
+        };
+      };
+    };
+    guest.nixos = {
+      services.qemuGuest.enable = true;
+    };
+    docker = {
+      nixos = {
+        virtualisation.docker = {
+          enable = true;
         };
       };
     };

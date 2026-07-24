@@ -1,7 +1,12 @@
-{chimera, ...}: {
+{
+  chimera,
+  lib,
+  ...
+}: {
   den.aspects.machina-mori = {
     includes = with chimera; [
       vm
+      virt._.guest
     ];
   };
 
@@ -15,20 +20,31 @@
       config,
       ...
     }: {
-      imports = [<nixpkgs/nixos/modules/profiles/qemu-guest.nix>];
+      # imports = [<nixpkgs/nixos/modules/profiles/qemu-guest.nix>];
       boot = {
+        kernelParams = ["reboot=acpi"];
+        plymouth.enable = lib.mkForce false;
         loader.systemd-boot.enable = true;
-        loader.timeout = 0;
+        loader.timeout = 5;
         consoleLogLevel = 3;
       };
       networking.networkmanager.enable = true;
 
       hardware.enableRedistributableFirmware = false;
-      services.printing.enable = false;
-      services.avahi.enable = false;
+      services = {
+        printing.enable = false;
+        avahi.enable = false;
+        openssh = {
+          enable = true;
+        };
+
+        acpid.enable = true;
+        qemuGuest.enable = true;
+      };
 
       services.greetd = {
         enable = true;
+        restart = false;
         settings = {
           default_session = {
             command = "niri-session";
@@ -37,13 +53,7 @@
         };
       };
 
-      users.privilegedGroups = ["audio" "docker"];
-      virtualization.docker.enable = true;
-    };
-    homeManager = {
-      wayland.windowManager.niri.settings = {
-        input.mod-key = "Alt";
-      };
+      users.privilegedGroups = ["audio" "docker" "video" "render"];
     };
   };
 }

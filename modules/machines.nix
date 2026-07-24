@@ -19,7 +19,6 @@
     };
     vm = {
       includes = [
-        <chimera/boot/graphical>
         <chimera/pwn>
         <chimera/workstation>
       ];

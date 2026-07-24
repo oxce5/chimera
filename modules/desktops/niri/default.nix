@@ -41,6 +41,7 @@
           };
         };
 
+        home.packages = with pkgs; [kitty];
         services.cliphist.enable = true;
 
         wayland.windowManager.niri = {

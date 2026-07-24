@@ -11,7 +11,7 @@
       <chimera/batteries/privileged-user>
 
       <chimera/wayland/niri>
-      <chimera/desktop-shells/noctalia>
+      # <chimera/desktop-shells/noctalia>
 
       <chimera/fish>
       <chimera/apps/coreutils>

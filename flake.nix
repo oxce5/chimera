@@ -18,6 +18,8 @@
     nixos-facter-modules.url = "github:nix-community/nixos-facter-modules";
     wrapper-manager.url = "github:viperML/wrapper-manager";
 
+    chimera-pkgs.url = "github:oxce5/chimera-pkgs";
+
     nix-gaming = {
       url = "github:fufexan/nix-gaming";
       inputs.nixpkgs.follows = "nixpkgs";

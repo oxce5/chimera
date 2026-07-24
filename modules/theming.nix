@@ -1,13 +1,10 @@
-{
-  withSystem,
-  ...
-}: {
+{inputs, ...}: {
   chimera.theming = {
     nixos = {pkgs, ...}: {
       fonts = {
         packages = with pkgs; [
           maple-mono.NF
-          (withSystem pkgs.stdenv.hostPlatform.system (p: p.config.packages.iosevka-chimera))
+          (inputs.chimera-pkgs.packages.${pkgs.stdenv.hostPlatform.system}.iosevka-chimera)
           montserrat
           libertine
           inter

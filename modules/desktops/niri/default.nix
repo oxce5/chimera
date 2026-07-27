@@ -33,15 +33,11 @@
         ...
       }: {
         imports = [inputs.niri-nix.homeModules.default];
-        xdg.portal = {
-          extraPortals = with pkgs; [xdg-desktop-portal-gtk xdg-desktop-portal-gnome];
-          config.common = {
-            "org.freedesktop.impl.portal.ScreenCast" = ["gnome"];
-            "org.freedesktop.impl.portal.FileChooser" = ["gtk"];
-          };
-        };
 
-        home.packages = with pkgs; [kitty];
+        home.packages = with pkgs; [
+          xwayland-satellite
+          kitty
+        ];
         services.cliphist.enable = true;
 
         wayland.windowManager.niri = {

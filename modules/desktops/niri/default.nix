@@ -101,6 +101,23 @@
               "easyeffects"
             ];
 
+            window-rule = [
+              {
+                match = {
+                  _props.app-id = "kitty";
+                  _props.title = "termfilechooser";
+                };
+
+                open-floating = true;
+                open-focused = true;
+
+                min-height = 720;
+                max-height = 720;
+                max-width = 1280;
+                min-width = 1280;
+              }
+            ];
+
             binds = {
               # === System & Overview ===
               "Mod+D" = {

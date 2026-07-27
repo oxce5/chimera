@@ -1,13 +1,10 @@
 {
   perSystem = {pkgs, ...}: let
-    libs =
-      [pkgs.wayland pkgs.libdecor pkgs.libx11 pkgs.libxi pkgs.libxxf86vm pkgs.libxfixes pkgs.libxrender pkgs.libxkbcommon pkgs.libGLU pkgs.libglvnd pkgs.numactl pkgs.SDL2 pkgs.libdrm pkgs.ocl-icd pkgs.stdenv.cc.cc.lib pkgs.openal pkgs.alsa-lib pkgs.pulseaudio]
-      ++ pkgs.lib.optionals (pkgs.lib.versionAtLeast "5.2.0-beta" "3.5") [pkgs.libsm pkgs.libice pkgs.zlib]
-      ++ pkgs.lib.optionals (pkgs.lib.versionAtLeast "5.2.0-beta" "4.5") [pkgs.vulkan-loader];
+    libs = [pkgs.wayland pkgs.libdecor pkgs.libx11 pkgs.libxi pkgs.libxxf86vm pkgs.libxfixes pkgs.libxrender pkgs.libxkbcommon pkgs.libGLU pkgs.libglvnd pkgs.numactl pkgs.SDL2 pkgs.libdrm pkgs.ocl-icd pkgs.stdenv.cc.cc.lib pkgs.openal pkgs.alsa-lib pkgs.pulseaudio pkgs.libsm pkgs.libice pkgs.zlib pkgs.vulkan-loader];
   in {
     packages.blender-beta = pkgs.stdenv.mkDerivation rec {
       pname = "blender-bin";
-      version = "5.2.0-beta";
+      version = "5.2.0";
 
       src = pkgs.fetchurl {
         url = "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz";

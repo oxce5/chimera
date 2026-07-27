@@ -3,6 +3,7 @@
     nixos.xdg.terminal-exec.enable = true;
     homeManager = {
       config,
+      lib,
       pkgs,
       ...
     }: {
@@ -19,6 +20,29 @@
           templates = null;
           # music = null;
           publicShare = null;
+        };
+
+        portal = {
+          enable = true;
+          xdgOpenUsePortal = true;
+          extraPortals = with pkgs; [
+            xdg-desktop-portal-termfilechooser
+            xdg-desktop-portal-gtk
+            xdg-desktop-portal-gnome
+          ];
+          config.common = {
+            "default" = "gtk";
+            "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
+            "org.freedesktop.impl.portal.ScreenCast" = "gnome";
+            "XDG_CURRENT_DESKTOP" = "niri";
+          };
+          config.niri = {
+            "default" = lib.mkForce "gtk";
+            "org.freedesktop.impl.portal.FileChooser" = lib.mkForce "termfilechooser";
+            "org.freedesktop.impl.portal.ScreenCast" = "gnome";
+            "XDG_CURRENT_DESKTOP" = "niri";
+            # "org.freedesktop.impl.portal.Screenshot" = "gnome";
+          };
         };
       };
       # home.sessionVariables = {

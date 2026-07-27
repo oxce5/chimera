@@ -15,7 +15,10 @@
       };
     };
     guest.nixos = {
-      services.qemuGuest.enable = true;
+      services = {
+        qemuGuest.enable = true;
+        spice-vdagentd.enable = true;
+      };
     };
     docker = {
       nixos = {

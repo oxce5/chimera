@@ -9,9 +9,8 @@
     nixos = {
       imports = [inputs.chimera-pkgs.nixosModules.sliver];
 
-      services.sliver = {
-        enable = true;
-      };
+      services.sliver.enable = true;
+
       environment.etc.hosts.mode = "0644";
       programs.wireshark.enable = true;
       virtualisation.docker.enable = true;

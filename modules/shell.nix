@@ -77,7 +77,11 @@
         icons = "auto";
         enableNushellIntegration = false;
       };
-      nix-your-shell.enable = true;
+      nix-your-shell = {
+        enable = true;
+        enableFishIntegration = true;
+        nix-output-monitor.enable = true;
+      };
       skim.enable = true;
       tealdeer = {
         enable = true;

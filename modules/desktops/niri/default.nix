@@ -17,12 +17,12 @@
         ...
       }: {
         imports = [inputs.niri-nix.nixosModules.default];
-        nixpkgs.overlays = [inputs.niri-nix.overlays.niri-nix];
-
+        #
+        # nixpkgs.overlays = [inputs.niri-nix.overlays.niri-nix];
+        #
         programs.niri = {
           enable = true;
-          package = pkgs.niri-unstable;
-          useNautilus = false;
+          package = inputs.niri-flake.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
         };
       };
       homeManager = {
@@ -40,6 +40,7 @@
 
         wayland.windowManager.niri = {
           enable = true;
+          package = inputs.niri-flake.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
           settings = {
             input = {
               keyboard = {
@@ -99,22 +100,21 @@
               "easyeffects"
             ];
 
-            window-rule = [
-              {
-                match = {
-                  _props.app-id = "kitty";
-                  _props.title = "termfilechooser";
-                };
-
-                open-floating = true;
-                open-focused = true;
-
-                min-height = 720;
-                max-height = 720;
-                max-width = 1280;
-                min-width = 1280;
-              }
-            ];
+            window-rule = {
+              _children = [
+                {
+                  match = {
+                    _props = {title = "termfilechooser";};
+                  };
+                  open-floating = true;
+                  open-focused = true;
+                  min-height = 720;
+                  max-height = 720;
+                  max-width = 1300;
+                  min-width = 1300;
+                }
+              ];
+            };
 
             binds = {
               # === System & Overview ===

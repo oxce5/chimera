@@ -42,6 +42,7 @@
     };
 
     niri-nix.url = "git+https://codeberg.org/bananad3v/niri-nix.git";
+    niri-flake.url = "github:sodiboo/niri-flake";
 
     dms = {
       url = "github:AvengeMedia/DankMaterialShell";

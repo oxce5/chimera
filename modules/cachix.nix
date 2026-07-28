@@ -10,7 +10,7 @@
       nix-gaming = mkCachix "nix-gaming" "nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=";
       prismlauncher = mkCachix "prismlauncher" "9/n/FGyABA2jLUVfY+DEp4hKds/rwO+SCOtbOkDzd+c=";
       devenv = mkCachix "devenv" "w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
-      niri-nix = mkCachix "niri-nix" "SvFtqpDcf7Sm1SMJdby1/+Y+6f3Yt3/3PMcSTKPJNJ0=";
+      niri = mkCachix "niri" "Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964=";
       kopuz = mkCachix "kopuz" "J2X3AnAYhKTJW5S3aCLoA1ckonQXVNZMQvhZA0YAufw=";
       noctalia = mkCachix "noctalia" "pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=";
     };

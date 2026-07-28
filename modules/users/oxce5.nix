@@ -19,7 +19,7 @@
 
       <chimera/fish>
       <chimera/apps/coreutils>
-      <chimera/dev>
+      <chimera/dev/min>
       <chimera/apps/gui>
       <chimera/apps/git>
       <chimera/apps/yazi>

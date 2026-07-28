@@ -1,25 +1,16 @@
 {
-  unify = {
-    nixos = {
+  chimera.apps._.gui = {
+    homeManager = {
       config,
       pkgs,
-      hostConfig,
       ...
     }: {
       programs.nh = {
         enable = true;
-        package = pkgs.nh;
         clean.enable = false;
         clean.extraArgs = "--keep-since 4d --keep 5";
-        flake = "/home/${hostConfig.primaryUser}/.flake";
+        flake = "/home/oxce5/.flake";
       };
-    };
-    home = {
-      pkgs,
-      config,
-      ...
-    }: {
-      home.sessionVariables.FLAKE = "${config.home.homeDirectory}/.flake";
     };
   };
 }

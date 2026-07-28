@@ -1,5 +1,5 @@
 {
-  unify.home = {
+  chimera.apps._.yazi.homeManager = {
     pkgs,
     config,
     ...
@@ -31,74 +31,33 @@
               }
             ];
           };
-          open = {
-            prepend_rules = [
-              {
-                mime = "application/zip";
-                use = "extract";
-              }
-              {
-                mime = "application/x-tar";
-                use = "extract";
-              }
-              {
-                mime = "application/gzip";
-                use = "extract";
-              }
-              {
-                mime = "application/x-bzip-compressed-tar";
-                use = "extract";
-              }
-              {
-                mime = "application/x-xz-compressed-tar";
-                use = "extract";
-              }
+          open.prepend_rules =
+            map (mime: {
+              inherit mime;
+              use = "extract";
+            }) [
+              "application/zip"
+              "application/x-tar"
+              "application/gzip"
+              "application/x-bzip-compressed-tar"
+              "application/x-xz-compressed-tar"
             ];
-          };
-          plugin = {
-            prepend_previewers = [
-              {
-                mime = "application/zip";
-                run = "ouch";
-              }
-              {
-                mime = "application/x-tar";
-                run = "ouch";
-              }
-              {
-                mime = "application/x-bzip2";
-                run = "ouch";
-              }
-              {
-                mime = "application/x-7z-compressed";
-                run = "ouch";
-              }
-              {
-                mime = "application/x-rar";
-                run = "ouch";
-              }
-              {
-                mime = "application/x-xz";
-                run = "ouch";
-              }
-              {
-                mime = "application/xz";
-                run = "ouch";
-              }
-              {
-                mime = "application/x-zstd";
-                run = "ouch";
-              }
-              {
-                mime = "application/zstd";
-                run = "ouch";
-              }
-              {
-                mime = "application/java-archive";
-                run = "ouch";
-              }
+          plugin.prepend_previewers =
+            map (mime: {
+              inherit mime;
+              run = "ouch";
+            }) [
+              "application/zip"
+              "application/x-tar"
+              "application/x-bzip2"
+              "application/x-7z-compressed"
+              "application/x-rar"
+              "application/x-xz"
+              "application/xz"
+              "application/x-zstd"
+              "application/zstd"
+              "application/java-archive"
             ];
-          };
         };
       };
     };

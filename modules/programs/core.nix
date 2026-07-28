@@ -1,57 +1,55 @@
 {
-  unify = {
-    modules.workstation.home = {pkgs, ...}: {
-      home.packages = with pkgs; [
-        imagemagick
-        inotify-tools
-      ];
-    };
-    home = {pkgs, ...}: {
-      home.packages = with pkgs; [
-        file
-        git
-        gptfdisk
-        psutils
-        killall
-        pciutils
-        traceroute
-        unrar
-        unzip
-        usbutils
-        wget
-        whois
-        aria2
-        choose
-        dua
-        dust
-        edir
-        fd
-        duf
-        gdu
-        gh
-        glow
-        isd
-        btop
-        lurk
-        mprocs
-        (ouch.override {
-          enableUnfree = true;
-        })
-        procs
-        progress
-        psmisc
-        rclone
-        ripgrep
-        ripgrep-all
-        rsync
-        sd
-        strace
-        systeroid
-        tcpdump
-        try
-        waypipe
-        xxd
-      ];
-    };
+  chimera.apps._.coreutils.homeManager = {pkgs, ...}: {
+    home.packages = with pkgs; [
+      aria2
+      choose
+      difftastic
+      doggo
+      dua
+      dust
+      edir
+      eva # calculator repl
+      fd
+      ffmpeg
+      file
+      gdu
+      gh
+      git
+      glow
+      gptfdisk
+      hexyl
+      imagemagick
+      inotify-tools
+      isd
+      killall
+      lemmeknow
+      lurk
+      mprocs
+      ouch
+      pciutils
+      procs
+      progress
+      psmisc
+      psutils
+      python3
+      rclone
+      ripgrep
+      ripgrep-all
+      rsync
+      sd
+      stdenv
+      stdenv.cc
+      strace
+      # systeroid # TODO
+      tcpdump
+      traceroute
+      try
+      unrar
+      unzip
+      usbutils
+      waypipe
+      wget
+      whois
+    ];
   };
 }

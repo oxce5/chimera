@@ -74,10 +74,7 @@
         imports = [
           inputs.noctalia.nixosModules.default
           inputs.noctalia-greeter.nixosModules.default
-          # inputs.niri-nix.nixosModules.default
         ];
-
-        nixpkgs.overlays = [inputs.niri-nix.overlays.niri-nix];
 
         programs = {
           noctalia = {
@@ -92,7 +89,6 @@
       };
 
       homeManager = {
-        # imports = [inputs.niri-nix.homeModules.default];
         wayland.windowManager.niri.settings.binds = let
           noctalia = ["noctalia" "msg"];
         in {

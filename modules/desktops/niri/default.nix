@@ -33,7 +33,6 @@
         ...
       }: {
         imports = [inputs.niri-nix.homeModules.default];
-
         home.packages = with pkgs; [
           xwayland-satellite
           kitty

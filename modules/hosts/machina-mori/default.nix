@@ -20,7 +20,6 @@
       config,
       ...
     }: {
-      # imports = [<nixpkgs/nixos/modules/profiles/qemu-guest.nix>];
       boot = {
         kernelParams = ["reboot=acpi"];
         plymouth.enable = lib.mkForce false;
@@ -39,7 +38,6 @@
         };
 
         acpid.enable = true;
-        qemuGuest.enable = true;
       };
 
       services.greetd = {

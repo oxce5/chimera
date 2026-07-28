@@ -11,11 +11,11 @@
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts"
       },
       "locked": {
-        "lastModified": 1785246672,
-        "narHash": "sha256-bLNUXtlHy+PxZwoazyvxjQxa3EMMG6COH/fvkcE6z7w=",
+        "lastModified": 1785250727,
+        "narHash": "sha256-A+4vy/zejgPe8/gpIE+48TApBmi45u+vU4EPsSEDPo8=",
         "owner": "oxce5",
         "repo": "chimera-pkgs",
-        "rev": "15b96f7f5bf21d9fa50a7dddc38d8c5bdfb0038c",
+        "rev": "9ede205eed2bb1e4f41caeb33e8161dd1d5e8889",
         "type": "github"
       },
       "original": {
@@ -614,11 +614,11 @@
         "nixpkgs": "nixpkgs_7"
       },
       "locked": {
-        "lastModified": 1785244726,
-        "narHash": "sha256-ExqSAUl05pzn2mqfrsbOPM/9oCWnmhM2M7WuCN0jIlQ=",
+        "lastModified": 1785247140,
+        "narHash": "sha256-OYaOlm1Rz3vyP92A1gyaa5/9MbdRck7Y7xI/z8/5QAI=",
         "owner": "noctalia-dev",
         "repo": "noctalia",
-        "rev": "b08a6d4ad26262a0819c4606f9bc4421f8c1188e",
+        "rev": "8906787d2687dbd800c7d351fdab4e834af1cd5b",
         "type": "github"
       },
       "original": {
@@ -633,11 +633,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1785246338,
-        "narHash": "sha256-o5+8cxuRXHTOkpzTXVbpgIobgwIcqJ5qAGyRaC4DPMA=",
+        "lastModified": 1785247454,
+        "narHash": "sha256-IgvtEQh4husb3Pt2amaU01RuLk9A/M1/2bBcrnRmeSo=",
         "owner": "noctalia-dev",
         "repo": "noctalia-greeter",
-        "rev": "4ffa59a42fba9b54b60044e0e05994d13672b3a5",
+        "rev": "590fc87a96c8582bc85ffbeb872cfc0ca764301d",
         "type": "github"
       },
       "original": {

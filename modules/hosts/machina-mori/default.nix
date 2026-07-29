@@ -53,5 +53,8 @@
 
       users.privilegedGroups = ["audio" "docker" "video" "render"];
     };
+    homeManager = {
+      services.awww.enable = true;
+    };
   };
 }

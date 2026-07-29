@@ -17,9 +17,6 @@
         ...
       }: {
         imports = [inputs.niri-nix.nixosModules.default];
-        #
-        # nixpkgs.overlays = [inputs.niri-nix.overlays.niri-nix];
-        #
         programs.niri = {
           enable = true;
           package = inputs.niri-flake.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;

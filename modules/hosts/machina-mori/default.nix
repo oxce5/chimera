@@ -26,7 +26,6 @@
         loader.systemd-boot.enable = true;
         loader.timeout = 5;
         consoleLogLevel = 3;
-        initrd.systemd.enable = lib.mkForce false;
       };
       networking.networkmanager.enable = true;
 

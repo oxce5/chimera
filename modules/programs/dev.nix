@@ -18,6 +18,7 @@
       };
     };
     baseWithLsp = {
+      includes = [chimera.dev._.base];
       homeManager = {pkgs, ...}: {
         programs.neovim.extraPackages = with pkgs; [
           bash-language-server
@@ -34,7 +35,7 @@
       };
     };
     min = {
-      includes = [chimera.dev._.base];
+      includes = [chimera.dev._.baseWithLsp];
       homeManager = {pkgs, ...}: {
         home.packages = with pkgs; [
           devenv

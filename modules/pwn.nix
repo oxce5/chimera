@@ -75,7 +75,7 @@
         # Exploitation Tools
         exploitdb
         responder
-        netexec
+        (inputs.chimera-pkgs.packages.${pkgs.stdenv.hostPlatform.system}.netexec)
         python3Packages.impacket
 
         # Sniffing & Spoofing

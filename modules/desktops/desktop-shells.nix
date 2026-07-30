@@ -72,8 +72,12 @@
     noctalia = {
       nixos = {
         imports = [
-          # inputs.noctalia.nixosModules.default
+          inputs.noctalia.nixosModules.default
           inputs.noctalia-greeter.nixosModules.default
+        ];
+
+        disabledModules = [
+          "programs/wayland/noctalia.nix"
         ];
 
         programs = {

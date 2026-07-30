@@ -26,10 +26,16 @@
         loader.systemd-boot.enable = true;
         loader.timeout = 5;
         consoleLogLevel = 3;
+        initrd.systemd.enable = lib.mkForce false;
       };
       networking.networkmanager.enable = true;
 
       hardware.enableRedistributableFirmware = false;
+      services.pipewire = {
+        alsa.enable = lib.mkForce false;
+        alsa.support32Bit = lib.mkForce false;
+        jack.enable = lib.mkForce false;
+      };
       services = {
         printing.enable = false;
         avahi.enable = false;
@@ -51,7 +57,8 @@
         };
       };
 
-      users.privilegedGroups = ["audio" "docker" "video" "render"];
+      virtualisation.docker.enable = lib.mkForce false;
+      users.privilegedGroups = ["audio" "video" "render"];
     };
     homeManager = {
       services.awww.enable = true;

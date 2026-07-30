@@ -1,6 +1,10 @@
 {inputs, ...}: {
   chimera.theming = {
-    nixos = {pkgs, ...}: {
+    nixos = {
+      pkgs,
+      lib,
+      ...
+    }: {
       fonts = {
         packages = with pkgs; [
           maple-mono.NF
@@ -13,7 +17,7 @@
           atkinson-hyperlegible-next
         ];
         enableDefaultPackages = true;
-        fontDir.enable = true;
+        fontDir.enable = lib.mkDefault false;
         fontconfig.defaultFonts = {
           sansSerif = ["Atkinson Hyperlegible Next"];
           serif = ["Liberation Serif"];

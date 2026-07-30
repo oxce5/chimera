@@ -1,5 +1,4 @@
-{ chimera, ...}:
-{
+{chimera, ...}: {
   chimera.dev.provides = {
     base = {
       nixos = {
@@ -13,33 +12,35 @@
         pkgs,
         ...
       }: {
-        programs.neovim = {
-          enable = true;
-          extraPackages = with pkgs; [
-            bash-language-server
-            dockerfile-language-server
-            yaml-language-server
-            jdt-language-server
-            basedpyright
-            nil
-            clang-tools
-            lua-language-server
-            stylua
-            alejandra
-          ];
-        };
+        programs.neovim.enable = true;
         # Allow imperative management of neovim luaconfig
         xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
       };
     };
-      min = {
-      includes = [ chimera.dev._.base ];
-        homeManager = {pkgs, ...}: {
-          home.packages = with pkgs; [
-            devenv
-            opencode
-          ];
-        };
+    baseWithLsp = {
+      homeManager = {pkgs, ...}: {
+        programs.neovim.extraPackages = with pkgs; [
+          bash-language-server
+          dockerfile-language-server
+          yaml-language-server
+          jdt-language-server
+          basedpyright
+          nil
+          clang-tools
+          lua-language-server
+          stylua
+          alejandra
+        ];
       };
     };
+    min = {
+      includes = [chimera.dev._.base];
+      homeManager = {pkgs, ...}: {
+        home.packages = with pkgs; [
+          devenv
+          opencode
+        ];
+      };
+    };
+  };
 }

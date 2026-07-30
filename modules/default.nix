@@ -24,8 +24,10 @@
       };
       documentation.doc.enable = false;
       documentation.info.enable = false;
+      documentation.man.enable = false;
+      documentation.nixos.enable = false;
       i18n.defaultLocale = "en_US.UTF-8";
-      i18n.supportedLocales = ["all"];
+      i18n.supportedLocales = ["en_US.UTF-8/UTF-8"];
       services.dbus.implementation = "broker";
       system.stateVersion = "22.05";
       time.timeZone = "Asia/Manila";

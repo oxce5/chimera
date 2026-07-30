@@ -6,7 +6,7 @@
   den.aspects.machina-mori = {
     includes = with chimera; [
       vm
-      virt._.guest
+      microvm._.guest
     ];
   };
 

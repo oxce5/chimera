@@ -5,6 +5,7 @@
       gaming._.max
       virt._.host
       virt._.docker
+      microvm._.host
     ];
   };
 

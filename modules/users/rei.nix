@@ -15,10 +15,9 @@
 
       <chimera/fish>
       <chimera/apps/coreutils>
-      <chimera/browser/firefox>
-      <chimera/dev>
       <chimera/pwn>
       <chimera/apps/yazi>
+      <chimera/dev/base>
     ];
   };
   den.hosts.x86_64-linux.machina-mori.users.rei = {};

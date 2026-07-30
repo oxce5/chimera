@@ -60,5 +60,10 @@
     kopuz.url = "github:temidaradev/kopuz";
     elyprism-launcher.url = "github:elyprismlauncher/elyprismlauncher";
     dw-proton.url = "github:imaviso/dwproton-flake";
+
+    microvm = {
+      url = "github:microvm-nix/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 }

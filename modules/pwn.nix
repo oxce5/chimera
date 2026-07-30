@@ -110,7 +110,8 @@
         # social-engineer-toolkit
 
         # windows :(
-        python314Packages.bloodyad
+        # ^ thank you pythonMetadataCheckPhase
+        # python314Packages.bloodyad
 
         # Miscellaneous
         openvpn

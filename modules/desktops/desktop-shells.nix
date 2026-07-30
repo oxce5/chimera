@@ -92,10 +92,6 @@
         wayland.windowManager.niri.settings.binds = let
           noctalia = ["noctalia" "msg"];
         in {
-          "Mod+Space" = {
-            _props.hotkey-overlay-title = "Application Launcher";
-            spawn = noctalia ++ ["panel-toggle" "launcher"];
-          };
           "Mod+V" = {
             _props.hotkey-overlay-title = "Clipboard Manager";
             spawn = noctalia ++ ["panel-toggle" "clipboard"];

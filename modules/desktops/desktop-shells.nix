@@ -72,7 +72,7 @@
     noctalia = {
       nixos = {
         imports = [
-          inputs.noctalia.nixosModules.default
+          # inputs.noctalia.nixosModules.default
           inputs.noctalia-greeter.nixosModules.default
         ];
 

@@ -33,7 +33,10 @@
           xwayland-satellite
           kitty
         ];
-        services.cliphist.enable = true;
+        services = {
+          cliphist.enable = true;
+          awww.enable = true;
+        };
 
         wayland.windowManager.niri = {
           enable = true;

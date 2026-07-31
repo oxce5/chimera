@@ -59,8 +59,5 @@
       virtualisation.docker.enable = lib.mkForce false;
       users.privilegedGroups = ["audio" "video" "render"];
     };
-    homeManager = {
-      services.awww.enable = true;
-    };
   };
 }

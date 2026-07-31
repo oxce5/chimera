@@ -11,11 +11,11 @@
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts"
       },
       "locked": {
-        "lastModified": 1785396540,
-        "narHash": "sha256-JoxCxflsxBLXNXQBwro1INeFTPlORw/7zEcfNorgbDY=",
+        "lastModified": 1785499700,
+        "narHash": "sha256-iibvKAoYjmrfGgi+1QOpUNXHAawr3527L0Y0ymoiJYA=",
         "owner": "oxce5",
         "repo": "chimera-pkgs",
-        "rev": "604a4a697de70c225c2b1195fbbea6db8b61ad22",
+        "rev": "7168b95983a2f4d352906638020199f01d8c1475",
         "type": "github"
       },
       "original": {

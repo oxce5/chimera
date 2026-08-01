@@ -39,6 +39,14 @@
       homeManager = {pkgs, ...}: {
         home.packages = with pkgs; [
           devenv
+        ];
+      };
+    };
+    ai = {
+      homeManager = {pkgs, ...}: {
+        programs.herdr.enable = true;
+
+        home.packages = with pkgs; [
           opencode
         ];
       };

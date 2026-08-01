@@ -17,10 +17,11 @@
       <chimera/tailscale>
       <chimera/flatpak>
       <chimera/xdg>
-
       <chimera/fish>
-      <chimera/apps/coreutils>
+
       <chimera/dev/min>
+      <chimera/dev/ai>
+      <chimera/apps/coreutils>
       <chimera/apps/gui>
       <chimera/apps/git>
       <chimera/apps/yazi>

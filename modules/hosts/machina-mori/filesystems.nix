@@ -18,5 +18,9 @@
         "noatime"
       ];
     };
+    fileSystems."/workspace" = {
+      device = "/dev/disk/by-label/workspace";
+      fsType = "ext4";
+    };
   };
 }

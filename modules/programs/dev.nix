@@ -15,12 +15,18 @@
         programs.neovim.enable = true;
         # Allow imperative management of neovim luaconfig
         xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
+
+        home.packages = with pkgs; [
+          gcc
+        ];
       };
     };
     baseWithLsp = {
       includes = [chimera.dev._.base];
       homeManager = {pkgs, ...}: {
         programs.neovim.extraPackages = with pkgs; [
+          tree-sitter
+
           bash-language-server
           dockerfile-language-server
           yaml-language-server

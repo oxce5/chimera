@@ -30,18 +30,17 @@
               steamtinkerlaunch
             ];
           };
-          # gamescope = {
-          #   enable = true;
-          #   args = [
-          #     "-W ${toString host.primaryDisplay.width}"
-          #     "-H ${toString host.primaryDisplay.height}"
-          #     "-r ${toString host.primaryDisplay.refresh}"
-          #     "-O ${host.primaryDisplay.name}"
-          #     "-f"
-          #     "--adaptive-sync"
-          #     "--mangoapp"
-          #   ];
-          # };
+          gamescope = {
+            enable = true;
+            args = [
+              "-W 1920"
+              "-H 1080"
+              "-r 144"
+              "-f"
+              "--adaptive-sync"
+              "--mangoapp"
+            ];
+          };
         };
       };
     };

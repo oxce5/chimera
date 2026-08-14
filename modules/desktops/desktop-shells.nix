@@ -114,14 +114,6 @@
             binds = let
               noctalia = ["noctalia" "msg"];
             in {
-              "Mod+V" = {
-                _props.hotkey-overlay-title = "Clipboard Manager";
-                spawn = noctalia ++ ["panel-toggle" "clipboard"];
-              };
-              "Mod+M" = {
-                _props.hotkey-overlay-title = "Task Manager";
-                spawn = noctalia ++ ["panel-toggle" "processlist"];
-              };
               "Super+X" = {
                 _props.hotkey-overlay-title = "Power Menu: Toggle";
                 spawn = noctalia ++ ["panel-toggle" "powermenu"];

@@ -32,6 +32,7 @@
         home.packages = with pkgs; [
           xwayland-satellite
           kitty
+          wl-mirror
         ];
         services = {
           cliphist.enable = true;

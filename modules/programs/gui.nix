@@ -9,6 +9,7 @@
     homeManager = {pkgs, ...}: {
       home.packages = with pkgs; [
         kitty
+        krita
         libreoffice
         hunspell
         hunspellDicts.en_US-large
@@ -23,7 +24,8 @@
         # gearlever
         # dino
 
-        (withSystem pkgs.stdenv.hostPlatform.system (p: p.config.packages.blender-beta))
+        # (withSystem pkgs.stdenv.hostPlatform.system (p: p.config.packages.blender-beta))
+        blender
         (inputs.kopuz.packages.${pkgs.stdenv.hostPlatform.system}.default)
         vesktop
       ];

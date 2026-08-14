@@ -58,6 +58,27 @@
 
       virtualisation.docker.enable = lib.mkForce false;
       users.privilegedGroups = ["audio" "video" "render"];
+
+      # Keep the store from filling / on big nixpkgs updates. The VM only runs
+      # for a few hours, so GC-on-boot catches the previous session's garbage;
+      # min-free/max-free additionally auto-GC mid-build when space runs low.
+      nix = {
+        optimise.automatic = lib.mkForce true;
+        gc = {
+          automatic = true;
+          options = "--delete-older-than 14d --max-freed 20G";
+        };
+        settings = {
+          keep-outputs = lib.mkForce false;
+          keep-derivations = lib.mkForce false;
+          auto-optimise-store = lib.mkForce false;
+          min-free = "2G";
+          max-free = "10G";
+        };
+      };
+      # Run the GC unit once at boot instead of relying on a daily timer that
+      # likely never fires within the VM's short uptime.
+      systemd.services."nix-gc".wantedBy = lib.mkForce ["multi-user.target"];
     };
   };
 }

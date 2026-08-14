@@ -43,6 +43,11 @@
           };
         };
       };
+      homeManager = {pkgs, ...}: let
+        inherit (pkgs.stdenv.hostPlatform) system;
+      in {
+        home.file.".local/share/Steam/compatibilitytools.d/DW-Proton".source = inputs.dw-proton.packages.${system}.dw-proton.steamcompattool;
+      };
     };
 
     max = {
@@ -72,11 +77,11 @@
         };
         environment.systemPackages = with pkgs; [
           # Utility
-          deadlock-mod-manager
+          # deadlock-mod-manager
           gpu-screen-recorder-gtk
           lsfg-vk
           lsfg-vk-ui
-          ludusavi
+          # ludusavi
           mangohud
           protonplus
           protontricks

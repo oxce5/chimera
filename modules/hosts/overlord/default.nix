@@ -2,7 +2,6 @@
   den.aspects.overlord = {
     includes = with chimera; [
       laptop
-      gaming._.max
       virt._.host
       virt._.docker
     ];
@@ -28,6 +27,12 @@
         "192.168.1.254" = ["bastion"];
       };
     };
+
+    # Enable OpenTabletDriver
+    hardware.opentabletdriver.enable = true;
+    hardware.uinput.enable = true;
+
+    boot.kernelModules = [ "uinput" ];
 
     users.privilegedGroups = ["audio" "docker"];
     hardware.nvidia-container-toolkit.enable = true;

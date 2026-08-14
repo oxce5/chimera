@@ -19,6 +19,8 @@
       <chimera/xdg>
       <chimera/fish>
 
+      <chimera/gaming/max>
+
       <chimera/dev/min>
       <chimera/dev/ai>
       <chimera/apps/coreutils>

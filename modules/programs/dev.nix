@@ -12,7 +12,10 @@
         pkgs,
         ...
       }: {
-        programs.neovim.enable = true;
+        programs = {
+          neovim.enable = true;
+          uv.enable = true;
+        };
         # Allow imperative management of neovim luaconfig
         xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
 

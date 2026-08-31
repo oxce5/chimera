@@ -26,7 +26,8 @@
 
         # (withSystem pkgs.stdenv.hostPlatform.system (p: p.config.packages.blender-beta))
         blender
-        (inputs.kopuz.packages.${pkgs.stdenv.hostPlatform.system}.default)
+        # (inputs.kopuz.packages.${pkgs.stdenv.hostPlatform.system}.default)
+        pear-desktop
         vesktop
       ];
     };

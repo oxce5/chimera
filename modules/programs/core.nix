@@ -20,7 +20,7 @@
       lemmeknow
       lurk
       mprocs
-      (ouch.override { enableUnfree = true; })
+      (ouch.override {enableUnfree = true;})
       pciutils
       procs
       progress

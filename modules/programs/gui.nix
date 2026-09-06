@@ -25,7 +25,15 @@
         # dino
 
         # (withSystem pkgs.stdenv.hostPlatform.system (p: p.config.packages.blender-beta))
-        blender
+        (inputs.wrapper-manager.lib.wrapWith pkgs {
+          basePackage = pkgs.blender;
+          env = {
+            __NV_PRIME_RENDER_OFFLOAD.value = "1";
+            __NV_PRIME_RENDER_OFFLOAD_PROVIDER.value = "NVIDIA-G0";
+            __GLX_VENDOR_LIBRARY_NAME.value = "nvidia";
+            __VK_LAYER_NV_optimus.value = "NVIDIA_only";
+          };
+        })
         # (inputs.kopuz.packages.${pkgs.stdenv.hostPlatform.system}.default)
         pear-desktop
         vesktop

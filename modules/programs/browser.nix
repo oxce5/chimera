@@ -1,6 +1,6 @@
-{
+{chimera, ...}: {
   chimera.browser.provides = {
-    firefox = {
+    base = {
       homeManager = {
         lib,
         config,
@@ -53,7 +53,6 @@
             in {
               "*".installation_mode = "blocked";
               "uBlock0@raymondhill.net" = mkExtension "ublock-origin";
-              "addon@darkreader.org" = mkExtension "darkreader";
               "{73a6fe31-595d-460b-a920-fcc0f8843232}" = mkExtension "noscript";
               "vpn@proton.ch" = mkExtension "proton-vpn-firefox-extension";
               "78272b6fa58f4a1abaac99321d503a20@proton.me" = mkExtension "proton-pass";
@@ -98,17 +97,74 @@
               };
             };
           };
+        };
+      };
+    };
 
-          profiles.default.search = {
-            force = true;
-            default = "ddg";
-            privateDefault = "ddg";
+    firefox = {
+      includes = [chimera.browser._.base];
+
+      homeManager = {
+        programs.firefox = {
+          # Dark Reader lives only in the Personal profile, so it is not
+          # force-installed from base; merely whitelisted to keep the copy
+          # already installed in Personal working.
+          policies.ExtensionSettings = {
+            "addon@darkreader.org".installation_mode = "allowed";
+          };
+
+          profiles = {
+            Personal = {
+              id = 0;
+              isDefault = true;
+              search = {
+                force = true;
+                default = "ddg";
+                privateDefault = "ddg";
+              };
+            };
+            School = {
+              id = 1;
+            };
           };
         };
       };
     };
 
-    # zen = {};
-    # helium = {};
+    pentest = {
+      includes = [chimera.browser._.base];
+
+      homeManager = {
+        pkgs,
+        config,
+        lib,
+        ...
+      }: {
+        wayland.windowManager.niri.settings.binds = {
+          "Mod+B" = {
+            _props.hotkey-overlay-title = "Open Browser";
+            spawn = "firefox";
+          };
+        };
+
+        programs.firefox = {
+          package = pkgs.firefox-esr;
+
+          policies = {
+            # Extensions
+            ExtensionSettings = let
+              mkExtension = short: {
+                install_url = "https://addons.mozilla.org/firefox/downloads/latest/${short}/latest.xpi";
+                installation_mode = "force_installed";
+                updates_disabled = true;
+              };
+            in {
+              "wappalyzer@crunchlabz.com" = mkExtension "wappalyzer";
+              "foxyproxy@eric.h.jung" = mkExtension "foxyproxy-standard";
+            };
+          };
+        };
+      };
+    };
   };
 }

@@ -16,7 +16,7 @@
 
       <chimera/fish>
       <chimera/apps/coreutils>
-      <chimera/browser/firefox>
+      <chimera/browser/pentest>
       <chimera/dev/base>
       <chimera/pwn>
       <chimera/apps/yazi>

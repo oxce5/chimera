@@ -70,7 +70,6 @@
 
         # Vulnerability Analysis
         sqlmap
-        bruno
 
         # Exploitation Tools
         exploitdb
@@ -82,8 +81,6 @@
         # wireshark
         bettercap
         python3Packages.scapy
-        mitmproxy
-        mitmproxy2swagger
 
         # Password Attacks
         thc-hydra

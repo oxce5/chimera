@@ -13,12 +13,7 @@
           # Launchers
           # cartridges
           heroic
-          # lutris
-          # (lutris.override {
-          #   extraPkgs = _: [ umu-launcher ];
-          # })
           (inputs.elyprism-launcher.packages.${system}.default)
-          # umu-launcher
         ];
         hardware.graphics.enable32Bit = true;
         programs = {
@@ -60,13 +55,8 @@
           inputs.nix-gaming.nixosModules.platformOptimizations
           inputs.nix-gaming.nixosModules.pipewireLowLatency
         ];
-        # hardware.opentabletdriver.enable = true;
+        hardware.opentabletdriver.enable = true;
         services = {
-          # input-remapper.enable = true;
-          # pipewire.lowLatency = {
-          #   enable = true;
-          #   quantum = 512; # apparently my cpu cant handle any lower
-          # };
         };
         programs = {
           steam = {

@@ -4,6 +4,7 @@
       laptop
       virt._.host
       virt._.docker
+      virt._.virtualbox
     ];
   };
 
@@ -29,7 +30,6 @@
     };
 
     # Enable OpenTabletDriver
-    hardware.opentabletdriver.enable = true;
     hardware.uinput.enable = true;
 
     boot.kernelModules = [ "uinput" ];

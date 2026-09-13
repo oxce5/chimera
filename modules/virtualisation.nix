@@ -27,5 +27,11 @@
         };
       };
     };
+    virtualbox = {
+      nixos = {
+        virtualisation.virtualbox.host.enable = true;
+        users.privilegedGroups = ["vboxusers"];
+      };
+    };
   };
 }

@@ -18,6 +18,7 @@
       <chimera/apps/coreutils>
       <chimera/browser/pentest>
       <chimera/dev/base>
+      <chimera/dev/ai>
       <chimera/pwn>
       <chimera/apps/yazi>
     ];

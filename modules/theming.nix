@@ -6,9 +6,28 @@
       ...
     }: {
       fonts = {
+        packages = [
+          (inputs.chimera-pkgs.packages.${pkgs.stdenv.hostPlatform.system}.iosevka-chimera)
+        ];
+        enableDefaultPackages = true;
+        fontDir.enable = lib.mkDefault false;
+        fontconfig.defaultFonts = {
+          monospace = ["Iosevka Chimera"];
+        };
+      };
+    };
+  };
+
+  # Desktop-only fonts. The VM only gets iosevka-chimera globally.
+  chimera.theming.provides.desktop = {
+    nixos = {
+      pkgs,
+      lib,
+      ...
+    }: {
+      fonts = {
         packages = with pkgs; [
           maple-mono.NF
-          (inputs.chimera-pkgs.packages.${pkgs.stdenv.hostPlatform.system}.iosevka-chimera)
           montserrat
           libertine
           inter
@@ -16,12 +35,9 @@
           nerd-fonts.symbols-only
           atkinson-hyperlegible-next
         ];
-        enableDefaultPackages = true;
-        fontDir.enable = lib.mkDefault false;
         fontconfig.defaultFonts = {
           sansSerif = ["Atkinson Hyperlegible Next"];
           serif = ["Liberation Serif"];
-          monospace = ["Iosevka Chimera"];
           emoji = ["OpenMoji Color"];
         };
       };

@@ -7,11 +7,13 @@
     includes = [
       <den/primary-user>
       <chimera/shell>
+      <chimera/shell/enhanced>
       (den.batteries.user-shell "fish")
       <chimera/batteries/privileged-user>
 
       <chimera/wayland/niri>
       <chimera/wayland/vicinae>
+      <chimera/wayland/mirror>
       <chimera/desktop-shells/noctalia>
       <chimera/easyeffects>
       <chimera/tailscale>
@@ -19,6 +21,7 @@
       <chimera/xdg>
       <chimera/fish>
 
+      <chimera/theming/desktop>
       <chimera/gaming/max>
 
       <chimera/dev/min>

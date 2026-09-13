@@ -15,10 +15,10 @@
       # <chimera/desktop-shells/noctalia>
 
       <chimera/fish>
-      <chimera/apps/coreutils>
+      <chimera/apps/coreutils-slim>
       <chimera/browser/pentest>
       <chimera/dev/base>
-      <chimera/dev/ai>
+      <chimera/dev/sessions>
       <chimera/pwn>
       <chimera/apps/yazi>
     ];

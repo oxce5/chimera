@@ -36,7 +36,6 @@
         (inputs.chimera-pkgs.packages.${pkgs.stdenv.hostPlatform.system}.sliver-client)
         # Information Gathering
         nmap
-        theharvester
         enum4linux-ng
         smbmap
         feroxbuster
@@ -87,7 +86,6 @@
         hashcat
         hashcat-utils
         john
-        ophcrack
 
         # Web Application Analysis
         whatweb
@@ -124,7 +122,10 @@
         })
         (inputs.wrapper-manager.lib.wrapWith pkgs {
           basePackage = pkgs.metasploit;
-          programs.msfconsole.prependFlags = ["--defer-module-loads"];
+          programs = {
+            msfconsole.prependFlags = ["--defer-module-loads"];
+            msfvenom.prependFlags = [];
+          };
         })
       ];
     };

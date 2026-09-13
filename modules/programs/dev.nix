@@ -52,12 +52,16 @@
       };
     };
     ai = {
+      includes = [chimera.dev._.sessions];
       homeManager = {pkgs, ...}: {
-        programs.herdr.enable = true;
-
         home.packages = with pkgs; [
           opencode
         ];
+      };
+    };
+    sessions = {
+      homeManager = {
+        programs.herdr.enable = true;
       };
     };
   };

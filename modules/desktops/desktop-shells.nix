@@ -98,7 +98,8 @@
         };
 
         homeManager = {pkgs, ...}: {
-          home.packages = [ pkgs.mpvpaper pkgs.mpv ];
+          home.packages = [pkgs.mpvpaper pkgs.mpv];
+          wayland.windowManager.niri.settings.spawn-at-startup = ["noctalia"];
           wayland.windowManager.niri.settings = {
             layer-rule = {
               _children = [

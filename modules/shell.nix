@@ -28,10 +28,6 @@
           git_status.disabled = true;
         };
       };
-      atuin = {
-        enable = true;
-        flags = ["--disable-up-arrow"];
-      };
       bat = {
         enable = true;
         config.style = "plain";
@@ -55,11 +51,6 @@
         icons = "auto";
         enableNushellIntegration = false;
       };
-      nix-your-shell = {
-        enable = true;
-        enableFishIntegration = true;
-        nix-output-monitor.enable = true;
-      };
       skim.enable = true;
       tealdeer = {
         enable = true;
@@ -70,6 +61,20 @@
         shellWrapperName = "y";
       };
       zoxide.enable = true;
+    };
+  };
+
+  chimera.shell.provides.enhanced.homeManager = {
+    programs = {
+      atuin = {
+        enable = true;
+        flags = ["--disable-up-arrow"];
+      };
+      nix-your-shell = {
+        enable = true;
+        enableFishIntegration = true;
+        nix-output-monitor.enable = true;
+      };
     };
   };
 }

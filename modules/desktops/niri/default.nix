@@ -32,11 +32,9 @@
         home.packages = with pkgs; [
           xwayland-satellite
           kitty
-          wl-mirror
         ];
         services = {
           cliphist.enable = true;
-          awww.enable = true;
         };
 
         wayland.windowManager.niri = {
@@ -96,11 +94,6 @@
 
             environment.EDITOR = "nvim";
 
-            spawn-at-startup = [
-              "noctalia"
-              "easyeffects"
-            ];
-
             window-rule = {
               _children = [
                 {
@@ -118,6 +111,12 @@
             };
           };
         };
+      };
+    };
+    mirror = {
+      homeManager = {pkgs, ...}: {
+        home.packages = [pkgs.wl-mirror];
+        services.awww.enable = true;
       };
     };
   };

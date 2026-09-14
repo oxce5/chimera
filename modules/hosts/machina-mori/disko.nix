@@ -50,6 +50,14 @@
                 mountpoint = "/";
               };
             };
+            NIXWORK = {
+              size = "3G";
+              content = {
+                type = "filesystem";
+                format = "ext4";
+                mountpoint = "/workspace";
+              };
+            };
             NIXSTORE = {
               size = "100%FREE";
               content = {

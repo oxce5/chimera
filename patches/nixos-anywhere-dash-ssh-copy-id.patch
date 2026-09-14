@@ -1,0 +1,25 @@
+--- a/src/nixos-anywhere.sh
++++ b/src/nixos-anywhere.sh
+@@ -551,8 +551,12 @@
+   step Uploading install SSH keys
+   until
+     if [[ ${envPassword} == y ]]; then
++      # run ssh-copy-id under bash explicitly: OpenSSH's getopts loop
++      # miscounts the `-i <key>` form when /bin/sh is dash (e.g. NixOS
++      # with environment.binsh = pkgs.dash), aborting with "Too many
++      # arguments". Forcing a bash interpreter avoids the dash bug.
+       HOME="$sshCopyHome" sshpass -e \
+-        ssh-copy-id \
++        "$BASH" "$(command -v ssh-copy-id)" \
+         -o ConnectTimeout=10 \
+         "${sshArgs[@]}" \
+         "$sshConnection"
+@@ -560,7 +564,7 @@
+       # To override `IdentitiesOnly=yes` set in `sshArgs` we need to set
+       # `IdentitiesOnly=no` first as the first time an SSH option is
+       # specified on the command line takes precedence
+-      HOME="$sshCopyHome" ssh-copy-id \
++      HOME="$sshCopyHome" "$BASH" "$(command -v ssh-copy-id)" \
+         -o IdentitiesOnly=no \
+         -o ConnectTimeout=10 \
+         "${sshArgs[@]}" \

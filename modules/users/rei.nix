@@ -8,6 +8,7 @@
       <den/primary-user>
       <chimera/shell>
       (den.batteries.user-shell "fish")
+      ({user}: { nixos.users.users.${user.userName}.hashedPassword = "$6$9O1fV1iB4koyWdpw$lTDeilYqeuF2H2/rtmc1qxwjvx3SUbBcs71EKICZxQaGuxciSBPicgShCQ56aZ..QvirueLNna6w0avGRPqX21"; })
       <chimera/batteries/privileged-user>
 
       <chimera/wayland/niri>

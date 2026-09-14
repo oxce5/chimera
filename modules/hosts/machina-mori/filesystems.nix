@@ -1,23 +1,11 @@
 {pkgs, ...}: {
   den.aspects.machina-mori.nixos = {
-    boot.initrd.services.lvm.enable = true;
-    boot.initrd.availableKernelModules = ["virtio_blk" "virtio_pci" "virtio"];
-    boot.initrd.kernelModules = ["dm_mod"];
-
-    fileSystems."/" = {
-      device = "/dev/pool/NIXROOT";
-      fsType = "ext4";
+    boot.initrd = {
+      availableKernelModules = ["virtio_blk" "virtio_pci" "virtio"];
+      services.lvm.enable = true;
     };
 
-    fileSystems."/boot" = {
-      device = "/dev/disk/by-label/NIXBOOT";
-      fsType = "vfat";
-      options = [
-        "fmask=0022"
-        "dmask=0022"
-        "noatime"
-      ];
-    };
+    # Lives on a second disk, outside the disko layout, so it survives reinstalls.
     fileSystems."/workspace" = {
       device = "/dev/disk/by-label/workspace";
       fsType = "ext4";

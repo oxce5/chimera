@@ -2,7 +2,7 @@
   chimera.virt.provides = {
     host = {
       nixos = {pkgs, ...}: {
-        users.privilegedGroups = ["kvm"];
+        users.privilegedGroups = ["libvirtd" "kvm"];
         networking.firewall.trustedInterfaces = ["virbr0"];
         programs.virt-manager.enable = true;
         environment.systemPackages = with pkgs; [

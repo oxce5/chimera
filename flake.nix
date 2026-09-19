@@ -28,11 +28,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    chimera-pkgs = {
-      url = "github:oxce5/chimera-pkgs";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
-    };
+    chimera-pkgs.url = "github:oxce5/chimera-pkgs";
 
     nix-gaming = {
       url = "github:fufexan/nix-gaming";

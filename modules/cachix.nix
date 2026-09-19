@@ -13,6 +13,7 @@
       niri = mkCachix "niri" "Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964=";
       kopuz = mkCachix "kopuz" "J2X3AnAYhKTJW5S3aCLoA1ckonQXVNZMQvhZA0YAufw=";
       noctalia = mkCachix "noctalia" "pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4=";
+      chimera-pkgs = mkCachix "chimera-pkgs" "gJAmxhc5yaLyHZ2ZecRA57syBgqBXYSFADvFjloxJxQ=";
     };
   in {
     nix.settings = {

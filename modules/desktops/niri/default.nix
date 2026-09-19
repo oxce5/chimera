@@ -35,6 +35,9 @@
         ];
         services = {
           cliphist.enable = true;
+          # Default wallpaper daemon. Desktop shells manage the wallpaper
+          # themselves and force-disable this (see desktop-shells common).
+          awww.enable = true;
         };
 
         wayland.windowManager.niri = {
@@ -116,7 +119,6 @@
     mirror = {
       homeManager = {pkgs, ...}: {
         home.packages = [pkgs.wl-mirror];
-        services.awww.enable = true;
       };
     };
   };

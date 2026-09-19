@@ -21,7 +21,6 @@
       <chimera/xdg>
       <chimera/fish>
 
-      <chimera/theming/desktop>
       <chimera/gaming/max>
 
       <chimera/dev/min>

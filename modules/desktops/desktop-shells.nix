@@ -14,7 +14,10 @@
       };
 
       dms = {
-        includes = [chimera.desktop-shells._.common];
+        includes = [
+          chimera.desktop-shells._.common
+          chimera.theming.provides.declarative
+        ];
         nixos = {pkgs, ...}: {
           services.displayManager.dms-greeter = {
             enable = true;
@@ -73,7 +76,10 @@
       };
 
       noctalia = {
-        includes = [chimera.desktop-shells._.common];
+        includes = [
+          chimera.desktop-shells._.common
+          chimera.theming.provides.noctalia
+        ];
 
         nixos = {
           imports = [

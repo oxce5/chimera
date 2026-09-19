@@ -7,11 +7,11 @@
         "pkgs-by-name-for-flake-parts": "pkgs-by-name-for-flake-parts"
       },
       "locked": {
-        "lastModified": 1787887861,
-        "narHash": "sha256-9L/7bhkqtTTt7DPwVGIso6iHu7z+A/ZlBohrz0l9xAA=",
+        "lastModified": 1789794673,
+        "narHash": "sha256-4KrRIuFhEV8jD/rZNo0HhMZiAVaJUiD5oCLYoGZJIg4=",
         "owner": "oxce5",
         "repo": "chimera-pkgs",
-        "rev": "291b4f2d88820daaa3d39c4f4b0b9dfc94834243",
+        "rev": "b8758e79b8859f6e0ce9ff6422f5e68576f0e5f5",
         "type": "github"
       },
       "original": {
@@ -685,17 +685,17 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1789684949,
-        "narHash": "sha256-ZKhUe/2IJUq1JhKxKMu8rbkgSGmPP2ZCqlIPn40aGCM=",
+        "lastModified": 1789370336,
+        "narHash": "sha256-6RSEDHIWQtesQKWSu5qRai8L2h4KgCgMEfJHstW99G4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e554fab72f81915600f3f449b786fd9af40439a5",
+        "rev": "c7def046b9a883d46974757852106483d741586f",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable",
         "repo": "nixpkgs",
+        "rev": "c7def046b9a883d46974757852106483d741586f",
         "type": "github"
       }
     },
@@ -910,11 +910,11 @@
     },
     "pkgs-by-name-for-flake-parts": {
       "locked": {
-        "lastModified": 1769286518,
-        "narHash": "sha256-F7VlUICvYp2wJKyQqM6d46BNEZCzMQ6dMH9zbmjuybc=",
+        "lastModified": 1789628227,
+        "narHash": "sha256-PC+g00FlwHgA/MyejBAEtQLRnrZLiA/Eo7i0rEkZ7bE=",
         "owner": "drupol",
         "repo": "pkgs-by-name-for-flake-parts",
-        "rev": "7ba1cd4a9a72c9c6c272018a63f090f2c912a171",
+        "rev": "da796090e8b34326a4aaf0c173df514f135b3907",
         "type": "github"
       },
       "original": {
@@ -1009,17 +1009,17 @@
     },
     "wrapper-manager": {
       "locked": {
-        "lastModified": 1788338967,
-        "narHash": "sha256-ERCTzitF650HHNvTOPMAB3rTi6ptcwatmrx9QFkreKs=",
-        "owner": "viperML",
-        "repo": "wrapper-manager",
-        "rev": "05d5c2a8f0a6091cc17573d9a0c0de59269b8534",
-        "type": "github"
+        "lastModified": 1788355120,
+        "narHash": "sha256-JEuM7FjlX48cpDhDrkeIch5nNYANux5o0wcw8vnwUuE=",
+        "ref": "refs/heads/master",
+        "rev": "5dbc685119c53a10c3f9a74b2716107413889796",
+        "revCount": 95,
+        "type": "git",
+        "url": "https://codeberg.org/viperML/wrapper-manager"
       },
       "original": {
-        "owner": "viperML",
-        "repo": "wrapper-manager",
-        "type": "github"
+        "type": "git",
+        "url": "https://codeberg.org/viperML/wrapper-manager"
       }
     },
     "xwayland-satellite-stable": {

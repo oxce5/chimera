@@ -14,11 +14,8 @@
       chimera.pwn.provides.ad
     ];
     nixos = {
-      imports = [inputs.chimera-pkgs.nixosModules.sliver];
-
       environment.etc.hosts.mode = "0644";
       programs.wireshark.enable = true;
-      services.sliver.enable = true;
       virtualisation.docker.enable = true;
       networking.firewall.trustedInterfaces = ["tun0"];
     };

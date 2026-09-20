@@ -32,7 +32,7 @@
     # Enable OpenTabletDriver
     hardware.uinput.enable = true;
 
-    boot.kernelModules = [ "uinput" ];
+    boot.kernelModules = ["uinput"];
 
     users.privilegedGroups = ["audio" "docker"];
     hardware.nvidia-container-toolkit.enable = true;

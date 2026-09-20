@@ -201,10 +201,6 @@
                 _props.hotkey-overlay-title = "Create window rule";
                 spawn = noctalia ++ ["panel-toggle" "window-rules"];
               };
-              "Ctrl+Shift+R" = {
-                _props.hotkey-overlay-title = "Rename Workspace";
-                spawn = noctalia ++ ["panel-open" "workspace-rename"];
-              };
             };
           };
         };

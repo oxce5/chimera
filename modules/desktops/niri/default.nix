@@ -80,9 +80,7 @@
                 top = 0;
                 bottom = 0;
               };
-              focus-ring = {
-                width = 4;
-              };
+              focus-ring.off = [];
               border.off = [];
               default-column-width = [];
               center-focused-column = "never";

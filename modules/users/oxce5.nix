@@ -14,6 +14,8 @@
       <chimera/wayland/niri>
       <chimera/wayland/vicinae>
       <chimera/wayland/mirror>
+      <chimera/wayland/screenshot>
+      <chimera/wayland/cast>
       <chimera/desktop-shells/noctalia>
       <chimera/easyeffects>
       <chimera/tailscale>

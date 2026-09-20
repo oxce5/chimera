@@ -165,14 +165,6 @@
       "Mod+Shift+Minus" = {set-window-height = "-10%";};
       "Mod+Shift+Equal" = {set-window-height = "+10%";};
 
-      # === Screenshots ===
-      "Mod+P" = {screenshot = [];};
-      "Mod+Alt+P" = {screenshot-screen = [];};
-      "Alt+P" = {screenshot-window = [];};
-      Print = {screenshot = [];};
-      "Ctrl+Print" = {screenshot-screen = [];};
-      "Alt+Print" = {screenshot-window = [];};
-
       # === System Controls ===
       "Mod+Escape" = {
         _props.allow-inhibiting = false;

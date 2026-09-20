@@ -5,13 +5,14 @@
 }: {
   chimera.pwn = {
     includes = [
-      chimera.pwn.provides.core
-      chimera.pwn.provides.recon
-      chimera.pwn.provides.exploit
-      chimera.pwn.provides.sniff
-      chimera.pwn.provides.crack
-      chimera.pwn.provides.web
-      chimera.pwn.provides.ad
+      chimera.pwn._.core
+      chimera.pwn._.c2
+      chimera.pwn._.recon
+      chimera.pwn._.exploit
+      chimera.pwn._.sniff
+      chimera.pwn._.crack
+      chimera.pwn._.web
+      chimera.pwn._.ad
     ];
     nixos = {
       environment.etc.hosts.mode = "0644";

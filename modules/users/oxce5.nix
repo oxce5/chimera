@@ -33,6 +33,7 @@
       <chimera/apps/yazi>
 
       <chimera/services/syncthing>
+      <chimera/services/printing>
     ];
   };
   den.hosts.x86_64-linux.overlord.users.oxce5 = {};

@@ -4,31 +4,31 @@
       pkgs,
       lib,
       ...
-      }: {
-        programs = {
-          dconf.enable = true;
-          appimage = {
-            enable = true;
-            binfmt = true;
-          };
-        };
-        environment = {
-          systemPackages = [pkgs.wl-clipboard];
-          sessionVariables = {
-            NIXOS_OZONE_WL = "1";
-            # XCURSOR_SIZE = lib.mkForce (builtins.ceil (32 * host.primaryDisplay.scaling));
-          };
-        };
-
-        services.pipewire = {
+    }: {
+      programs = {
+        dconf.enable = true;
+        appimage = {
           enable = true;
-          alsa.enable = true;       
-          alsa.support32Bit = true; 
-          pulse.enable = true;      
-          jack.enable = true;       
-          wireplumber.enable = true;
+          binfmt = true;
         };
       };
+      environment = {
+        systemPackages = [pkgs.wl-clipboard];
+        sessionVariables = {
+          NIXOS_OZONE_WL = "1";
+          # XCURSOR_SIZE = lib.mkForce (builtins.ceil (32 * host.primaryDisplay.scaling));
+        };
+      };
+
+      services.pipewire = {
+        enable = true;
+        alsa.enable = true;
+        alsa.support32Bit = true;
+        pulse.enable = true;
+        jack.enable = true;
+        wireplumber.enable = true;
+      };
+    };
 
     homeManager = {config, ...}: {
       qt.enable = true;

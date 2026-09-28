@@ -13,6 +13,10 @@
       "Mod+Shift+Slash" = {show-hotkey-overlay = [];};
 
       # === Application Launchers ===
+      "Mod+Return" = {
+        _props.hotkey-overlay-title = "Open Terminal (multiplexed)";
+        spawn-sh = ["kitty" "-e" "herdr"];
+      };
       "Mod+T" = {
         _props.hotkey-overlay-title = "Open Terminal";
         spawn = "kitty";

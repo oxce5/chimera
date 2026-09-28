@@ -1,4 +1,8 @@
 {
+  inputs,
+  ...
+}:
+{
   chimera.boot.provides = {
     # secure.nixos = {
     #   imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
@@ -12,7 +16,11 @@
     # };
 
     graphical.nixos.boot = {
-      plymouth.enable = true;
+      plymouth = {
+        enable = true;
+        theme = "tetos";
+        themePackages = [ inputs.chimera-pkgs.packages.x86_64-linux.plymouth-theme-tetos ];
+      };
       consoleLogLevel = 3;
       initrd.verbose = false;
       initrd.systemd.enable = true;

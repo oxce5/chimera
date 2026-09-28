@@ -4,7 +4,7 @@
       pkgs,
       ...
     }: {
-      services.openrgb.enable = true;
+      services.hardware.openrgb.enable = true;
       environment.systemPackages = [pkgs.openrgb-with-all-plugins];
     };
   };

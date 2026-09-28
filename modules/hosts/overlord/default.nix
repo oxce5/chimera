@@ -2,6 +2,7 @@
   den.aspects.overlord = {
     includes = with chimera; [
       laptop
+      apps._.openrgb
       virt._.host
       virt._.docker
       virt._.virtualbox

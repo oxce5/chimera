@@ -7,7 +7,7 @@
     den.url = "github:vic/den";
     # flake-aspects.url = "github:vic/flake-aspects";
 
-    nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+    nixpkgs.url = "github:NixOS/nixpkgs/c7def046b9a883d46974757852106483d741586f";
 
     home-manager = {
       url = "github:nix-community/home-manager";

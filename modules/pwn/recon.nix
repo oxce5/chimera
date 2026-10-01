@@ -25,7 +25,7 @@
       # notify
       # mapcidr
       interactsh
-      # katana
+      katana
       # cvemap
       # shuffledns
       massdns

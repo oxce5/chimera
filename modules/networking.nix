@@ -26,7 +26,7 @@
         settings = {
           listen-address = "127.0.0.1";
           bind-interfaces = true;
-          strict-order = true;
+          strict-order = false;
           server = [
             "100.97.28.65" # homelab via Tailscale
             "192.168.1.21" # homelab LAN

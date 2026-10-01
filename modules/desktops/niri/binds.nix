@@ -15,7 +15,7 @@
       # === Application Launchers ===
       "Mod+Return" = {
         _props.hotkey-overlay-title = "Open Terminal (multiplexed)";
-        spawn-sh = ["kitty" "-e" "herdr"];
+        spawn-sh = "kitty -e herdr";
       };
       "Mod+T" = {
         _props.hotkey-overlay-title = "Open Terminal";

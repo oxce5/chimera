@@ -20,6 +20,10 @@
         programs.niri = {
           enable = true;
           package = inputs.niri-flake.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
+          # niri's module adds nautilus to services.dbus.packages for
+          # xdg-desktop-portal-gnome's FileChooser, but chimera.xdg forces
+          # FileChooser to termfilechooser, so nautilus (~1.1 GiB) is dead weight.
+          useNautilus = false;
         };
       };
       homeManager = {

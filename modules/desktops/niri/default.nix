@@ -19,7 +19,7 @@
         imports = [inputs.niri-nix.nixosModules.default];
         programs.niri = {
           enable = true;
-          package = inputs.niri-flake.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
+          package = pkgs.niri;
           # niri's module adds nautilus to services.dbus.packages for
           # xdg-desktop-portal-gnome's FileChooser, but chimera.xdg forces
           # FileChooser to termfilechooser, so nautilus (~1.1 GiB) is dead weight.
@@ -34,6 +34,7 @@
         ...
       }: {
         home.packages = with pkgs; [
+          # Required for Xwayland applications (burpsuite, etc.) under niri.
           xwayland-satellite
           kitty
         ];
@@ -46,7 +47,7 @@
 
         wayland.windowManager.niri = {
           enable = true;
-          package = inputs.niri-flake.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
+          package = pkgs.niri;
           settings = {
             input = {
               keyboard = {

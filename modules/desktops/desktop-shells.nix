@@ -99,8 +99,8 @@
               recommendedServices.enable = true;
               systemd.enable = true;
             };
-            noctalia-greeter.enable = true;
           };
+          services.displayManager.noctalia-greeter.enable = true;
         };
 
         homeManager = {pkgs, ...}: {

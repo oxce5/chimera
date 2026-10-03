@@ -1,5 +1,6 @@
 {
   chimera,
+  inputs,
   lib,
   ...
 }: {
@@ -30,6 +31,22 @@
       networking.networkmanager.enable = true;
 
       hardware.enableRedistributableFirmware = false;
+
+      # Closure trims that only make sense on a throwaway VM. The desktop keeps
+      # the upstream defaults for all of these.
+      services.speechd.enable = lib.mkForce false; # only ever enabled by graphical-desktop's mkDefault
+
+      programs.nix-index-database.comma.enable = lib.mkForce false;
+      programs.nix-index.package = lib.mkForce pkgs.nix-index; # drop the prebuilt ~180 MB database
+
+      fonts = {
+        enableDefaultPackages = lib.mkForce false; # no CJK/unifont on this box (~170 MB)
+        packages = lib.mkForce [
+          (inputs.chimera-pkgs.packages.${pkgs.stdenv.hostPlatform.system}.iosevka-chimera)
+          pkgs.noto-fonts-color-emoji
+        ];
+      };
+
       services.pipewire = {
         alsa.enable = lib.mkForce false;
         alsa.support32Bit = lib.mkForce false;

@@ -34,7 +34,7 @@
             __VK_LAYER_NV_optimus.value = "NVIDIA_only";
           };
         })
-        # (inputs.kopuz.packages.${pkgs.stdenv.hostPlatform.system}.default)
+        (inputs.kopuz.packages.${pkgs.stdenv.hostPlatform.system}.default)
         pear-desktop
         vesktop
       ];

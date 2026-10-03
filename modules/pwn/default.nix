@@ -13,7 +13,7 @@
       chimera.pwn._.crack
       chimera.pwn._.web
       chimera.pwn._.ad
-      chimera.pwn._.forensics
+      # chimera.pwn._.forensics
       chimera.pwn._.re
     ];
     nixos = {

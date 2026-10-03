@@ -10,12 +10,12 @@
     ...
   }: {
     home.packages = with pkgs; let
+      # nixpkgs' default is [nmap rockyou seclists wfuzz]. `rockyou` is now cut
+      # from seclists upstream, so keeping it costs the full ~2 GiB seclists
+      # tree. nmap's lists are small; the rest is opt-in via
+      # chimera.pwn.provides.wordlists.
       wordlists = pkgs.wordlists.override {
-        lists = [
-          pkgs.nmap
-          pkgs.rockyou
-          pkgs.seclists
-        ];
+        lists = [pkgs.nmap];
       };
     in [
       # general
@@ -49,6 +49,21 @@
           msfconsole.prependFlags = ["--defer-module-loads"];
           msfvenom.prependFlags = [];
         };
+      })
+    ];
+  };
+
+  # The big lists (rockyou + seclists ~2 GiB, wfuzz) are not part of chimera.pwn
+  # by default. Opt in per host/user, e.g. in modules/users/rei.nix:
+  #   den.aspects.rei.includes = [ <chimera/pwn/wordlists> ];
+  chimera.pwn.provides.wordlists.homeManager = {pkgs, ...}: {
+    home.packages = [
+      (pkgs.wordlists.override {
+        lists = with pkgs; [
+          rockyou
+          seclists
+          wfuzz
+        ];
       })
     ];
   };

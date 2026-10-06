@@ -12,7 +12,6 @@
   };
 
   den.hosts.x86_64-linux.machina-mori = {
-    users.rei.classes = ["homeManager"];
     displays.Virtual-1 = {
       width = 1888;
       height = 980;

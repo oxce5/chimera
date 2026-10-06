@@ -9,7 +9,6 @@
   };
 
   den.hosts.x86_64-linux.overlord = {
-    users.oxce5.classes = ["homeManager"];
     # Pinned panel; HDMI-A-5 is the projector (vertical monitor later),
     # mode deliberately unpinned.
     displays = {

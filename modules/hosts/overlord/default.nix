@@ -10,6 +10,17 @@
 
   den.hosts.x86_64-linux.overlord = {
     users.oxce5.classes = ["homeManager"];
+    outputs = {
+      eDP-1 = {
+        width = 1920;
+        height = 1080;
+        refreshRate = 60;
+      };
+      HDMI-A-5 = {
+        width = 1920;
+        height = 1080;
+      };
+    };
   };
 
   den.aspects.overlord.nixos = {

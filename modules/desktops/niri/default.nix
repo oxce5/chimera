@@ -73,6 +73,20 @@
             screenshot-path = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png";
             prefer-no-csd = [];
 
+            output = lib.mapAttrsToList (name: d:
+              {
+                _args = [name];
+                mode = "${toString d.width}x${toString d.height}${lib.optionalString ((d.refreshRate or null) != null) "@${toString d.refreshRate}"}";
+                transform = d.transform or "normal";
+              }
+              // lib.optionalAttrs ((d.position or null) != null) {
+                position._props = {
+                  x = d.position.x;
+                  y = d.position.y;
+                };
+              })
+            host.outputs;
+
             overview = {
               workspace-shadow.off = [];
             };

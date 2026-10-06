@@ -27,11 +27,8 @@
       boot = {
         kernelParams = ["reboot=acpi"];
         plymouth.enable = lib.mkForce false;
-        loader.systemd-boot.enable = true;
         loader.timeout = 5;
-        consoleLogLevel = 3;
       };
-      networking.networkmanager.enable = true;
 
       hardware.enableRedistributableFirmware = false;
 

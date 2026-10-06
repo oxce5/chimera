@@ -33,10 +33,8 @@
     facter.reportPath = ./_facter.json;
     boot = {
       kernelPackages = pkgs.linuxPackages_zen;
-      loader.systemd-boot.enable = true;
     };
     networking = {
-      networkmanager.enable = true;
       hosts = {
         "192.168.1.254" = ["bastion"];
       };

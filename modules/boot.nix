@@ -1,8 +1,12 @@
-{
-  inputs,
-  ...
-}:
-{
+{inputs, ...}: {
+  # Basics every machine in the fleet shares. Included via the host role
+  # aspects (<chimera/boot> in chimera.workstation), so hosts should not
+  # re-declare these.
+  chimera.boot.nixos.boot = {
+    loader.systemd-boot.enable = true;
+    consoleLogLevel = 3;
+  };
+
   chimera.boot.provides = {
     # secure.nixos = {
     #   imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
@@ -19,11 +23,9 @@
       plymouth = {
         enable = true;
         theme = "tetos";
-        themePackages = [ inputs.chimera-pkgs.packages.x86_64-linux.plymouth-theme-tetos ];
+        themePackages = [inputs.chimera-pkgs.packages.x86_64-linux.plymouth-theme-tetos];
       };
-      consoleLogLevel = 3;
       initrd.verbose = false;
-      initrd.systemd.enable = true;
       kernelParams = [
         "quiet"
         "splash"

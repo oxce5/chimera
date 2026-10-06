@@ -6,6 +6,7 @@
     # };
     nixos = {
       networking = {
+        networkmanager.enable = true;
         nftables.enable = true;
         wireguard.enable = true;
         firewall.trustedInterfaces = [

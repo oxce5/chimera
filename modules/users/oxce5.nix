@@ -1,40 +1,11 @@
 {
-  den,
+  chimera,
   __findFile,
   ...
 }: {
-  den.aspects.oxce5 = {
-    includes = [
-      <den/primary-user>
-      <chimera/shell>
-      <chimera/shell/enhanced>
-      (den.batteries.user-shell "fish")
-      <chimera/batteries/privileged-user>
-
-      <chimera/wayland/niri>
-      <chimera/wayland/vicinae>
-      <chimera/wayland/mirror>
-      <chimera/wayland/screenshot>
-      <chimera/wayland/cast>
-      <chimera/desktop-shells/noctalia>
-      <chimera/easyeffects>
-      <chimera/tailscale>
-      <chimera/flatpak>
-      <chimera/xdg>
-      <chimera/fish>
-
-      <chimera/gaming/max>
-
-      <chimera/dev/min>
-      <chimera/dev/ai>
-      <chimera/apps/coreutils/desktop>
-      <chimera/apps/gui>
-      <chimera/apps/git>
-      <chimera/apps/yazi>
-
-      <chimera/services/syncthing>
-      <chimera/services/printing>
-    ];
-  };
+  den.aspects.oxce5.includes = [
+    <den/primary-user>
+    chimera.workstation-user
+  ];
   den.hosts.x86_64-linux.overlord.users.oxce5 = {};
 }

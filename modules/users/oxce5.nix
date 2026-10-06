@@ -27,7 +27,7 @@
 
       <chimera/dev/min>
       <chimera/dev/ai>
-      <chimera/apps/coreutils>
+      <chimera/apps/coreutils/desktop>
       <chimera/apps/gui>
       <chimera/apps/git>
       <chimera/apps/yazi>

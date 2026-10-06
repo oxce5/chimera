@@ -21,6 +21,10 @@
       includes = [
         <chimera/pwn>
         <chimera/workstation>
+        <chimera/virt/headless>
+        <chimera/virt/ephemeral-store>
+        <chimera/virt/audio-minimal>
+        <chimera/virt/emoji-fonts>
       ];
     };
   };

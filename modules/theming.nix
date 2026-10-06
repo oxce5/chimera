@@ -48,31 +48,6 @@
     };
   };
 
-  # Declarative base theming, managed by NixOS/Home Manager. This is the
-  # fallback when no runtime theme manager (noctalia) is present: colors are
-  # fixed at build time and everything follows them.
-  chimera.theming.provides.declarative = {
-    includes = [chimera.theming.provides.desktop];
-    homeManager = {pkgs, ...}: {
-      gtk = {
-        theme = {
-          name = "adw-gtk3-dark";
-          package = pkgs.adw-gtk3;
-        };
-        gtk3.extraConfig = {
-          gtk-application-prefer-dark-theme = 1;
-        };
-      };
-      qt = {
-        platformTheme.name = "gtk3";
-        style = {
-          name = "adwaita-dark";
-          package = pkgs.adwaita-qt;
-        };
-      };
-    };
-  };
-
   # Noctalia-driven system-wide theming. Used only when the noctalia desktop
   # shell is present: noctalia owns the palette at runtime and renders theme
   # files for GTK/Qt/terminal/KDE apps, so nothing here hardcodes colors.

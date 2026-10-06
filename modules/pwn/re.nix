@@ -1,12 +1,18 @@
 {chimera, ...}: {
   chimera.pwn.provides.re.homeManager = {pkgs, ...}: {
-    home.packages = with pkgs; [
-      # radare2-style RE with Ghidra's decompiler backend (rz-ghidra).
-      # `pdg @ fcn` prints pseudo-C for a function.
-      (rizin.withPlugins (p: with p; [
-        rz-ghidra
-      ]))
-      # cutter (rizin GUI, has the decompiler pane too)
+    programs.rizin = {
+      enable = true;
+      package = pkgs.rizin.withPlugins (ps: [ ps.rz-ghidra ps.sigdb ]);
+      settings = {
+        "bin.relocs.apply" = true;
+        "ghidra.roprop" = 2;
+        "ghidra.rawptr" = false;
+        "bin.demangle" = true;
+      };
+    };
+
+    home.packages = [
+      pkgs.cutter
     ];
   };
 }

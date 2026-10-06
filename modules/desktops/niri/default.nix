@@ -29,7 +29,31 @@
         pkgs,
         host,
         ...
-      }: {
+      }: let
+        mkOutput = d:
+          {
+            mode =
+              lib.concatStringsSep "x" [
+                (toString d.width)
+                (toString d.height)
+              ]
+              + lib.optionalString (d.refresh != null) "@${toString d.refresh}";
+            position._props = {
+              x = d.x;
+              y = d.y;
+            };
+            scale = d.scaling;
+            transform = d.transform;
+          }
+          // lib.optionalAttrs d.vrr {
+            variable-refresh-rate._props.on-demand = true;
+          }
+          // lib.optionalAttrs d.primary {
+            focus-at-startup = [];
+          };
+
+        outputs = lib.mapAttrs' (name: d: lib.nameValuePair ''output "${name}"'' (mkOutput d)) host.displays;
+      in {
         home.packages = with pkgs; [
           # Required for Xwayland applications (burpsuite, etc.) under niri.
           xwayland-satellite
@@ -115,33 +139,7 @@
                 ];
               };
             }
-            //
-            # home-manager's toKDL serializes list values as `node { - item }`
-            # (rejected by niri), and the attr `output` can only appear once,
-            # so each connector is an independent top-level key. The key IS
-            # the full node name; the value is that node's body.
-            (lib.mapAttrs'
-              (
-                name: d: let
-                  refresh = d.refresh or null;
-                in
-                  lib.nameValuePair ''output "${name}"'' {
-                    mode = "${toString d.width}x${toString d.height}${lib.optionalString (refresh != null) "@${toString refresh}"}";
-                    position._props = {
-                      x = d.x or 0;
-                      y = d.y or 0;
-                    };
-                    scale = d.scaling or 1.0;
-                    transform = d.transform or "normal";
-                  }
-                  // lib.optionalAttrs (d.vrr or false) {
-                    variable-refresh-rate = "on-demand";
-                  }
-                  // lib.optionalAttrs (d.primary or false) {
-                    focus-at-startup = true;
-                  }
-              )
-              host.displays);
+            // outputs;
         };
       };
     };

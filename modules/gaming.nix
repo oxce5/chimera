@@ -45,19 +45,27 @@
       };
     };
 
+    # Wacom tablet support: OpenTabletDriver needs write access to the input
+    # devices, which means the uinput kernel module.
+    tablet.nixos = {
+      boot.kernelModules = ["uinput"];
+      hardware = {
+        opentabletdriver.enable = true;
+        uinput.enable = true;
+      };
+    };
+
     max = {
       includes = [
         chimera.gaming._.replays
         chimera.gaming._.min
+        chimera.gaming._.tablet
       ];
       nixos = {pkgs, ...}: {
         imports = [
           inputs.nix-gaming.nixosModules.platformOptimizations
           inputs.nix-gaming.nixosModules.pipewireLowLatency
         ];
-        hardware.opentabletdriver.enable = true;
-        services = {
-        };
         programs = {
           steam = {
             platformOptimizations.enable = true;

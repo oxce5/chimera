@@ -19,7 +19,6 @@
     nixos = {
       environment.etc.hosts.mode = "0644";
       programs.wireshark.enable = true;
-      virtualisation.docker.enable = true;
       networking.firewall.trustedInterfaces = ["tun0"];
     };
   };

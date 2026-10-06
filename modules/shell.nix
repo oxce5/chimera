@@ -55,10 +55,6 @@
         enable = true;
         settings.updates.auto_update = true;
       };
-      yazi = {
-        enable = true;
-        shellWrapperName = "y";
-      };
       zoxide.enable = true;
     };
   };

@@ -54,6 +54,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Declarative management of non-volatile state. Only used by the VM's
+    # volatile-root aspect, which is currently a skeleton (see
+    # modules/virtualisation.nix).
+    preservation.url = "github:nix-community/preservation";
+
     nixos-anywhere = {
       url = "github:nix-community/nixos-anywhere";
       inputs.nixpkgs.follows = "nixpkgs";

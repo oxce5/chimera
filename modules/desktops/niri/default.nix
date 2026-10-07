@@ -32,12 +32,18 @@
       }: let
         mkOutput = d:
           {
-            mode =
-              lib.concatStringsSep "x" [
-                (toString d.width)
-                (toString d.height)
-              ]
-              + lib.optionalString (d.refresh != null) "@${toString d.refresh}";
+            mode = {
+              # niri matches the refresh exactly, to three decimals.
+              _args = [
+                "${toString d.width}x${toString d.height}${lib.optionalString (d.refresh != null) "@${toString d.refresh}"}"
+              ];
+              # custom=true asks for a mode the display never advertised; the
+              # refresh is mandatory then, and niri computes the timings itself
+              # (a separate `modeline` node would override this outright).
+              _props = lib.optionalAttrs d.custom {
+                custom = true;
+              };
+            };
             position._props = {
               x = d.x;
               y = d.y;
@@ -63,9 +69,15 @@
           cliphist.enable = true;
           # Default wallpaper daemon. Desktop shells manage the wallpaper
           # themselves and force-disable this (see desktop-shells common).
+          #
+          # Only the daemon is started. awww-daemon takes no image argument, so
+          # the image has to be pushed separately with `awww img` once the
+          # daemon's socket exists, which is a startup race this config doesn't
+          # win cleanly -- hence imperative, per host:
+          #
+          #   awww img /assets/rei.jpeg
           awww.enable = true;
         };
-
         wayland.windowManager.niri = {
           enable = true;
           package = pkgs.niri;

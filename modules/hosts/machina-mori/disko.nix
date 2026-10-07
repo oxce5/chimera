@@ -16,6 +16,18 @@
     ];
 
     disko.devices = {
+      # / is a tmpfs (chimera.impermanence.volatile-root). nodev creates no
+      # device, it only emits the fileSystems."/" entry, so /boot and the LVs
+      # below are still the only things on disk.
+      nodev."/" = {
+        type = "nodev";
+        fsType = "tmpfs";
+        mountOptions = [
+          "mode=0755"
+          "size=100%"
+        ];
+      };
+
       disk = {
         main = {
           type = "disk";
@@ -62,16 +74,18 @@
             NIXROOT = {
               # Created before HOMEROOT, and both before NIXSTORE, so that the
               # two 25%slices are taken off the top and NIXSTORE gets the rest.
-              # When this host goes volatile (chimera.impermanence.volatile-root)
-              # this LV stops being / and becomes the preservation store at
-              # /persist instead — same LV, same uuid, no mkfs. Its ~1.2G of
-              # ex-/ content has to be dealt with at that point.
+              #
+              # This LV was / and is now /persist — the preservation store for
+              # the volatile root (chimera.impermanence.volatile-root). Same LV,
+              # same uuid, and no mkfs, since blkid still recognises the ext4.
+              # It keeps the ~1.2G of old / content that predates the switch;
+              # only the declared preserveAt paths are read from it.
               priority = 1000;
               size = "25%FREE";
               content = {
                 type = "filesystem";
                 format = "ext4";
-                mountpoint = "/";
+                mountpoint = "/persist";
               };
             };
             NIXWORK = {
@@ -105,6 +119,17 @@
       };
     };
 
+    # /persist holds everything that survives a reboot, so the initrd must be
+    # able to read machine-id and the nix database out of it before the real
+    # root is up. /nix needs it for the same reason: the store is a separate LV
+    # and the profiles in it are read from the initrd.
+    fileSystems = {
+      # disko already declares /persist as /dev/pool/NIXROOT; this only adds
+      # the flags, so set them without restating the device.
+      "/persist".neededForBoot = true;
+      "/nix".neededForBoot = true;
+    };
+
     # /nix is scratch: a stale store is pure garbage, and keeping it across
     # deploys hides problems (dead symlinks in the GC roots, closures built
     # against a different config). So drop NIXSTORE before disko runs and let
@@ -114,8 +139,9 @@
     system.build.diskoScript = lib.mkForce (pkgs.writeShellScript "diskoScript" ''
       PATH=${lib.makeBinPath [pkgs.lvm2 pkgs.util-linux]}:$PATH
       # lvremove refuses nothing, but a mounted LV would leave the mountpoint
-      # shadowed by a fresh, empty filesystem.
-      umount /nix /home /workspace 2>/dev/null || true
+      # shadowed by a fresh, empty filesystem. /persist is in this list because
+      # NIXROOT is mounted there on every boot now that / is volatile.
+      umount /nix /home /workspace /persist 2>/dev/null || true
       vgchange -ay pool || true
       if lvdisplay pool/NIXSTORE >/dev/null 2>&1; then
         echo "disko: removing existing pool/NIXSTORE for a clean store"

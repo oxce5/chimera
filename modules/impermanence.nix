@@ -36,27 +36,25 @@
       };
     };
 
-    # The full volatile root, parked. The preserveAt block below is written out
-    # rather than commented so the option names are type-checked on every eval,
-    # but preservation does nothing unless `enable` is true — the built system
-    # is byte-identical to not having this aspect at all.
+    # The volatile root, live on machina-mori. Rolling it out took three pieces
+    # of host-side wiring that this aspect does not and cannot do itself:
+    #   1. A persistent mount at /persist. `persistentStoragePath` defaults to
+    #      the attribute name, so preserveAt."/persist" needs no further
+    #      wiring. disko hosts get there by pointing their root LV at /persist
+    #      instead of / — same LV, same uuid, no mkfs, since blkid still
+    #      recognises the ext4. See modules/hosts/machina-mori/disko.nix.
+    #   2. / as a tmpfs (`disko.devices.nodev."/"` for disko hosts).
+    #   3. fileSystems."/persist".neededForBoot and fileSystems."/nix".neededForBoot,
+    #      because machine-id and the nix database are read from the initrd.
     #
-    # Rolling it out takes more than flipping `enable`, because the state has to
-    # live somewhere real:
-    #   1. Give the host a persistent mount for it and mount that at /persist.
-    #      `persistentStoragePath` defaults to the attribute name, so
-    #      preserveAt."/persist" needs no further wiring. Hosts that use disko
-    #      get there by pointing their root LV at /persist instead of / — same
-    #      LV, same uuid, and no mkfs, since blkid still recognises the ext4.
-    #   2. Make / a tmpfs (`disko.devices.nodev."/"` for disko hosts).
-    #   3. Set fileSystems."/persist".neededForBoot and
-    #      fileSystems."/nix".neededForBoot — machine-id and the nix database are
-    #      read from the initrd, so the mounts have to exist that early.
+    # Only what a running machine cannot reconstruct is listed here. Anything
+    # the config re-derives each boot is deliberately absent — see the nix
+    # database note below, which is the easy one to get wrong.
     volatile-root.nixos = {lib, ...}: {
       imports = [inputs.preservation.nixosModules.default];
 
       preservation = {
-        enable = false;
+        enable = true;
 
         preserveAt."/persist" = {
           files = [
@@ -77,6 +75,7 @@
               how = "symlink";
               configureParent = true;
             }
+            # Without this the machine reseeds entropy on every boot.
             {
               file = "/var/lib/systemd/random-seed";
               how = "symlink";
@@ -86,16 +85,21 @@
           ];
 
           directories = [
-            # The nix database. Without it every rebuild re-registers the whole
-            # store, which is slow enough to be worth preserving.
-            {
-              directory = "/var/lib/nixos";
-              inInitrd = true;
-            }
-            # Past boots are the only record of what a machine did last week.
-            "/var/log"
-            # Hand-installed tooling and payloads that no Nix expression owns.
-            "/opt"
+            # The connection identity: secret_key, seen-bssids, and the leases
+            # keyed by interface name. Losing it gives the host a new identity
+            # on every boot, which churns anything that pins it — tailscale,
+            # paired remotes, DHCP reservations.
+            "/var/lib/NetworkManager"
+            # NOT the nix database, despite what it used to be commented as:
+            # /var/lib/nixos holds auto-subuid-map, declarative-users,
+            # declarative-groups, uid-map and gid-map, all of which activation
+            # rewrites from the config every boot. The real nix DB is
+            # /nix/var/nix/{db,gcroots,profiles}, which lives on NIXSTORE and is
+            # already wiped by the host's diskoScript on every deploy.
+            #
+            # NOT /var/log or /opt either: /opt does not exist on either host,
+            # and the journal is transient by nature. Add them back per host if
+            # past boots turn out to matter.
           ];
         };
       };

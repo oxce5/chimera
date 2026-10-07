@@ -1,5 +1,5 @@
 {
-  inputs,
+  self,
   lib,
   ...
 }: let
@@ -23,7 +23,11 @@
         refresh = mkOption {
           type = types.nullOr types.float;
           default = null;
-          description = "Hz to pin. null lets the compositor pick the highest advertised rate for this mode.";
+          description = ''
+            Hz to pin. null lets the compositor pick the highest advertised rate for this
+            mode. Mandatory when `custom` is set, since a mode the display never advertised
+            has no rate to infer.
+          '';
         };
         width = mkOption {
           type = types.int;
@@ -32,6 +36,17 @@
         height = mkOption {
           type = types.int;
           default = 1080;
+        };
+        custom = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Ask the compositor for a mode the display does not advertise, e.g. a
+            resolution the QEMU monitor never lists. Requires `refresh`, and
+            niri silently falls back to the display's preferred mode when the
+            request cannot be honoured — check `niri msg outputs` to confirm it
+            took. Off by default; see niri's "mode custom=true" docs.
+          '';
         };
         x = mkOption {
           type = types.int;
@@ -61,10 +76,16 @@
         wallpaper = mkOption {
           type = types.nullOr types.path;
           default = null;
+          description = ''
+            Image to show behind the session, as a path relative to the flake
+            root. Recorded only: nothing applies it automatically, since every
+            wallpaper daemon here (awww, the desktop shells) wants the image at
+            runtime rather than at build time. See chimera.wayland's awww note.
+          '';
           apply = v:
             if v == null
             then null
-            else builtins.path {path = inputs.self + v;};
+            else builtins.path {path = self + v;};
         };
       };
     }
@@ -97,11 +118,18 @@ in {
   };
 
   den.default.nixos = {host, ...}: {
-    assertions = [
-      {
-        assertion = host.displays != {};
-        message = "display-properties: host '${host.name}' defines no displays. Set den.hosts.<system>.${host.name}.displays.<connector> = { width = …; height = …; };";
-      }
-    ];
+    assertions =
+      [
+        {
+          assertion = host.displays != {};
+          message = "display-properties: host '${host.name}' defines no displays. Set den.hosts.<system>.${host.name}.displays.<connector> = { width = …; height = …; };";
+        }
+      ]
+      ++ lib.mapAttrsToList
+      (name: d: {
+        assertion = !d.custom || d.refresh != null;
+        message = "display-properties: display '${name}' on host '${host.name}' sets custom = true, which needs an explicit refresh.";
+      })
+      host.displays;
   };
 }

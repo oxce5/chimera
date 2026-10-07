@@ -21,10 +21,8 @@
         _props.hotkey-overlay-title = "Open Terminal";
         spawn = "kitty";
       };
-      "Mod+B" = {
-        _props.hotkey-overlay-title = "Open Browser";
-        spawn = "firefox";
-      };
+      # Mod+B is not here: the browser aspect (chimera.browser.provides.*)
+      # owns it, so the key follows whichever browser the host actually has.
 
       # === Security ===
       "Mod+Shift+E" = {quit = [];};

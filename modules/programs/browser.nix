@@ -6,6 +6,15 @@
         config,
         ...
       }: {
+        # The browser aspect owns its own Mod+B bind, so a host reaches
+        # exactly one definition of it. bases.nix must not also define it.
+        wayland.windowManager.niri.settings.binds = {
+          "Mod+B" = {
+            _props.hotkey-overlay-title = "Open Browser";
+            spawn = lib.mkDefault "firefox";
+          };
+        };
+
         programs.firefox = {
           enable = true;
 
@@ -140,12 +149,8 @@
         lib,
         ...
       }: {
-        wayland.windowManager.niri.settings.binds = {
-          "Mod+B" = {
-            _props.hotkey-overlay-title = "Open Browser";
-            spawn = "firefox";
-          };
-        };
+        wayland.windowManager.niri.settings.binds."Mod+B".spawn =
+          lib.mkForce "firefox-esr";
 
         programs.firefox = {
           package = pkgs.firefox-esr;

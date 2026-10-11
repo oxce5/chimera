@@ -5,11 +5,14 @@
       systemd.suppressedSystemUnits = ["systemd-machine-id-commit.service"];
 
       preservation.preserveAt."/persist".directories = [
-        "/opt"
         {
-          directory = "/var/lib/sliver";
+          directory = "/opt";
           user = "rei";
           group = "users";
+        }
+        {
+          directory = "/var/lib/sliver";
+          user = "sliver";
         }
         {
           directory = "/workspace";
@@ -23,6 +26,7 @@
       nixos.preservation.preserveAt."/persist".users.${user.userName}.directories = [
         ".config/nvim"
         ".local/state/nvim"
+        ".sliver-client"
       ];
     };
   };

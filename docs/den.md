@@ -6,8 +6,14 @@ framework/library for NixOS, nix-Darwin and home-manager.
 - Source: https://den.denful.dev
 - Repo: https://github.com/denful/den
 - Docs pages are indexed at the end of this file.
-- Snapshot date: 2026-10-03. Den is pre-1.0 ("HeadsUp" / bleeding-edge) — verify API details
-  against the live docs before relying on internals.
+- Snapshot date: 2026-10-11, taken from the pinned inputs this repo actually evaluates:
+  `github:vic/den` @ `7594405b` (2026-09-28) and `github:vic/import-tree` @ `eb1b52e`
+  (2026-09-03). Den is pre-1.0 ("HeadsUp" / bleeding-edge) — verify API details against the
+  live docs before relying on internals.
+- ⚠️ **Fork note.** Upstream is `denful/den`, but every Den template (and this repo) pins
+  **`vic/den` + `vic/import-tree`**. `denful/import-tree` is stale — the npins section of the
+  upstream `from-zero-to-den` guide still prints it while the template's `npins/sources.json`
+  uses `vic`. Use `vic/import-tree`; don't "fix" it back.
 
 ---
 
@@ -24,7 +30,7 @@ flake
     └── home { home }                    den.homes.<system>.<name>
 ```
 
-Four concepts:
+Four concerns, orthogonal:
 
 | Concept | Meaning | Option |
 |---|---|---|
@@ -35,6 +41,11 @@ Four concepts:
 
 Entities declare *what exists*; aspects declare *what it does*; policies decide *how things
 relate*; quirks let aspects share data without coupling.
+
+**Class** vs **entity kind** is the distinction people trip on first: a *class* (`nixos`, `darwin`,
+`homeManager`, `user`, `os`, `wsl`) is a Nix module-evaluation domain and decides which module
+system evaluates the content; an *entity kind* (`host`, `user`, `home`, plus custom ones) is a Den
+data type and decides how policies dispatch.
 
 ### Context vs NixOS module args — the key distinction
 
@@ -86,21 +97,26 @@ The context shape *is* the condition — no `mkIf`, no `enable` flag.
 
 ```nix
 {
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-  inputs.darwin.url = "github:nix-darwin/nix-darwin";
-  inputs.import-tree.url = "github:denful/import-tree";
+  inputs.nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+  inputs.import-tree.url = "github:vic/import-tree";
   inputs.den.url = "github:denful/den";
   # optional
   inputs.home-manager.url = "github:nix-community/home-manager";
+  inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs";
   inputs.flake-parts.url = "github:hercules-ci/flake-parts";
 
   outputs = inputs:
     (inputs.nixpkgs.lib.evalModules {
-      modules = [ (inputs.import-tree ./modules) (inputs.den.flakeOutputs.flake) ];
+      modules = [ (inputs.import-tree ./modules) ];
       specialArgs.inputs = inputs;
     }).config.flake;
 }
 ```
+
+The first three input lines are verbatim `templates/minimal/flake.nix`; the optional ones are added
+here. Note you do **not** need `flake-parts` in the inputs at all —
+`inputs.den.flakeModule` works with plain `evalModules`. The `imports = [ (inputs.den.flakeModule) ]`
+belongs in a module under `modules/`, not here.
 
 ### `modules/den.nix`
 
@@ -130,6 +146,8 @@ Build: `nix build .#nixosConfigurations.igloo` / `nixos-rebuild build --flake .#
 
 ### No-flake variant (`npins` + `with-inputs`)
 
+`templates/noflake/default.nix` returns the whole config, not `.config.flake`:
+
 ```nix
 # default.nix
 let
@@ -139,20 +157,27 @@ let
     (inputs.nixpkgs.lib.evalModules {
       modules = [ (inputs.import-tree ./modules) ];
       specialArgs.inputs = inputs;
-    }).config.flake;
+    }).config;          # template: `.config`  ·  the from-zero-to-den guide: `.config.flake`
 in
 with-inputs outputs
 ```
 
+Because the template returns `.config`, its outputs live one level deeper:
+
 ```console
-npins init
-npins add github denful import-tree   -b main
-npins add github denful den            -b main
-npins add github denful with-inputs    -b main
-npins add github nix-community home-manager --branch master
+nixos-rebuild build --file . -A flake.nixosConfigurations.igloo   # .config
+nixos-rebuild build --file . -A nixosConfigurations.igloo         # .config.flake
 ```
 
-Build: `nixos-rebuild build --file . -A nixosConfigurations.igloo`.
+```console
+npins init                                            # adds the nixpkgs channel
+npins add github vic   import-tree -b main
+npins add github denful den         -b main
+npins add github vic   with-inputs  -b main
+npins add github nix-community home-manager --branch master   # OPTIONAL
+```
+
+`with-inputs` is also `vic/with-inputs`, not `denful/with-inputs`, in the template's pins.
 
 ### Layout rules
 
@@ -162,9 +187,19 @@ Build: `nixos-rebuild build --file . -A nixosConfigurations.igloo`.
 - `inputs.den.flakeModule` → the `den` module arg. `inputs.den.flakeOutputs.flake` → the
   flake-parts-compatible `flake` output option (needed when there is no flake-parts and you
   contribute `packages`/`checks`/etc.).
-- `inputs.den.flakeModules.strict` → strict typing for `den.schema.{host,user,home,aspect,flake}`
-  (undeclared attrs become errors).
-- `inputs.den.namespace <name> <export|false|sources>` → aspect namespace.
+- `inputs.den.namespace <name> <export|false|sources>` → aspect namespace (§9).
+- `inputs.den.flakeModules.*` (full list, from `nix/default.nix`):
+
+| Module | Purpose |
+|---|---|
+| `flakeModule` (= `flakeModules.default`) | the `den` module arg + all `den.*` options |
+| `flakeModules.dendritic` | dendritic mode: `flake-file.inputs.den.url` mkDefault + `inputs.den.flakeModule` |
+| `flakeModules.denTest` | exports `_module.args.denTest` — isolated eval of a single module with `expected` assertions |
+| `flakeModules.strict` | strict typing for `den.schema.{host,user,home,aspect,flake}` (undeclared attrs become errors) |
+
+- `inputs.den.templates.<name>.path` → scaffoldable template dirs; `nix flake init -t
+  github:denful/den#<name>`. Demos that are *not* `flake init` templates (they use
+  `path:../..`): `fleet-demo`, `terranix-demo`, `diagram-demo`, `scoped-import-tree`.
 
 ---
 
@@ -174,6 +209,11 @@ Build: `nixos-rebuild build --file . -A nixosConfigurations.igloo`.
 
 Schema entries are **metadata modules, not aspects**. They provide shared options to every
 entity of a kind. Freeform type ⇒ adding a key registers a new **entity kind**.
+
+`den.schema` is built on [gen-schema](https://github.com/sini/gen-schema). Alongside your own
+kinds it carries introspection attrs (`_kindNames`, `_topology`, `_edges`, `_roots`, `_leaves`,
+`_refEdges`, `_declarationKeys`, `_collectionKeys`, `_reservedCollectionKeys`) that the pipeline
+consumes. Ignore them; they are not settable.
 
 | Path | Type | Purpose |
 |---|---|---|
@@ -194,8 +234,26 @@ Per-schema-entry attributes:
 | `parent` | nullOr str | `null` | enclosing entity kind (e.g. `user.parent = "host"`) |
 | `collisionPolicy` | nullOr enum | `null` | see collision policy below |
 
-Pre-registered kinds: `host`, `user`, `home`, `conf`, `fleet`. Others are added by batteries or
-by you: `flake`, `flake-system`, `wsl-host`, `flake-parts`, `hm-host`, …
+Element check: a bare **string** in `includes`/`excludes` throws at eval. String policies no
+longer work — use the attrset. A function (parametric aspect reference) is allowed.
+
+Built-in entity topology is pre-wired in `modules/options.nix`:
+`den.schema.user.parent = "host"` and `den.schema.home.parent = "host"`. That DAG is what the
+pipeline uses for descendant fan-out (§4) and class-module arg promotion.
+
+Pre-registered kinds:
+
+| Kind | Registered by |
+|---|---|
+| `conf`, `fleet` | `modules/options.nix` (`conf = {}`, `fleet = {}`) |
+| `host`, `user`, `home` | `modules/options.nix` |
+| `flake`, `flake-system`, `flake-parts`, `default` | `modules/context/flake-schema.nix` |
+| `wsl-host`, `hm-host` | created on demand by the `wsl` / `homeManager` batteries |
+
+Anything else is added by a battery or by you — writing `den.schema.my-kind = { … }` registers it.
+`default` is the `den.default` routing kind; the old `*-to-default` policies are gone and
+`den.default` is injected as a schema include for `host`/`user`/`home` instead
+(`modules/aspects/defaults.nix`).
 
 ### `den.hosts` — `attrsOf systemType`
 
@@ -241,16 +299,18 @@ Key `user@host` binds a home to a host user; a bare key is a standalone home.
 
 | Option | Type | Default |
 |---|---|---|
-| `name` | str | registry key (`tux@igloo`) |
+| `name` | str | registry key (`tux@igloo`) — this is what `home.name` sees |
 | `userName` | str | part before `@` |
 | `hostName` | nullOr str | part after `@`, `null` when standalone |
 | `host` / `user` | raw | bound entities or `null` |
-| `system` | str | parent key |
+| `system` | str | parent key (identity key — declared via `den.schema.home.imports`) |
 | `class` | str | `homeManager` |
+| `description` | str | `home.<userName>@<system>` |
 | `aspect` | raw | `den.aspects."<user>@<host>"` + `den.aspects.<user>` |
 | `pkgs` | raw | `inputs.nixpkgs.legacyPackages.<system>` |
 | `instantiate` | raw | `inputs.home-manager.lib.homeManagerConfiguration` |
 | `intoAttr` | listOf str | `[ "homeConfigurations" name ]` |
+| `resolved`, `collisionPolicy` | | as host |
 | `*` | `den.schema.home` + freeform | |
 
 Every entity also gets `id_hash` (safe comparison; `==` is fragile across module boundaries).
@@ -307,22 +367,62 @@ Den **auto-creates** an aspect per entity (`den.aspects.<host>`, `den.aspects.<u
 `den.aspects."<user>@<host>"`, `den.aspects.<home>`). Declare `den.aspects.*` manually only for
 shared aspects, or to *extend* the auto-created ones (any file may).
 
+Auto-created host/user aspects are themselves parametric (`{ host, ... }:` / `{ host, user, ... }:`)
+and carry an empty class bucket for every class the entity's `classes` list enables.
+
+### `den.ful` — namespaced aspect collections
+
+`den.ful.<ns>` is an `attrsOf namespaceType` holding a namespace container whose freeform keys
+are aspects (plus `schema`, `classes`, `_`). Populated by `inputs.den.namespace` or by merging
+upstream `flake.denful.<ns>` output. `inputs.den.namespace "eg" true` also creates a module arg
+alias `eg`. See §9.
+
 ### Keys of an aspect
 
 | Key | Type | Meaning |
 |---|---|---|
 | `<class>` | module / function-module | config merged into entities of that class |
-| `includes` | list | providers (aspects, sub-aspects, functions) pulled in |
-| `excludes` | list | aspects/policies excluded from this subtree |
+| `includes` | listOf provider | providers (aspects, sub-aspects, functions) pulled in |
+| `excludes` | listOf provider | aspects/policies excluded from this subtree |
 | `provides` (alias `_`) | submodule | named sub-aspects → `den.aspects.<name>.<sub>` |
-| `policies` | submodule | named policy functions declared by the aspect |
-| `meta` | freeform submodule | `handleWith`, `aspect-chain`, `collisionPolicy`, `guard`, `aspects`, plus auto `name`/`loc`/`file`/`self` |
+| `policies` | policy registry | named policy functions, activated by placing in `includes` |
+| `meta` | freeform submodule | `handleWith`, `aspect-chain`, `collisionPolicy`; `guard`/`aspects` for conditional aspects; plus auto `name`/`loc`/`file`/`self` |
 | `classes` | lazyAttrsOf raw | class schemas declared by this aspect, merged into `den.classes` |
 | `name`, `description` | str | |
 | `__functor` | function | makes the aspect callable; built-in default dispatches on context |
 | `__args` | internal | parametric aspect args — not an authoring surface |
 
 `den.lib.parametric` is **deprecated**: every aspect already has a `__functor`.
+
+### Key classification (what is a class, a quirk, or a child aspect)
+
+`classifyKeys` (`nix/lib/aspects/fx/key-classification.nix`) sorts each aspect key into one of
+four buckets, in this order:
+
+| Key matches | Category | What happens |
+|---|---|---|
+| `den.quirks` | pipe key | collected as quirk/pipe data |
+| `den.classes` | class key | emitted as a class module |
+| a nested aspect (value carries a class/pipe/structural key) | nested key | walked as a sub-aspect |
+| none of the above | unregistered class key | falls through to class (backwards compat) |
+
+Pipe keys are checked first, so a quirk name always beats a same-named class key — but the
+registries **assert** they never collide (`den.classes`/`den.quirks` share a key ⇒ eval error).
+`isStructuralKey` (exported as `den.lib.aspects.fx.keyClassification.isStructuralKey`) is what
+marks `includes`/`excludes`/`provides`/`meta`/`policies`/`classes` as non-content.
+
+### Reserved keys
+
+Keys that match no registry would be dispatched as an unregistered class. To carry your own
+metadata on an aspect, reserve it globally:
+
+```nix
+den.reservedKeys = [ "settings" "tags" ];
+```
+
+Reserved keys are structural: the pipeline ignores them entirely, so the value you wrote is left
+as-is for whatever reads it (the aspect-settings generator, §4). They are **not merged** across
+modules — last definition wins silently.
 
 ### Static vs parametric includes
 
@@ -337,17 +437,63 @@ shared aspects, or to *extend* the auto-created ones (any file may).
 
 At scope `S`, destructuring an entity-kind arg:
 
-1. **In context at `S`** → bound once.
-2. **Descendant in the schema DAG** (`user` under `host`) → fan out, emit **class-locally at `S`**.
+1. **In context at `S`** → bound once, emit at `S`.
+2. **Descendant in the schema DAG** (`user` under `host`) → fan out once per descendant, each
+   emitting **class-locally at `S`**.
 3. **Neither** (misplaced arg, or any entity kind at root/flake scope) → **silently inert**, no
-   warning.
+   warning. (Deliberate: legit fan-out and misplacement are indistinguishable without whole-fleet
+   context, so a warning would fire on correct code.)
+
+A **static** aspect (plain attrset) whose class module names a *descendant* kind is promoted to
+parametric and fanned out exactly like the aspect-level form:
+
+```nix
+# included at HOST scope — `user` is a descendant of `host` → promoted, fanned out per user
+den.aspects.desktop = {
+  nixos = { user, ... }: { users.users.${user.userName}.extraGroups = [ "video" "input" ]; };
+};
+```
 
 Consequence: a host-scope `{ user, ... }` aspect fans out over users but emits on the *host*
-class. It no longer delivers `homeManager` content to users (breaking change). To target
-another entity, use `provides`, an explicit policy, or the `host-aspects` battery.
+class. It does **not** deliver `homeManager` content to users. To target another entity, use
+`provides.to-users` / `provides.<name>`, an explicit policy, or the `host-aspects` battery.
 
 Cross-entity delivery (host configuring a sibling host) is **not** expressible via parametric
 args.
+
+### Where class content actually lands
+
+Every entity resolves in its own **scope**, and each scope only delivers *some* classes:
+
+| Scope | Delivers |
+|---|---|
+| host (`den.aspects.igloo` + its `includes` + `den.schema.host.includes`) | `nixos`, `darwin`, `os` |
+| user (`den.aspects.tux` + its `includes` + `den.schema.user.includes` + `den.default`) | `homeManager`, `user` |
+| `den.default` | walked in both, but content lands **once**, not once per scope |
+
+A `homeManager` key the host scope walks is **dropped, silently** — there is no route from host
+scope into a user's home. Same for `user` at host scope.
+
+| Written on | Class | Lands in |
+|---|---|---|
+| `den.aspects.igloo` | `nixos` / `os` | igloo's OS config |
+| `den.aspects.igloo` | `homeManager`, `user` | **nowhere** |
+| `den.aspects.tux` | `homeManager` | tux's home only |
+| `den.aspects.tux` | `user` | `users.users.tux` on igloo |
+| `den.aspects.tux` | `nixos` / `os` / `darwin` | **every host tux lives on** ⚠️ bug [#694](https://github.com/denful/den/issues/694) |
+| `igloo.provides.to-users` | `homeManager` | every user on igloo |
+| `igloo.provides.tux` | `homeManager` / `user` | tux only |
+| `tux.provides.igloo` | `homeManager` | tux's home, only on igloo |
+| `tux.provides.to-hosts` | `nixos` | igloo's OS config |
+| `igloo.includes = [ aspects.host-aspects ]` + user opts in | `homeManager` | that user's home |
+
+⚠️ [#694](https://github.com/denful/den/issues/694): untargeted `nixos`/`darwin`/`os` on a **user**
+aspect reaches every host that user lives on, with no opt-in. The planned fix makes it opt-in via
+a `user-aspects` battery mirroring `host-aspects`. Until then use the `user` class (which only
+ever touches `users.users.<name>`) or `provides.<host>` / `provides.to-hosts`.
+
+Use `to-users` when the *host* decides; use the `host-aspects` battery when each *user* decides
+whether to take the host's home config.
 
 ### Three kinds of aspect attributes
 
@@ -358,7 +504,8 @@ args.
    den.aspects.igloo.gpu = { host, ... }: lib.optionalAttrs (host ? gpu) { … };
    den.aspects.igloo.provides.alice.homeManager.programs.vim.enable = true;
    ```
-   Cross-entity special keys (permanent API, fire during the tree walk):
+   Cross-entity special keys (permanent API, they become cross-entity policy effects during the
+   tree walk — no battery needed):
    ```nix
    den.aspects.igloo = {
      provides.to-users = { user, ... }: { homeManager.programs.helix.enable = user.name == "alice"; };
@@ -366,7 +513,9 @@ args.
      provides.igloo.nixos.programs.emacs.enable = true;
    };
    ```
-   For new work prefer `den.policies` + `policy.include` (more explicit).
+   `provides.to-users` works on a feature aspect the host includes too, so one aspect can carry
+   both its system and user parts. Note: `provides` is composition, not override — to make one
+   depend on the other, include it explicitly.
 
 ### Class modules (two-layer vs flat)
 
@@ -482,8 +631,15 @@ aspect = den.lib.aspects.resolve "nixos" (den.aspects.my-aspect { host = den.hos
 nixosConfigurations.my-laptop = lib.nixosSystem { modules = [ aspect ]; };
 ```
 
-`den.hosts.<sys>.<name>.mainModule` gives the fully-resolved module for a host (also the escape
-hatch used while migrating from a non-Den flake).
+`den.lib.aspects.resolve` is **internal** — upstream explicitly marks it "not a public API". Call
+it only when building custom pipeline stages. The supported entry points are:
+
+```nix
+den.hosts.<sys>.<name>.mainModule          # fully-resolved module for a host (also the escape
+                                           # hatch when migrating from a non-Den flake)
+den.hosts.<sys>.<name>.resolved             # the resolved aspect record
+den.lib.resolveEntity "flake" { }          # public entity resolver used by the pipeline itself
+```
 
 ---
 
@@ -507,7 +663,9 @@ den.aspects.igloo.includes = [ den.policies.p ]; # this aspect subtree
 ```
 
 `excludes` prevents firing in a subtree; **parent excludes are authoritative over child includes**.
-Aspects and policies mix freely in `includes`.
+Aspects and policies mix freely in `includes`. Use `den.lib.policy.mkPolicy name fn` for inline
+policies that don't need the registry — it returns `{ __isPolicy = true; name; fn; }`, which is
+how the pipeline tells a policy from an aspect.
 
 ### Effect constructors (`den.lib.policy.*`)
 
@@ -517,14 +675,16 @@ Aspects and policies mix freely in `includes`.
 | `resolve.shared bindings` | shared (non-isolated) fan-out |
 | `resolve.to kind bindings` | resolve a specific entity kind |
 | `resolve.shared.to kind bindings` | shared fan-out + explicit kind |
-| `resolve.withIncludes includes bindings` / `.to.withIncludes` | attach includes to the new scope |
+| `resolve.withIncludes includes bindings` | attach includes to the new scope |
+| `resolve.shared.withIncludes includes bindings` | shared fan-out + attached includes |
+| `resolve.to.withIncludes kind includes bindings` | explicit kind + attached includes |
 | `include aspect` | inject an aspect into the current resolution (walks the aspect tree) |
 | `exclude aspect` | remove an aspect via the constraint registry |
 | `deliver spec` | user-facing delivery primitive (below) |
-| `route spec` | sugar over `deliver`: `fromClass`→`from`, `intoClass`→`to`, `path`→`at` |
+| `route spec` | sugar over `deliver`: `fromClass`→`from`, `intoClass`→`to`, `path`→`at`, `reinstantiate`→`mode = "verbatim"` |
 | `provide spec` | sugar over `deliver`: `class`→`to`, `module`→`from.module` |
 | `instantiate spec` | request post-pipeline instantiation (entity, or `{ name, class, instantiate, intoAttr }`) |
-| `spawn { classes ? null }` | deferred node spawn, resolved post-walk over the parent's full scope tree |
+| `spawn { classes ? null }` | deferred node spawn, resolved post-walk over the parent's full scope tree (host + siblings) so projected content sees fleet-wide pipe values |
 | `pipe` | pipe builder |
 | `pipelineOnly value` | tag a value `collisionPolicy = "class-wins"` |
 | `mkPolicy name fn` | build `{ __isPolicy = true; name; fn; }` |
@@ -557,10 +717,16 @@ policy.deliver {
 - `nest` — evaluate and place at `at`.
 - `verbatim` — place collected module wrappers **by reference** (for targets whose `merge`
   re-instantiates, e.g. microvm guest config). There is no `reinstantiate` flag; use `mode`.
+  Class sources only.
 - `guard` failing ⇒ contributes nothing. `adaptArgs` adapts module args (with non-empty `at`,
   source modules eval in a submodule whose `specialArgs` = `adaptArgs` applied to target args).
-- `policy.deliver` deliberately has **no** `appendToParent`.
-- Passing both `path` and `intoPath` to `policy.route` is an error.
+- `policy.deliver` deliberately has **no** `appendToParent` — use a class source whose `to` already
+  names the target.
+- Passing both `path` and `intoPath` to `policy.route` is an error. `intoPath` is the public
+  alias that pairs with `fromClass`/`intoClass` (the `forward` battery's naming).
+- `policy.route` also accepts `collectSubtree = true` — also collect the source class's content
+  from descendant scopes, not just this scope. That is what the built-in `packages-to-flake-parts`
+  uses so per-system `packages` gather host/user contributions.
 
 ### `policy.include` vs `policy.provide`
 
@@ -572,17 +738,23 @@ policy.deliver {
 
 ### Built-in policies
 
-Entity traversal (`policies/core.nix`):
+The only hardcoded entity traversal edge lives in `modules/policies/core.nix`; everything else is
+registered by a battery or by `modules/policies/{flake,flake-parts}.nix`.
 
 | Policy | From → To | Behaviour |
 |---|---|---|
-| `host-to-users` | `host` → `user` | one shared `{ host, user }` scope per user. A freeform key on the host aspect matching a user name is also included — but it currently reaches **every** user; prefer `provides.<user>` |
+| `host-to-users` | `host` → `user` | one shared `{ host, user }` scope per `host.users` entry. A host aspect child keyed by a user's name (`den.aspects.igloo.tux`) is included as well — but it currently reaches **every** user; prefer `provides.tux` |
 | `os-to-host` | `os` class | route `os` content to the host's own OS class, in every scope binding a host |
 | `user-to-host` | `user` class | route to `users.users.<userName>`, injecting `osConfig` |
 | `host-to-hm-users` / `hm-user-detect` | `homeManager` | import HM OS module; forward each HM user into `home-manager.users.<name>` |
 | `host-to-hjem-users` / `hjem-user-detect` | `hjem` | → `hjem.users.<name>` |
 | `host-to-maid-users` / `maid-user-detect` | `maid` (NixOS only) | → `users.users.<name>.maid` |
 | `host-to-wsl-host` / `wsl-to-host` | `wsl` | resolve `wsl-host` when `host.wsl.enable` on a NixOS host; route to host's `wsl.*` |
+
+The three home-environment families are **not** written out in the source: they are generated by
+`den.lib.home-env.makeHomeEnv`, which returns `{ battery, userDetect, hostConf }`. `hostConf`
+declares the `<optionPath>.enable` / `.module` options (`home-manager`, `hjem`, `nix-maid`), and
+the `*-user-detect` half covers users resolved by registry/policy rather than via `host.users`.
 
 Flake output traversal (`policies/flake.nix`):
 
@@ -591,11 +763,12 @@ Flake output traversal (`policies/flake.nix`):
 | `flake-to-systems` | `flake` → `flake-system` (one per `den.systems` entry) |
 | `system-to-os-outputs` | `flake-system` → `host` (+ instantiate) |
 | `system-to-hm-outputs` | `flake-system` → `home` (+ instantiate) |
-| `packages-to-flake`, `apps-to-flake`, `checks-to-flake`, `devShells-to-flake`, `legacyPackages-to-flake` | route classes to flake outputs |
+| `packages-to-flake`, `apps-to-flake`, `checks-to-flake`, `devShells-to-flake`, `legacyPackages-to-flake` | `flake-system` → flake outputs |
 
-Flake-parts (opt-in via `den.schema`, only registered when `inputs.flake-parts` exists):
-`system-to-flake-parts` (`flake-system` → `flake-parts`, one `{ flake-parts }` per system),
-`packages-to-flake-parts` (`packages` class → perSystem `packages`, `collectSubtree = true`).
+Flake-parts (opt-in via `den.schema`, only registered when `inputs.flake-parts` exists — never
+included by default): `system-to-flake-parts` (`flake-system` → `flake-parts`, one `{ flake-parts }`
+per system), `packages-to-flake-parts` (`packages` class → perSystem `packages`,
+`collectSubtree = true`).
 
 The `flake-scope` battery carries its own `den-flake-scope` policy for pipeline-arg enrichment.
 
@@ -673,6 +846,10 @@ No pipe policy is needed for same-scope aggregation.
 | `tux` | `igloo.nixos` | nothing (user data stays in user scope) |
 | `alice` | `tux.homeManager` | nothing (siblings isolated) |
 | `igloo` | `tux.homeManager` | nothing unless a host-scope pipe policy binds the pipe — **and only if the user emits nothing of its own** |
+
+Isolation can be relaxed per kind with `den.schema.<kind>.isolated = true`: an ancestor collecting
+its subtree cannot then cross into the isolated scope (the isolated scope still collects its own
+content).
 
 ### Pipe stages (`den.lib.policy.pipe`)
 
@@ -776,11 +953,19 @@ den.schema.fleet.includes = [ den.policies.fleet-to-hosts ];
 | **`provides`** | cross-entity aspect delivery (host ↔ user) |
 | **Class modules** | NixOS / Darwin / HM configuration |
 
+When config "doesn't apply", check **scope delivery** first (§4, *Where class content actually
+lands*) before suspecting parametric dispatch.
+
 ---
 
 ## 7. Reference: batteries
 
-Aliases: `den.batteries` = `den.provides` = `den._`.
+Aliases: `den.batteries` = `den.provides` = `den._`. Note the name collision with an aspect's own
+`provides` — on an *aspect* `provides`/`_` means sub-aspects; at the *top level* `den.provides`
+means batteries.
+
+Two categories: **opt-in** (you list them in `includes`) and **auto-activated** (they define classes
+or integration layers and have nothing to include — their headings name the class they add).
 
 ### Opt-in (place in an `includes` list)
 
@@ -790,17 +975,20 @@ Aliases: `den.batteries` = `den.provides` = `den._`.
 | `den.batteries.hostname` | sets `networking.hostName` from `host.hostName` (nixos/darwin/wsl) |
 | `den.batteries.primary-user` | NixOS: `wheel` + `networkmanager`; Darwin: `system.primaryUser`; WSL: `defaultUser` |
 | `(den.batteries.user-shell "zsh")` | enables `programs.<shell>`, sets login shell at OS + HM |
-| `(den.batteries.unfree [ "vscode" ])` | `allowUnfreePredicate` in nixos/darwin/homeManager |
-| `(den.batteries.insecure [ "openssl-1.1.1w" ])` | `permittedInsecurePackages` |
+| `(den.batteries.unfree [ "vscode" ])` | `allowUnfreePredicate` in nixos/darwin/homeManager; on a user also allowed on the host's OS config. Predicate builder auto-included in `den.default` |
+| `(den.batteries.insecure [ "openssl-1.1.1w" ])` | `permittedInsecurePackages`; predicate builder auto-included in `den.default` |
 | `den.batteries.host-aspects` | projects user-relevant classes (e.g. `homeManager`) from a host aspect tree onto opted-in users |
-| `den.batteries.tty-autologin "alice"` | systemd getty autologin (NixOS) |
-| `den.batteries.vm-autologin "alice"` | VM autologin (NixOS VMs) |
+| `(den.batteries.tty-autologin "alice")` | systemd getty autologin on TTY1 (NixOS) |
+| `(den.batteries.vm-autologin "alice")` | VM autologin (NixOS VMs) |
 | `den.batteries.forward { … }` | generic forwarding primitive / custom class factory |
 | `den.batteries.import-tree` | auto-import `.nix` files; class from dir name (`_<class>/`) |
-| `den.batteries.flake-scope` | exposes `lib`, `inputs`, `den` to pipeline functions *and* class modules |
+| `den.batteries.flake-scope` | exposes `lib`, `inputs`, `den` to pipeline functions *and* class modules (tagged `pipelineOnly`) |
 | `den.batteries.inputs'` | `inputs'` as a top-level module arg (per-system inputs) |
 | `den.batteries.self'` | `self'` as a top-level module arg |
 | `den.batteries.mutual-provider` | **inert compatibility shim, no effects** |
+
+`mutual-provider` does nothing on purpose: host↔user routing is now built into the pipeline. Keep
+including it if you have it; new code doesn't need it.
 
 ```nix
 den.default.includes = [ den.batteries.define-user den.batteries.hostname den.batteries.flake-scope ];
@@ -810,6 +998,8 @@ den.aspects.alice.includes = [
   (den.batteries.unfree [ "nvidia-x11" "steam" ])
 ];
 ```
+
+Batteries compose freely with inline config in the same `includes` list.
 
 ### Auto-activated (define classes / integration layers — nothing to include)
 
@@ -823,8 +1013,14 @@ den.aspects.alice.includes = [
 | `maid` | `inputs.nix-maid`, NixOS only | forwards into `users.users.<name>.maid` |
 | `flake-parts` | `inputs.flake-parts` | per-system `perSystem` modules |
 
+`os`, `user` and `wsl` are wired with the lighter `den.lib.policy.route`; `homeManager`, `hjem`
+and `maid` use `den.batteries.forward` (via `makeHomeEnv`) internally.
+
 **Activation rule**: writing `homeManager`/`hjem`/`maid` on an aspect is *not enough* — at least
-one user must list the class in `users.<name>.classes`.
+one user must list the class in `users.<name>.classes` (default `[ "user" ]`). Each home-env
+battery declares a `<optionPath>.{enable,module}` pair on the host (`home-manager`, `hjem`,
+`nix-maid`); `enable` defaults to "some user has the class", `module` defaults to the module from
+the flake input. Set `module` to pin, patch, or supply a module without the input.
 
 ```nix
 den.hosts.x86_64-linux.igloo.users.alice.classes = [ "homeManager" "hjem" ];
@@ -840,6 +1036,10 @@ den.homes.x86_64-linux."tux@igloo" = { };
 den.homes.x86_64-linux.tux = { };        # fully standalone
 ```
 
+⚠️ Content pushed from the **host** side (host policies, `provides.<user>`, `host-aspects`) does
+**not** reach a standalone `user@host` home. Put host-specific config on the user side
+(`tux.provides.igloo`).
+
 ### `forward` spec
 
 ```nix
@@ -847,13 +1047,16 @@ den.batteries.forward {
   each = lib.attrValues host.users;          # items to forward
   fromClass = item: "myClass";               # source class
   intoClass = item: host.class;              # target class
-  intoPath  = item: [ "users" "users" item.userName ];
+  intoPath  = item: [ "users" "users" item.userName ];   # or `args: path`
   fromAspect = item: item.aspect;            # defaults to item.resolved
   guard = args: bool;                        # optional
   adaptArgs = args: attrs;                   # optional
   adapterModule = { … };                     # optional, submodule type override
 }
 ```
+
+`intoClass`/`intoPath` may be omitted entirely if the source class declares
+`den.classes.<name>.forwardTo = { class; path?; }`.
 
 Guard forms: `lib.optionalAttrs` when testing whether an **option is defined**; `lib.mkIf` when
 testing a **config value**.
@@ -868,9 +1071,16 @@ den.policies.files-to-flake-parts = _: [
 den.schema.flake-parts.includes = [ den.policies.files-to-flake-parts ];
 ```
 
-`den.classes.<name>` fields: `description`, `forwardTo = { class; path?; }`,
-`parentPath = name: path` (nested classes), `parentArg` (module arg reaching the enclosing
-owner, e.g. `osConfig`). Den's own: `den.classes.homeManager.parentPath = u: [ "home-manager" "users" u ]`,
+`den.classes.<name>` fields (`classSchemaType` in `modules/options.nix`):
+
+| Field | Type | Meaning |
+|---|---|---|
+| `description` | str | **required** |
+| `forwardTo` | nullOr `{ class; path?; }` | default routing target for the `forward` battery |
+| `parentPath` | nullOr `name: path` | for nested classes, the path of a named member inside the enclosing config owner |
+| `parentArg` | nullOr str | module arg by which a member reaches the enclosing owner (`osConfig` for HM) |
+
+Den's own: `den.classes.homeManager.parentPath = u: [ "home-manager" "users" u ]`,
 `den.classes.homeManager.parentArg = "osConfig"`.
 
 ### `import-tree`
@@ -878,8 +1088,12 @@ owner, e.g. `osConfig`). Den's own: `den.classes.homeManager.parentPath = u: [ "
 ```nix
 den.schema.host.includes = [ (den.batteries.import-tree.provides.host ./hosts) ];
 den.schema.user.includes = [ (den.batteries.import-tree.provides.user ./users) ];
+den.schema.home.includes = [ (den.batteries.import-tree.provides.home ./homes) ];
 den.aspects.laptop.includes = [ (den.batteries.import-tree ./disko) ];
 ```
+
+`provides.host`/`user`/`home` read `<root>/<entity name>/_nixos/` and friends; requires
+`inputs.import-tree`.
 
 ### flake-parts integration
 
@@ -918,7 +1132,19 @@ home.instantiate { pkgs = home.pkgs; modules = [ home.mainModule ]; }
 | `flake.darwinConfigurations.<name>` | | hosts with `class = "darwin"` |
 | `flake.homeConfigurations.<name>` | | homes |
 | `flake.systemConfigs.<name>` | | `class = "systemManager"` |
-| `flake.denful.<ns>` | raw | exported namespaces |
+| `flake.denful.<ns>` | raw | exported namespaces (mirror of `den.ful.<ns>`) |
+
+`instantiate` defaults: `nixos` → `inputs.nixpkgs.lib.nixosSystem`, `darwin` →
+`inputs.darwin.lib.darwinSystem`, `systemManager` → `inputs.system-manager.lib.makeSystemConfig`.
+Override `instantiate` per entity for a pinned nixpkgs or a `specialArgs` you need. `intoAttr = [ ]`
+skips placing the configuration entirely.
+
+`inputs.den.flakeOutputs` only declares the `flake.*` options that need **merge** semantics
+(`flakeNames`: nixosConfigurations / darwinConfigurations / homeConfigurations, and `systemNames`:
+devShells / packages / apps / checks / tests / legacyPackages). Without flake-parts, import
+`inputs.den.flakeOutputs.flake` for the top-level `flake` attrset, or the single specific one
+(`inputs.den.flakeOutputs.nixosConfigurations`) if you only need that merge point. With
+flake-parts loaded, define your own `options.flake.*` instead.
 
 Contributing `packages` / `checks` / `devShells` / `legacyPackages` / `apps` from aspects
 (needed without flake-parts, or with multiple definitions to merge):
@@ -931,6 +1157,9 @@ den.schema.flake-system.includes = [ den.aspects.foo ];
 
 den.aspects.foo.packages = { pkgs, ... }: { inherit (pkgs) hello; };
 ```
+
+Any host or user aspect can produce them — `system-to-os-outputs` handles the per-host fan-out;
+you only need the `flake-system` schema include to attach the aspect.
 
 With flake-parts, use its own `perSystem` and `den.batteries.inputs'` / `self'`.
 
@@ -965,8 +1194,16 @@ With flake-parts, use its own `perSystem` and `den.batteries.inputs'` / `self'`.
 ```
 
 Second arg = boolean (export?) or list of upstream sources whose `flake.denful.<name>` merges in;
-include `true` in the list to also export. With `den.lib.__findFile` installed
-(`_module.args.__findFile = den.lib.__findFile;`) you can reference `<eg/desktop>`.
+include `true` in the list to also export. `den.namespace` creates three things: `den.ful.<name>`
+(the container), a module-arg alias `<name>`, and (when exporting) `flake.denful.<name>`.
+
+With `den.lib.__findFile` installed (`_module.args.__findFile = den.lib.__findFile;`) you can
+reference `<eg/desktop>`. This repo does exactly that — `modules/den.nix` wires `__findFile` and
+`modules/machines.nix` / `modules/roles.nix` use `<chimera/…>` angle-bracket refs.
+
+⚠️ In one module you may take `den` as an argument **or** use `<den/…>` string refs — not both.
+Taking `den` makes path lookup self-referential, `__findFile` stops resolving and Nix falls through
+to the NIX search path (`error: cannot look up '<chimera/...>' in pure evaluation mode`).
 
 ### Custom classes
 
@@ -989,23 +1226,46 @@ See https://den.denful.dev/tutorials/microvm/ for the worked example.
 
 ### `den.lib` surface
 
-Public-ish entries worth knowing:
+Verified against `den.lib` in a config that enables home-manager, hjem, maid, WSL and
+flake-parts. Public-ish entries worth knowing:
 
-- `den.lib.aspects.resolve class aspect` / `resolveImports` / `resolveWithPaths` /
-  `resolveWithState` — **internal** resolution helpers (used by `den.lib.capture`).
-- `den.lib.aspects.fx.constraints` — `exclude`, `substitute`, `filterBy` handler records for
-  `meta.handleWith`.
-- `den.lib.aspects.hasAspectIn`, `collectPathSet`, `mkEntityHasAspect`, `mkProjectedHasAspect`.
-- `den.lib.resolveEntity kind ctx` — build an aspect-like record for an entity outside the pipeline.
-- `den.lib.policy.{resolve,include,exclude,route,provide,instantiate,spawn,deliver,pipe,pipelineOnly,mkPolicy,for,when}`.
-- `den.lib.policyInspect.inspect`.
-- `den.lib.home-env.{makeHomeEnv,mkDetectHost,mkIntoClassUsers}` — build a home-env battery.
-- `den.lib.capture` (+ `den-diagram`) — capture resolution traces for diagrams.
-- `den.lib.__findFile` — angle-bracket resolver.
-- `den.lib.nh.*` — wrappers.
-- `den.lib.strict` — applied through `den.schema.aspect`.
-- Legacy/deprecated: `den.lib.parametric`, `den.lib.take.exactly`, `den.lib.perHost` /
-  `perUser` / `perHome` (warn), `den.lib` old parametric dispatch, `den.ctx`.
+| Entry | Notes |
+|---|---|
+| `den.lib.__findFile` | angle-bracket resolver |
+| `den.lib.aspects.resolve` / `resolveImports` / `resolveWithPaths` / `resolveWithState` | **internal** resolution helpers. `resolveWithPaths` is what `mainModule` uses so the pipeline runs once per entity; `resolveWithState` feeds `den.lib.capture` |
+| `den.lib.aspects.fx.constraints` | `exclude`, `substitute`, `filterBy` handler records for `meta.handleWith` |
+| `den.lib.aspects.fx.keyClassification.isStructuralKey` | what makes a key structural (used by the settings generator) |
+| `den.lib.aspects.hasAspectIn`, `collectPathSet`, `mkEntityHasAspect`, `mkProjectedHasAspect` | entity `hasAspect` building blocks |
+| `den.lib.resolveEntity kind ctx` | **public** entity resolver (used by `config.resolved` and the flake outputs). Not a rename of `resolveStage` to worry about — there is no `den.lib.resolveStage` |
+| `den.lib.policy.{resolve,include,exclude,route,provide,instantiate,spawn,deliver,pipe,pipelineOnly,mkPolicy,for,when}` | |
+| `den.lib.policyInspect.inspect` | |
+| `den.lib.home-env.{makeHomeEnv,mkDetectHost,mkIntoClassUsers}` | build a home-env battery |
+| `den.lib.forward` | the `forward` implementation behind `den.batteries.forward` |
+| `den.lib.capture` (+ `den-diagram`) | `capture`, `captureAll`, `captureWithPaths`, `captureWithPathsWith`, `captureFleet` |
+| `den.lib.nh.{denPackages,denShell,denApps,hostApps,homeApps}` | nh wrappers |
+| `den.lib.fx` | `nix-effects` API (§10) |
+| `den.lib.strict` | applied through `den.schema.aspect` |
+| `den.lib.nixModule` | the whole Den module set as one nix module (no flake) |
+| `den.lib.nsTypes` / `den.lib.schema` / `den.lib.schemaUtil` | namespace + gen-schema plumbing (mostly internal) |
+| `den.lib.synthesizePolicies` | policy synthesis helper |
+
+**Deprecated / legacy** (all still evaluate, all warn or no-op):
+
+- `den.lib.parametric` and `.{atLeast,exactly,fixedTo,expands}` — identity passthroughs.
+  `fixedTo`/`expands` still return a parametric wrapper. Every aspect already has a `__functor`.
+- `den.lib.canTake` and `.{atLeast,exactly,upTo}` — pure predicates, do **not** warn; still used
+  by the type system.
+- `den.lib.take.{exactly,atLeast,upTo}` — context guards; `exactly` warns, the rest are identity.
+  `take.unused` is a plain helper, does not warn.
+- `den.lib.perHost` / `perUser` / `perHome` — now thin aliases for `({ host, ... }: …)`. They no
+  longer self-suppress: the binding-half rewrite means a config that relied on the old silent `{}`
+  will now see the wrapped aspect bind.
+- `den.ctx` — compat shim; see https://den.denful.dev/guides/migrate-ctx/.
+
+**Removed**: `den.stages.<kind>.includes` now throws with a migration message. Use
+`den.schema.<kind>.includes`; for providers use `policy.aspects` with direct aspect references
+(`modules/removed-stages.nix`).
+
 
 ---
 
@@ -1044,16 +1304,26 @@ https://den.denful.dev/future/.
 
 1. **Walk** the scope tree from `flake`, collecting aspects, pipe data, routes and instantiate
    requests into scope-partitioned state. Includes are deduplicated by `"${scope}/${identityKey}"`.
-2. **Pipe assembly** (`assemblePipes`, post-walk): expose pass → broadcast pass → per-scope
+   Scope IDs are `key=value` pairs sorted lexicographically (`"host=igloo,user=tux"`).
+2. **Per-scope wrapping** (`wrapClassModule`): each scope's class imports get that scope's entity
+   context pre-applied, so the module system only sees its own args.
+3. **Pipe assembly** (`assemblePipes`, post-walk): expose pass → broadcast pass → per-scope
    assembly (extract raw entries, merge exposed child data, mark local config thunks, apply
    untargeted pipe effects, route inbound `pipe.as`, build `pipe.to` targets) → inject into scope
    contexts.
-3. **Per-host extraction** (`applyInstantiates`): filter shared state to each host's subtree
+4. **Route application**: `policy.route` specs read source content from scope partitions and inject
+   into target classes.
+5. **Per-host extraction** (`applyInstantiates`): filter shared state to each host's subtree
    (host scope + descendants + ancestors such as `flake-system`, whose routes/provides must stay
    visible), then re-run class wrapping, provides and routes with the host as root scope.
-4. **Instantiation** via each entity's `instantiate`.
+6. **Instantiation** via each entity's `instantiate`.
 
 ⇒ `pipe.collect` always sees all hosts' data; no walk-order sensitivity.
+
+Two mechanisms must stay in sync during every scope transition: `scope.provide` (which context
+handlers are visible to parametric resolution) and `state.currentScope` (which partition emissions
+write to). Both are set in the same `fx.bind` chain. If they diverge, content lands in the wrong
+scope — that is the shape of most "my config went to the wrong host" bugs.
 
 Built-in policy graph:
 
@@ -1069,6 +1339,17 @@ host ──host-to-hm-users──> home-manager users
 
 ## 12. Gotchas checklist
 
+**Where config lands** (the #1 source of confusion)
+- Host scope delivers `nixos`/`darwin`/`os` only. User scope delivers `homeManager`/`user`.
+  A `homeManager` key written on a host aspect (or on an aspect the host includes, even a
+  `{ user, ... }:` one) is **dropped silently**.
+- ⚠️ [#694](https://github.com/denful/den/issues/694): untargeted `nixos`/`darwin`/`os` on a
+  **user** aspect reaches every host that user lives on. Use `user` class, `provides.<host>` or
+  `provides.to-hosts`.
+- `den.aspects.<host>.<username>` (host aspect child named after a user) reaches **every** user on
+  that host, not just that one. Use `provides.<username>`.
+- `den.default` is walked in every scope, but its content lands **once**, not once per scope.
+
 **Class modules / dispatch**
 - Flat-form class modules need `...`; aspect-level context wrappers should omit it.
 - Full application (all args are context args) needs no `...`.
@@ -1078,19 +1359,24 @@ host ──host-to-hm-users──> home-manager users
   `den-wins` / `class-wins`.
 - Class modules naming a **descendant** entity kind are promoted to parametric and fan out
   class-locally at the including scope.
+- Prefer **named** aspects over inline anonymous functions in `includes` — better traces, and they
+  show up in diagrams.
 
 **Entities**
 - Darwin hosts have `class = "darwin"`, not `"nixos"`. `host.class` is the OS class, not the
   context type.
 - Home-env classes (`homeManager`, `hjem`, `maid`) need the class in `users.<name>.classes`;
   writing the aspect key alone is inert.
+- Host-side content (`provides.<user>`, `host-aspects`, host policies) does **not** reach a
+  standalone `user@host` home — put it on the user side.
+- A bare **string** in `den.schema.<kind>.includes` / `.excludes` throws; use the attrset.
 - Files under `modules/` starting with `_` are skipped by `import-tree`.
 - `den.systems` (not hosts directly) drives the flake→system fan-out.
 - `den.default` owned configs are deduped, but parametric functions in `den.default.includes` run
   at every context stage — write bare functions.
 
 **Pipes / quirks**
-- Quirk names must not collide with `den.classes` names.
+- Quirk names must not collide with `den.classes` names (asserted at eval).
 - A quirk **function** value is *called* unless it asks for unbound args (`config`, `pkgs`).
   To deliver a function itself (an overlay), wrap it: `_: [ overlay ]`.
 - `pipe.for`'s function must return a **list**; max one `pipe.for` per pipe per scope.
@@ -1101,35 +1387,52 @@ host ──host-to-hm-users──> home-manager users
 - Cross-host config-dependent thunks must form a DAG.
 
 **Aspects**
-- `meta` is freeform: a stale `meta.provider` is silently absorbed. `meta.aspect-chain`:
-  `null` ≠ `[]` (`null` = unset, `[]` = root).
+- `meta` is freeform: a stale `meta.provider` is silently absorbed. `meta.adapter` no longer
+  exists (`meta.handleWith` replaced it). `meta.aspect-chain`: `null` ≠ `[]` (`null` = unset,
+  `[]` = root).
 - `excludes` are authoritative — a parent's exclude cannot be overridden by a child's include.
-- Host-scope `{ user, ... }` aspects no longer deliver `homeManager` content to users; route via
+- Host-scope `{ user, ... }` aspects do not deliver `homeManager` content to users; route via
   `provides.to-users`, a policy, or the `host-aspects` battery.
 - Reserved keys (`settings`) are **not merged** across modules — last definition wins silently.
 - `settings` must be declared on the static aspect attrset, and holds declarations, not values.
+- In one module you may take `den` as an argument **or** use `<den/…>` string refs — never both.
+
+**Removed**
+- `den.stages` throws. Use `den.schema.<kind>.includes`.
 
 ---
 
 ## 13. Debugging & tooling
 
 ```nix
-# expose den temporarily, then remove
+# expose den temporarily, then remove (this repo keeps it on purpose for `nix repl`)
 { den, ... }: { flake.den = den; }
 ```
 
 ```console
 nix repl                # then :lf .
-just repl               # loads denTest + den.lib (does NOT load your project definitions)
+just repl               # upstream Justfile: nix repl --override-input den . ./templates/ci
+                        # loads denTest + den.lib (does NOT load your project definitions)
 ```
 
+- **Inspect the live registry** (works in this repo as-is):
+  ```console
+  nix eval --json .#den --apply 'd: {
+    kinds      = builtins.attrNames d.schema;      # ignore the _-prefixed introspection attrs
+    classes    = builtins.attrNames d.classes;
+    batteries  = builtins.attrNames d.batteries;
+    policies   = builtins.attrNames d.policies;
+    lib        = builtins.attrNames d.lib;
+    denconfig  = d.config;                          # classModuleCollisionPolicy
+  }'
+  ```
 - **Policy inspection**: `den.lib.policyInspect.inspect { kind = "host"; context = { host = …; }; }`
 - **Trace context**: `den.aspects.laptop.includes = [ ({ host, ... }@ctx: builtins.trace ctx { … }) ];`
   (`builtins.break ctx` to drop into a debugger)
 - **Manual resolve**:
   ```nix
-  module = den.lib.aspects.resolve "nixos" den.aspects.laptop
-  module = den.hosts.x86_64-linux.igloo.mainModule          # context-dependent
+  module = den.lib.aspects.resolve "nixos" den.aspects.laptop   # internal
+  module = den.hosts.x86_64-linux.igloo.mainModule             # supported
   cfg = (lib.nixosSystem { modules = [ module ]; }).config
   ```
 - **Diagrams**:
@@ -1144,15 +1447,18 @@ just repl               # loads denTest + den.lib (does NOT load your project de
   ```
 - Common symptoms: duplicate list entries (parametric `den.default.includes`), missing attribute
   (context lacks the expected param — trace keys), wrong class (Darwin), module not found (`_`
-  prefix or outside `modules/`).
+  prefix or outside `modules/`), config "not applying" (check scope delivery first — §4).
 
-Templates to start from: `tutorials/minimal`, `tutorials/default`, `tutorials/noflake`,
-`tutorials/nvf-standalone`, `tutorials/example`, `tutorials/flake-parts-modules`,
-`tutorials/ci`. See https://den.denful.dev/tutorials/overview/.
+Templates to start from: `minimal`, `default`, `noflake`, `nvf-standalone`, `example`,
+`microvm`, `flake-parts-modules`, `bogus`, `ci`. Demos (repo-local, `path:../..`): `fleet-demo`,
+`terranix-demo`, `diagram-demo`, `scoped-import-tree`. See
+https://den.denful.dev/tutorials/overview/.
 
 ---
 
 ## 14. Doc index (URLs)
+
+Verified live against https://den.denful.dev on 2026-10-11 — all of these return 200.
 
 **Start**: `/overview/` · `/motivation/` · `/guides/from-zero-to-den/` ·
 `/guides/from-flake-to-den/` · `/guides/migrate/` · `/explanation/coming-from/` · `/future/`
@@ -1175,18 +1481,27 @@ Templates to start from: `tutorials/minimal`, `tutorials/default`, `tutorials/no
 
 **Troubleshoot**: `/guides/debug/` · `/tutorials/bogus/`
 
-**Examples**: `/tutorials/fleet-demo/` · `/tutorials/microvm/` · `/tutorials/terranix-demo/` ·
-`/tutorials/case-study-kubernetes/` · `/tutorials/case-study-acl-environments/` ·
-`/tutorials/case-study-disks-impermanence/` · `/tutorials/case-study-diagrams/` ·
-`/tutorials/overview/`
+**Examples**: `/tutorials/overview/` · `/tutorials/fleet-demo/` · `/tutorials/microvm/` ·
+`/tutorials/terranix-demo/` · `/guides/acl-environments/` ·
+`/tutorials/case-study-kubernetes/` · `/tutorials/case-study-disks-impermanence/` ·
+`/tutorials/case-study-diagrams/`
+
+**Templates**: `/tutorials/minimal/` · `/tutorials/default/` · `/tutorials/example/` ·
+`/tutorials/noflake/` · `/tutorials/nvf-standalone/` · `/tutorials/flake-parts-modules/` ·
+`/tutorials/ci/` · `/tutorials/bogus/`
 
 **Reference**: `/reference/glossary/` · `/reference/schema/` · `/reference/aspects/` ·
-`/reference/policies/` · `/reference/quirks/` · `/reference/lib/` · `/reference/diag/` ·
-`/reference/output/` · legacy: `/reference/lib-deprecated/`, `/explanation/context-system/`,
-`/guides/migrate-ctx/`
+`/reference/batteries/` · `/reference/quirks/` · `/reference/policies/` · `/reference/lib/` ·
+`/reference/diag/` · `/reference/output/` · legacy: `/reference/lib-deprecated/`,
+`/explanation/context-system/`, `/guides/migrate-ctx/`
 
 **Project**: `/releases/` (bleeding-edge) · `/contributing/` · `/maintainers/` · `/community/`
 
 **Ecosystem**: https://denful.dev (sponsor) · `import-tree`, `flake-aspects`, `flake-file`,
 `with-inputs`, `denful`, `dendrix` · `gen`, `gen-schema`, `gen-merge`, `gen-scope`, `gen-graph` ·
 DeepWiki: https://deepwiki.com/denful/den · Matrix `#den-lib:matrix.org`
+
+⚠️ Note `/guides/acl-environments/` — it lives under **guides**, not `/tutorials/`, despite being
+a "Case Study". `/tutorials/acl-environments/` and `/tutorials/case-study-acl-environments/` both
+404. Likewise the docs prose still links `github.com/denful/import-tree` while every template pins
+`github:vic/import-tree`; trust the templates.

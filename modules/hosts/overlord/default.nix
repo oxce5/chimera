@@ -33,6 +33,8 @@
     facter.reportPath = ./_facter.json;
     boot = {
       kernelPackages = pkgs.linuxPackages_zen;
+      # /dev/fuse, for the rclone mount in <chimera/storage>.
+      kernelModules = ["fuse"];
     };
     networking = {
       hosts = {

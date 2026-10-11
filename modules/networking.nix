@@ -26,10 +26,14 @@
         settings = {
           listen-address = "127.0.0.1";
           bind-interfaces = true;
-          strict-order = false;
+          strict-order = true;
+
           server = [
-            "100.97.28.65" # homelab via Tailscale
-            "192.168.1.21" # homelab LAN
+            "/chimera.moe/100.97.28.65"
+            "/chimera.moe/192.168.1.21"
+
+            "100.97.28.65"
+            "192.168.1.21"
           ];
         };
       };

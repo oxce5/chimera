@@ -1,5 +1,7 @@
 {
   den.aspects.overlord.nixos = {
+    boot.tmp.cleanOnBoot = true;
+
     fileSystems."/" = {
       device = "/dev/disk/by-label/ROOT";
       fsType = "ext4";

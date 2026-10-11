@@ -38,7 +38,11 @@
         Type = lib.mkForce "exec";
         RestartSec = "30s";
         TimeoutStopSec = "30s";
-        ExecStopPost = "-${pkgs.fuse3}/bin/fusermount3 -uz %h/Blender_online";
+        ExecStopPost = "-/run/wrappers/bin/fusermount3 -uz %h/Blender_online";
+        ExecStartPre = lib.mkForce [
+          "-/run/wrappers/bin/fusermount3 -uz %h/Blender_online"
+          "${pkgs.coreutils}/bin/mkdir -p %h/Blender_online"
+        ];
       };
       Unit.StartLimitIntervalSec = "5min";
     };

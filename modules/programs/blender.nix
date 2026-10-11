@@ -4,11 +4,11 @@
   in {
     packages.blender-beta = pkgs.stdenv.mkDerivation rec {
       pname = "blender-bin";
-      version = "5.2.0";
+      version = "5.3.0";
 
       src = pkgs.fetchurl {
-        url = "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz";
-        hash = "sha256-lvbBgaMPSVBgeDnchNQqNUslDYoCMbCYtZt7xpw1HEg=";
+        url = "https://cdn.builder.blender.org/download/daily/blender-5.3.0-beta+v53.2ebd15112ac6-linux.x86_64-release.tar.xz";
+        hash = "sha256-lFCNT/AW6bLIBuWo/qNfP46Lo9mfObJK0jMoU9q6vLQ=";
       };
 
       buildInputs = [pkgs.makeWrapper];

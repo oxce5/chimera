@@ -7,9 +7,6 @@
   # not via a `chimera` module argument. Taking `chimera` as an argument makes
   # path lookup self-referential and it falls through to the NIX search path.
   chimera = {
-    # The floor every user account in the fleet stands on: an interactive
-    # shell, a wayland session, and the file manager. Everything else is
-    # layered on top by a role.
     desktop-base = {
       includes = [
         <chimera/shell>
@@ -24,7 +21,6 @@
       ];
     };
 
-    # The daily driver: full desktop, GUI apps, and the dev/ai toolchains.
     workstation-user = {
       includes = [
         <chimera/desktop-base>
@@ -64,6 +60,11 @@
         <chimera/dev/base>
         <chimera/dev/sessions>
         <chimera/pwn>
+        # Only needed for its homeManager half (the niri portal trim): Den
+        # merges homeManager content reached through a *user* role aspect.
+        # `chimera.vm` is a host role, so its includes — including this one —
+        # contribute nixos content but their homeManager half is inert.
+        <chimera/virt/headless>
       ];
     };
   };

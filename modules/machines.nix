@@ -27,9 +27,8 @@
         <chimera/virt/emoji-fonts>
 
         # Host-agnostic; overlord picks these up when it goes volatile too.
-        <chimera/impermanence/ephemeral-tmp>
-        # Inert skeleton, see chimera.impermanence.volatile-root.
-        <chimera/impermanence/volatile-root>
+        <chimera/impermanence/tmp>
+        <chimera/impermanence/root>
       ];
     };
   };

@@ -41,9 +41,6 @@
       };
     };
 
-    # A throwaway VM: no speech daemon, no prebuilt nix-index database, no
-    # avahi/printing, and a short bootloader timeout. The laptop keeps the
-    # upstream defaults for all of these.
     headless.nixos = {
       pkgs,
       lib,
@@ -53,6 +50,26 @@
         kernelParams = ["reboot=acpi"];
         plymouth.enable = lib.mkForce false;
         loader.timeout = 5;
+      };
+
+      # capped due to low RAM
+      fileSystems = {
+        "/tmp" = lib.mkForce {
+          device = "tmpfs";
+          fsType = "tmpfs";
+          options = [
+            "mode=1777"
+            "size=1G"
+          ];
+        };
+        "/var/tmp" = lib.mkForce {
+          device = "tmpfs";
+          fsType = "tmpfs";
+          options = [
+            "mode=1777"
+            "size=256M"
+          ];
+        };
       };
 
       hardware.enableRedistributableFirmware = false;
@@ -66,17 +83,23 @@
 
       programs.nix-index-database.comma.enable = lib.mkForce false;
       programs.nix-index.package = lib.mkForce pkgs.nix-index; # drop the prebuilt ~180 MB database
+
+      # just use termfilechooser bro
+      xdg.portal.extraPortals = lib.mkForce (with pkgs; [
+        xdg-desktop-portal-termfilechooser
+      ]);
     };
 
-    # Keep the store from filling / on big nixpkgs updates. The VM only runs
-    # for a few hours, so GC-on-boot catches the previous session's garbage;
-    # min-free/max-free additionally auto-GC mid-build when space runs low.
+    headless.homeManager = {pkgs, ...}: {
+      wayland.windowManager.niri.portalPackage = pkgs.xdg-desktop-portal-termfilechooser;
+    };
+
     ephemeral-store.nixos = {lib, ...}: {
       nix = {
         optimise.automatic = lib.mkForce true;
         gc = {
           automatic = true;
-          options = "--delete-older-than 14d --max-freed 20G";
+          options = "--delete-older-than 3d --max-freed 20G";
         };
         settings = {
           keep-outputs = lib.mkForce false;
@@ -86,12 +109,9 @@
           max-free = "10G";
         };
       };
-      # Run the GC unit once at boot instead of relying on a daily timer that
-      # likely never fires within the VM's short uptime.
       systemd.services."nix-gc".wantedBy = lib.mkForce ["multi-user.target"];
     };
 
-    # No sound hardware is routed to this VM, so drop the ALSA/JACK stacks.
     audio-minimal.nixos = {lib, ...}: {
       services.pipewire = {
         alsa.enable = lib.mkForce false;
@@ -100,9 +120,6 @@
       };
     };
 
-    # Emoji coverage on top of the fleet-wide iosevka-chimera (contributed by
-    # chimera.theming), without the rest of the default font packages (~170 MB
-    # of CJK/unifont).
     emoji-fonts.nixos = {
       pkgs,
       lib,

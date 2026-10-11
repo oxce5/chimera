@@ -1,5 +1,17 @@
 {chimera, ...}: {
-  chimera.pwn.provides.re.homeManager = {pkgs, ...}: {
+  chimera.pwn.provides.re.homeManager = {pkgs, ...}: let
+    cutter = pkgs.cutter.overrideAttrs (_: {
+      preBuild = ''
+        runtimePythonPath=$(
+          echo "$PYTHONPATH" |
+          tr ':' '\n' |
+          grep -v 'shiboken6-generator' |
+          paste -sd: -
+        )
+        qtWrapperArgs+=(--prefix PYTHONPATH : "$runtimePythonPath")
+      '';
+    });
+  in {
     programs.rizin = {
       enable = true;
       package = pkgs.rizin.withPlugins (ps: [ps.rz-ghidra ps.sigdb]);
@@ -12,7 +24,7 @@
     };
 
     home.packages = [
-      pkgs.cutter
+      cutter
     ];
   };
 }

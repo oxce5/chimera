@@ -1,6 +1,22 @@
 {chimera, ...}: {
   # Tools every user gets, on every host.
-  chimera.apps.provides.coreutils.base.homeManager = {pkgs, ...}: {
+  chimera.apps.provides.coreutils.base.homeManager = {pkgs, ...}: let
+    lib = pkgs.lib;
+    rgaHelpers = with pkgs; [
+      ffmpeg
+      poppler-utils
+      ripgrep
+      zip
+      fzf
+    ];
+    ripgrepAll = pkgs.ripgrep-all.overrideAttrs (_: {
+      postInstall = ''
+        for bin in $out/bin/*; do
+          wrapProgram "$bin" --prefix PATH ":" "${lib.makeBinPath rgaHelpers}"
+        done
+      '';
+    });
+  in {
     home.packages = with pkgs; [
       aria2
       choose
@@ -16,7 +32,7 @@
       psmisc
       python3
       ripgrep
-      ripgrep-all
+      ripgrepAll
       rsync
       sd
       strace

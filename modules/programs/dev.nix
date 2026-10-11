@@ -20,6 +20,7 @@
         xdg.configFile."nvim/init.lua".enable = lib.mkForce false;
 
         home.packages = with pkgs; [
+          # DO NOT REMOVE: Treesitter requirement
           gcc
         ];
       };

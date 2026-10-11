@@ -9,6 +9,28 @@
       ];
     };
 
+    lvm_vg.main = {
+      type = "lvm_vg";
+      lvs = {
+        persist = {
+          size = "15G";
+          content = {
+            type = "filesystem";
+            format = "ext4";
+            mountpoint = "/persist";
+          };
+        };
+        home = {
+          size = "100%";
+          content = {
+            type = "filesystem";
+            format = "ext4";
+            mountpoint = "/home";
+          };
+        };
+      };
+    };
+
     disk = {
       main = {
         type = "disk";
@@ -31,20 +53,13 @@
                 ];
               };
             };
-            persist = {
-              size = "4G";
-              content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/persist";
-              };
-            };
-            home = {
+
+            lvm = {
               size = "100%";
+              type = "8e00";
               content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/home";
+                type = "lvm_pv";
+                vg = "main";
               };
             };
           };

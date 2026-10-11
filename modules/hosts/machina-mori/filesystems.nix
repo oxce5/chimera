@@ -7,7 +7,7 @@
         "virtio_pci"
         "virtio"
       ];
-      services.lvm.enable = false;
+      services.lvm.enable = true;
     };
   };
 }

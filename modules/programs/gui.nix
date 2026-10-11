@@ -24,9 +24,8 @@
         # gearlever
         # dino
 
-        # (withSystem pkgs.stdenv.hostPlatform.system (p: p.config.packages.blender-beta))
         (inputs.wrapper-manager.lib.wrapWith pkgs {
-          basePackage = pkgs.blender;
+          basePackage = withSystem pkgs.stdenv.hostPlatform.system (p: p.config.packages.blender-beta);
           env = {
             __NV_PRIME_RENDER_OFFLOAD.value = "1";
             __NV_PRIME_RENDER_OFFLOAD_PROVIDER.value = "NVIDIA-G0";

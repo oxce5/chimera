@@ -25,6 +25,7 @@
     provides.to-users = {user, ...}: {
       nixos.preservation.preserveAt."/persist".users.${user.userName} = {
         directories = [
+          ".cache/awww"
           ".config/carapace"
           ".config/kitty"
           ".config/mozilla"

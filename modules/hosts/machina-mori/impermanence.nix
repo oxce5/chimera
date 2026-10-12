@@ -23,11 +23,29 @@
     };
 
     provides.to-users = {user, ...}: {
-      nixos.preservation.preserveAt."/persist".users.${user.userName}.directories = [
-        ".config/nvim"
-        ".local/state/nvim"
-        ".sliver-client"
-      ];
+      nixos.preservation.preserveAt."/persist".users.${user.userName} = {
+        directories = [
+          ".config/carapace"
+          ".config/kitty"
+          ".config/mozilla"
+          ".config/nuclei"
+          ".config/nvim"
+          ".config/uncover"
+          ".config/vicinae"
+          ".local/share/fish"
+          ".local/share/nvim"
+          ".local/share/vicinae"
+          ".local/state/nvim"
+          ".msf4"
+          ".penelope"
+          ".sliver-client"
+          "nuclei-templates"
+        ];
+        files = [
+          ".config/herdr/config.toml"
+          ".config/herdr/session.json"
+        ];
+      };
     };
   };
 }

@@ -9,6 +9,15 @@
       ];
     };
 
+    nodev."/home" = {
+      type = "nodev";
+      fsType = "tmpfs";
+      mountOptions = [
+        "mode=0755"
+        "size=100%"
+      ];
+    };
+
     lvm_vg.main = {
       type = "lvm_vg";
       lvs = {
@@ -18,14 +27,6 @@
             type = "filesystem";
             format = "ext4";
             mountpoint = "/persist";
-          };
-        };
-        home = {
-          size = "100%";
-          content = {
-            type = "filesystem";
-            format = "ext4";
-            mountpoint = "/home";
           };
         };
       };

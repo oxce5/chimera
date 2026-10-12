@@ -6,6 +6,7 @@
     ];
 
     fileSystems = {
+      "/home".neededForBoot = true;
       "/persist".neededForBoot = true;
       "/nix".neededForBoot = true;
     };

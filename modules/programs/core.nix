@@ -24,6 +24,7 @@
       dua
       edir
       fd
+      fzf
       file
       hexyl
       inotify-tools

@@ -41,6 +41,7 @@
           ".penelope"
           ".sliver-client"
           "nuclei-templates"
+          ".config/herdr/plugins"
         ];
         files = [
           ".config/herdr/config.toml"

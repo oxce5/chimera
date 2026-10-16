@@ -17,9 +17,10 @@
         ...
       }: {
         imports = [inputs.niri-nix.nixosModules.default];
+        nixpkgs.overlays = [ inputs.niri-nix.overlays.niri-nix ];
         programs.niri = {
           enable = true;
-          package = pkgs.niri;
+          package = pkgs.niri-unstable;
           useNautilus = false;
         };
       };
@@ -80,7 +81,7 @@
         };
         wayland.windowManager.niri = {
           enable = true;
-          package = pkgs.niri;
+          package = pkgs.niri-unstable;
 
           settings =
             {
@@ -103,6 +104,7 @@
                 mouse = {
                   accel-speed = -0.600000;
                 };
+                focus-follows-mouse = [];
               };
 
               screenshot-path = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png";

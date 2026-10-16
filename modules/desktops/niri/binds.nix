@@ -134,7 +134,7 @@
           close-window = [];
         };
         "Mod+F" = {maximize-column = [];};
-        "Mod+Ctrl+F" = {toggle-windowed-fullscreen = [];};
+        "Mod+Ctrl+Shift+F" = {toggle-windowed-fullscreen = [];};
         "Mod+Shift+F" = {fullscreen-window = [];};
         "Mod+Shift+T" = {toggle-window-floating = [];};
         "Mod+Shift+V" = {switch-focus-between-floating-and-tiling = [];};

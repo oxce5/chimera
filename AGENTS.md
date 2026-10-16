@@ -172,6 +172,10 @@ in-repo, and §12 is a dense list worth skimming in full.
   — `custom` asks niri for a mode the guest GPU never advertises, which is exactly the documented
   use case. Two assertions in `den.default.nixos` require every host to define ≥1 display and
   require `refresh` when `custom` is set.
+- A display key is whatever niri knows the output by — copy the name from `niri msg outputs`
+  (often a connector like `eDP-1`, but a display can also be named by its EDID, in which case the
+  key is a longer string). Such a key must be quoted — unquoted it is a Nix parse error, not a
+  module error. `transform` is an `enum` of strings, so `transform = "270";`.
 - `wallpaper` is recorded but **nothing applies it** (`awww` takes no image argument, and the
   startup race is unwon). Apply it manually: `awww img /assets/rei.jpeg`.
 - Root is fully volatile: tmpfs `/` + `/home`, a 15 G ext4 `/persist` LV, and a disposable btrfs

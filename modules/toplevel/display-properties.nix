@@ -101,6 +101,12 @@ in {
     options.displays = mkOption {
       type = types.lazyAttrsOf displayType;
       default = {};
+      description = ''
+        Per-connector display config, keyed by whatever name niri knows the
+        output by — copy it from `niri msg outputs`. Usually a connector
+        (`eDP-1`, `HDMI-A-5`), but a display can also be named by its EDID, in
+        which case the key is a longer string with spaces and has to be quoted.
+      '';
     };
     options.primaryDisplay = mkOption {
       type = types.nullOr (types.lazyAttrsOf types.raw);

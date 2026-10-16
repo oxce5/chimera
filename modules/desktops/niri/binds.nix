@@ -193,7 +193,7 @@
         "Mod+R" = {switch-preset-column-width = [];};
         "Mod+Shift+R" = {switch-preset-window-height = [];};
         "Mod+Ctrl+R" = {reset-window-height = [];};
-        "Mod+Ctrl+F" = {expand-column-to-available-width = [];};
+        "Mod+Ctrl+F" = {maximize-window-to-edges = [];};
         "Mod+C" = {center-column = [];};
         "Mod+Ctrl+C" = {center-visible-columns = [];};
 

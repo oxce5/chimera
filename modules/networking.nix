@@ -14,10 +14,6 @@
           "podman0"
           "docker0"
         ];
-        nameservers = [
-          "192.168.1.21"
-          "100.97.28.65"
-        ];
         resolvconf.extraOptions = ["timeout:1" "attempts:2"];
       };
       services.dnsmasq = {
@@ -26,7 +22,9 @@
         settings = {
           listen-address = "127.0.0.1";
           bind-interfaces = true;
+          no-resolv = true;
           strict-order = true;
+          cache-size = 10000;
 
           server = [
             "/chimera.moe/100.97.28.65"

@@ -1,4 +1,8 @@
-{chimera, ...}: {
+{
+  chimera,
+  lib,
+  ...
+}: {
   den.aspects.overlord = {
     includes = with chimera; [
       laptop
@@ -52,6 +56,8 @@
         "192.168.1.254" = ["bastion"];
       };
     };
+
+    services.dnsmasq.settings.server = lib.mkAfter ["192.168.1.1"];
 
     users.privilegedGroups = ["audio" "docker"];
     hardware.nvidia-container-toolkit.enable = true;

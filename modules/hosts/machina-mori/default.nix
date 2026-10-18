@@ -1,7 +1,7 @@
 {
-chimera,
-lib,
-...
+  chimera,
+  lib,
+  ...
 }: {
   den.aspects.machina-mori = {
     includes = with chimera; [
@@ -39,6 +39,11 @@ lib,
         };
       };
       virtualisation.docker.enable = lib.mkForce false;
+
+      services.dnsmasq.settings.server = lib.mkAfter [
+        "192.168.122.1"
+        "1.1.1.1"
+      ];
     };
 
     provides.to-users = {user, ...}: {

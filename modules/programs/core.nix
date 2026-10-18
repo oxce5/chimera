@@ -54,6 +54,7 @@
       home.packages = with pkgs; [
         doggo
         dust
+        ddcutil
         eva
         ffmpeg
         gdu

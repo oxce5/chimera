@@ -1,6 +1,6 @@
 {chimera, ...}: {
   chimera.browser.provides = {
-    base = {
+    base-firefox = {
       homeManager = {
         lib,
         config,
@@ -111,7 +111,7 @@
     };
 
     firefox = {
-      includes = [chimera.browser._.base];
+      includes = [chimera.browser._.base-firefox];
 
       homeManager = {
         programs.firefox = {
@@ -141,7 +141,7 @@
     };
 
     pentest = {
-      includes = [chimera.browser._.base];
+      includes = [chimera.browser._.base-firefox];
 
       homeManager = {
         pkgs,

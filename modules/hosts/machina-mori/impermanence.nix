@@ -29,6 +29,7 @@
           ".config/carapace"
           ".config/kitty"
           ".config/mozilla"
+          ".config/net.imput.helium"
           ".config/nuclei"
           ".config/nvim"
           ".config/uncover"

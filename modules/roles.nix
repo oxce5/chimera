@@ -57,6 +57,10 @@
 
         <chimera/apps/coreutils-slim>
         <chimera/browser/pentest>
+        # homeManager half of pentest-helium (the package); its nixos half
+        # (/etc/chromium policies) comes via the vm host role. Mod+B stays
+        # on firefox-esr - helium is launched from the launcher.
+        <chimera/browser/pentest-helium>
         <chimera/dev/base>
         <chimera/dev/sessions>
         <chimera/pwn>

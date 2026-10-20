@@ -1,17 +1,4 @@
-{
-  chimera,
-  lib,
-  ...
-}: {
-  den.aspects.overlord = {
-    includes = with chimera; [
-      laptop
-      apps._.openrgb
-      virt._.host
-      virt._.docker
-    ];
-  };
-
+{lib, ...}: {
   den.hosts.x86_64-linux.overlord = {
     # niri output names; pinned panel, HDMI-A-5 (projector) left unpinned
     displays = {

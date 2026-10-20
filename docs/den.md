@@ -1199,7 +1199,7 @@ include `true` in the list to also export. `den.namespace` creates three things:
 
 With `den.lib.__findFile` installed (`_module.args.__findFile = den.lib.__findFile;`) you can
 reference `<eg/desktop>`. This repo does exactly that — `modules/den.nix` wires `__findFile` and
-`modules/machines.nix` / `modules/roles.nix` use `<chimera/…>` angle-bracket refs.
+`modules/assignments.nix` uses `<chimera/…>` angle-bracket refs.
 
 ⚠️ In one module you may take `den` as an argument **or** use `<den/…>` string refs — not both.
 Taking `den` makes path lookup self-referential, `__findFile` stops resolving and Nix falls through

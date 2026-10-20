@@ -1,15 +1,4 @@
-{
-  chimera,
-  lib,
-  ...
-}: {
-  den.aspects.machina-mori = {
-    includes = with chimera; [
-      vm
-      virt._.guest
-    ];
-  };
-
+{lib, ...}: {
   den.hosts.x86_64-linux.machina-mori = {
     displays.Virtual-1 = {
       width = 1888;

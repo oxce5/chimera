@@ -40,7 +40,8 @@ nix repl                          # then :lf . ; .#den is the whole den config
 - `programs.nh` is pointed at `/home/oxce5/.flake` (`modules/programs/nh.nix`), which is a **symlink
   to this repo** — so `nh` works here. If that symlink ever changes, `nh` silently builds elsewhere.
 - `flake.nix:56-58` claims the `preservation` input is only used by "a skeleton" aspect. That is
-  stale — the real content is `modules/impermanence.nix`, wired in at `machines.nix:30-31`.
+  stale — the real content is `modules/impermanence.nix`, wired in through the `vm` host role in
+  `modules/assignments.nix`.
 
 ## Builds: substitution, not compilation
 
@@ -97,27 +98,29 @@ Aspects live in the exported `chimera` namespace, keyed by file path:
 
 Declaring an aspect does nothing on its own — it must be reached via `includes`:
 
-- `modules/hosts/<host>/default.nix` → `den.aspects.<host>.includes` + `den.hosts.x86_64-linux.<host>`
-- `modules/users/<user>.nix` → `den.aspects.<user>.includes` + `den.hosts.x86_64-linux.<host>.users.<user>`
-- `modules/machines.nix` → the `chimera.workstation` / `chimera.laptop` / `chimera.vm` **host** role
-  aspects that hosts include. Role-as-inheritance: change behavior by editing the role, not each host.
-- `modules/roles.nix` → the `chimera.desktop-base` / `chimera.workstation-user` / `chimera.pentest-user`
-  **user** role aspects that `den.aspects.<user>.includes` pulls in.
+- `modules/assignments.nix` is the **only** place roles and entity includes live:
+  - `chimera.workstation` / `chimera.laptop` / `chimera.vm` are **host** role aspects; each host
+    includes one. Role-as-inheritance: change behavior by editing the role, not each host.
+  - `chimera.desktop-base` / `chimera.workstation-user` / `chimera.pentest-user` are **user** role
+    aspects; each user includes one.
+  - `den.aspects.<host|user>.includes` connects each entity to its role and any one-off aspects.
+- `modules/hosts/<host>/default.nix` → hardware/display/host-specific config + `den.hosts.x86_64-linux.<host>`
+- `modules/users/<user>.nix` → user-specific config + `den.hosts.x86_64-linux.<host>.users.<user>`
 
-Both host files declare an aspect **and** the matching `den.hosts` entry; Den also auto-creates
-`den.aspects.<host>` / `den.aspects.<user>`, so the explicit block is an *extension* of it.
-Never delete the `den.hosts.*` line — that is what makes the host get built.
+Host files extend the auto-created aspect **and** declare the matching `den.hosts` entry; Den also
+auto-creates `den.aspects.<host>` / `den.aspects.<user>`, so the explicit block is an *extension* of
+it. Never delete the `den.hosts.*` line — that is what makes the host get built.
 
 Two consequences of that split that are easy to get wrong:
 
-- **`<chimera/pwn>` is included twice** — by the `vm` host role (`machines.nix:22`) *and* by the
-  `pentest-user` user role (`roles.nix:62`). The `nixos` half (wireshark, `tun0` in the firewall,
+- **`<chimera/pwn>` is included twice** — by the `vm` host role *and* by the `pentest-user` user
+  role, both in `modules/assignments.nix`. The `nixos` half (wireshark, `tun0` in the firewall,
   `services.sliver.enable`) reaches machina-mori through the *host* role; only the `homeManager`
   half arrives via the user role. Verified: wireshark is `true` on `machina-mori`, `false` on
   `overlord`. The same reasoning is why `pentest-user` re-includes `<chimera/virt/headless>`
   purely for its `homeManager` half.
 - **`virt.docker` (`virtualisation.nix:36-42`) only sets `virtualisation.docker.enable`** — it does
-  not add the `docker` group, so `hosts/overlord/default.nix:45` patches `users.privilegedGroups`
+  not add the `docker` group, so `modules/hosts/overlord/default.nix` patches `users.privilegedGroups`
   in by hand. `virt.host` likewise has no `amd_iommu`, so PCI/USB passthrough into the VM isn't set up.
 
 ### home-manager
@@ -136,7 +139,7 @@ Read `docs/den.md` (§4 aspects, §12 gotchas checklist) before writing aspects 
 in-repo, and §12 is a dense list worth skimming in full.
 
 - **A `homeManager` key written at host scope is silently dropped.** Not an error, no warning.
-  This is live in the repo: the fish `vpn` function at `modules/hosts/machina-mori/default.nix:43-56`
+  This is live in the repo: the fish `vpn` function at `modules/hosts/machina-mori/default.nix`
   is a `homeManager` key on `den.aspects.machina-mori`, so it does not exist —
   `nix eval .#nixosConfigurations.machina-mori.config.home-manager.users.rei.programs.fish.functions`
   returns only `["y"]` (from `apps/yazi`). To reach users from a host aspect use
@@ -155,7 +158,7 @@ in-repo, and §12 is a dense list worth skimming in full.
   (`error: cannot look up '<chimera/...>' in pure evaluation mode`). So a module either takes
   `chimera` and uses explicit `chimera.x.y` refs (see `modules/hosts/*/default.nix`,
   `modules/pwn/default.nix`), or writes `chimera = { … }` as a literal attr path and uses `<chimera/…>`
-  strings (see `modules/machines.nix`, `modules/roles.nix`). Under the second style, aspects cannot
+  strings (see `modules/assignments.nix`). Under the second style, aspects cannot
   self-reference either — reference siblings by path (`<chimera/desktop-base>`).
 - `inputs` is **not** a nixos module arg. To use a flake input inside `nixos = {…}:` content,
   capture it lexically from the outer module args (see `modules/theming.nix`, which threads

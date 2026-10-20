@@ -4,7 +4,12 @@
     config,
     ...
   }: {
-    programs = {
+      programs = {
+        atuin = {
+          enable = true;
+          flags = ["--disable-up-arrow"];
+        };
+
       bash = {
         enable = true;
         enableVteIntegration = true;
@@ -61,10 +66,6 @@
 
   chimera.shell.provides.enhanced.homeManager = {
     programs = {
-      atuin = {
-        enable = true;
-        flags = ["--disable-up-arrow"];
-      };
       nix-your-shell = {
         enable = true;
         enableFishIntegration = true;

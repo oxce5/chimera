@@ -14,6 +14,9 @@
       users.privilegedGroups = ["audio" "video" "render"];
 
       services = {
+        # niri-nix enables this by default; the throwaway VM has no secrets to keep
+        gnome.gnome-keyring.enable = lib.mkForce false;
+
         openssh.enable = true;
 
         greetd = {

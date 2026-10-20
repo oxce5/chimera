@@ -6,7 +6,7 @@
 }: {
   chimera.apps._.gui = {
     includes = [
-      <chimera/browser/firefox>
+      # <chimera/browser/firefox>
       <chimera/browser/helium>
     ];
     homeManager = {pkgs, ...}: {

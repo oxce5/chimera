@@ -6,10 +6,7 @@
         <chimera/dev>
         <chimera/networking>
         <chimera/theming>
-        # Chromium-family policy is machine-wide (/etc/chromium/policies), so
-        # base-helium's nixos half must be reached via a host role; its
-        # homeManager part is inert here and reaches users through
-        # <chimera/apps/gui> (and <chimera/browser/pentest-helium>).
+        # base-helium's nixos half must be reached via a host role
         <chimera/browser/base-helium>
       ];
     };
@@ -25,9 +22,7 @@
     vm = {
       includes = [
         <chimera/pwn>
-        # Hardened helium: block-all + force-installed pentest extensions.
-        # Like <chimera/pwn>, this aspect is included again by the
-        # pentest-user role for its homeManager half.
+        # hardened helium; also included by the pentest-user role for its HM half
         <chimera/browser/pentest-helium>
         <chimera/workstation>
         <chimera/virt/headless>

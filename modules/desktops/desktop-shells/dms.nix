@@ -3,9 +3,7 @@
   inputs,
   ...
 }: {
-  # Parked: nothing includes this aspect right now, it is kept so dms can be
-  # swapped back in for noctalia. Include it from a user's aspect (or from
-  # chimera.desktop-shells) to activate.
+  # parked; see AGENTS.md
   chimera.desktop-shells.provides.dms = {
     includes = [
       chimera.desktop-shells._.common

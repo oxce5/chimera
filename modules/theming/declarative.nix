@@ -1,10 +1,5 @@
 {chimera, ...}: {
-  # Declarative base theming, managed by NixOS/Home Manager. This is the
-  # fallback when no runtime theme manager (noctalia) is present: colors are
-  # fixed at build time and everything follows them.
-  #
-  # Currently only reached via chimera.desktop-shells.provides.dms, which is
-  # itself parked.
+  # build-time fallback theme; only reached via dms, which is parked
   chimera.theming.provides.declarative = {
     includes = [chimera.theming.provides.desktop];
     homeManager = {pkgs, ...}: {

@@ -13,11 +13,7 @@
   };
 
   den.hosts.x86_64-linux.overlord = {
-    # Keys are output names, copied from `niri msg outputs`; this one needs
-    # quoting because it is not a plain connector name.
-    #
-    # Pinned panel; HDMI-A-5 is the projector
-    # mode deliberately unpinned.
+    # niri output names; pinned panel, HDMI-A-5 (projector) left unpinned
     displays = {
       eDP-1 = {
         primary = true;

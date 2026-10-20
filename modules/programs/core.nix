@@ -46,8 +46,7 @@
     ];
   };
 
-  # Desktop add-ons on top of the base: the bigger/duplicate CLIs that only
-  # earn their closure cost on the laptop.
+  # desktop-only add-ons, see AGENTS.md
   chimera.apps.provides.coreutils.desktop = {
     includes = [chimera.apps.provides.coreutils.base];
     homeManager = {pkgs, ...}: {

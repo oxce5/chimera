@@ -1,8 +1,5 @@
 {
-  # Substituters for whoever *builds* this flake (laptop, VM, CI, a fresh
-  # machine). Keep in sync with modules/cachix.nix, which pushes the same list
-  # into the built hosts' own nix.conf — without this block a builder only knows
-  # about cache.nixos.org and starts compiling everything else from source.
+  # keep in sync with modules/cachix.nix (see AGENTS.md)
   nixConfig = {
     extra-substituters = [
       "https://cache.nixos.org"
@@ -53,9 +50,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Declarative management of non-volatile state. Only used by the VM's
-    # volatile-root aspect, which is currently a skeleton (see
-    # modules/virtualisation.nix).
     preservation.url = "github:nix-community/preservation";
 
     nixos-anywhere = {

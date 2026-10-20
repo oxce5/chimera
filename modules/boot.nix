@@ -1,7 +1,5 @@
 {inputs, ...}: {
-  # Basics every machine in the fleet shares. Included via the host role
-  # aspects (<chimera/boot> in chimera.workstation), so hosts should not
-  # re-declare these.
+  # shared basics; include via the host role, not per host
   chimera.boot.nixos.boot = {
     loader.systemd-boot.enable = true;
     consoleLogLevel = 3;

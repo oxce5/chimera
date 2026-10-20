@@ -162,6 +162,59 @@ in-repo, and §12 is a dense list worth skimming in full.
   `inputs.chimera-pkgs` into a `pkgs`-taking function).
 - An aspect must be a static attrset for `den.reservedKeys`/`settings` to be discoverable.
 
+## helium (`modules/programs/browsers/helium.nix`)
+
+Split in two halves because **Chromium on Linux reads policy machine-wide only**:
+`/etc/chromium/policies/{managed,recommended}`. A policy file under `~/.config/<browser>/policies`
+is ignored — `chrome://policy` came back empty while the oxcl HM module was writing exactly that.
+So policies and the pinned-extension list are `nixos`; only the package, the `Mod+B` bind and the
+external-extension JSON are `homeManager`. Like `<chimera/pwn>`, the aspect is reached twice: a host
+role for the nixos half, a user role for the HM half. HM reads the nixos-side list through
+`osConfig.programs.helium.extensions`.
+
+What is upstream and what is not:
+
+- Policy file is upstream: `programs.chromium.enable` + `extraOpts` (freeform attrs) makes nixpkgs
+  render `chromium/policies/managed/extra.json`, plus copies for `brave/` and `opt/chrome/`.
+- `ExtensionsSettings` has **no upstream typed equivalent**. nixpkgs
+  `programs.chromium.extensions` exists but is `listOf str` → `ExtensionInstallForcelist` (web-store
+  force install). HM `programs.chromium.extensions` does take `{id, updateUrl, crxPath, version}`
+  and writes `<configDir>/External Extensions/<id>.json`, but `configDir` is hardcoded to
+  `~/.config/chromium` (or the chrome/brave dirs), never Helium's `~/.config/net.imput.helium` —
+  hence the `xdg.configFile` write here. This nixpkgs pin has no package-level CRX mechanism either
+  (`withPlugins` is gone from `chromium/{common,browser,default}.nix`).
+- `programs.helium.extensions` is ours and exists for one thing upstream cannot do: **hash-pinned
+  CRX bytes**. `crx.hash` fetches from the store at build time, `crx.path` points at an in-tree CRX;
+  the assertion requires exactly one. `id` is `[a-z]{32}`.
+
+Why every entry is `allowed`, never `force_installed`: a force hands the id to Chromium's updater,
+which then needs `update_url` to fetch from. A store CRX has no update source, so the force never
+lands — observed: the externals installed fine while the one forced external never did. `allowed`
+only whitelists the id under the `"*": blocked` catch-all; `external_crx` performs the install.
+`update_url` is meaningless under `allowed` and is null on every entry.
+
+Why nothing auto-updates: `external_crx` + `external_version` is a one-shot local install. The
+browser only reinstalls when `external_version` changes, i.e. when the repo bumps `crx.version`
+(and `crx.hash` together: `nix hash file --type sha256 --base32 <crx>`), followed by a rebuild and a
+browser restart. The self-updating key is `external_update_url` (HM's default for a bare
+`{id = "…";}`); we never emit it. The Teto theme can never auto-update — it has no update manifest.
+The fetch URL pins client params (`prodversion=155.0.8059.84`, …) so the served bytes stay stable;
+bump that only together with every hash if the store ever refuses the old client.
+
+`mkCrxJson` must stay a `runCommand`, not `writeText` + `builtins.toJSON`: `toJSON` drops string
+context, so the CRX store path in `external_crx` would silently leave the system closure. Through
+the runCommand the CRX is a real build input. (Upstream HM's chromium module has this same bug —
+it writes `external_crx` with `toJSON`.)
+
+Extension ids: `doojm…` NoScript, `jplg…` Proton VPN, `ghmb…` Proton Pass, `bmel…` Teto theme
+(`crx.path`), `gppong…` Wappalyzer, `gckn…` FoxyProxy. `pentest-helium` only appends the last two to
+the same list; `base-helium` folds the whole thing into one `ExtensionSettings` dict, so there is a
+single unconflicted managed file.
+
+Teto theme: pre-packed by hand with `--pack-extension`. The pack key is deliberately not committed
+(it lives in `~/.local/share/helium-pack/pack.pem`); the id is sha256 of that key's SPKI DER with
+hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stable.
+
 ## VM-specific conventions
 
 - `machina-mori` is a real guest built by this flake, but its **libvirt domain is created by hand in
@@ -185,8 +238,63 @@ in-repo, and §12 is a dense list worth skimming in full.
 - Pentest tooling is opted into deliberately to keep the closure small: `modules/pwn/core.nix`
   overrides `wordlists` down to `lists = [nmap]` (nixpkgs' default pulls `seclists`, ~2 GiB), with
   the big lists behind `chimera.pwn.provides.wordlists`. `chimera.pwn._.forensics` and
-  `forensics.imaging` are likewise commented out of the default include list. Don't "helpfully"
-  re-enable them.
+  `forensics.imaging` are likewise commented out of the default include list — `guymager` needs
+  Qt5 + mono and propagates `qttools`' *dev* output (~2.6 GiB on its own), and `libewf`/`sleuthkit`
+  are enough to read E01 images and do timeline work. Don't "helpfully" re-enable them.
 - Never commit secrets. `sops-nix`/`age` are **not** wired up — there is no `modules/secrets/`
   directory (it was deleted in `9e31f62`); the only pre-existing secret shape is rei's inline
   `hashedPassword` in `modules/users/rei.nix`.
+
+## Desktop (niri, binds, shells)
+
+- `modules/desktops/niri/binds.nix` groups one navigation action per direction and binds every key
+  spelling of that direction under the same prefix (arrows + hjkl). Monitor focus only spells the
+  horizontal directions with arrows; hjkl still covers all four.
+- **Mod+B is owned by the browser aspect, not by `binds.nix`.** `base-firefox` sets it
+  `mkDefault "firefox"`, `pentest` `mkForce`s `"firefox-esr"`, `base-helium`'s homeManager half sets
+  `"helium"`. On machina-mori both `pentest` and `pentest-helium` are included through the user role,
+  so firefox-esr wins and helium is launched from the launcher only.
+- niri `window-rule._children`: a second window-rule block can only be expressed as a *top-level*
+  `_children` singleton. A nested `window-rule._children` inlines into one block and merges all
+  matches (observed: cast windows forced to 1300x720); a plain list renders invalid `-` nodes.
+- Display `custom = true` needs `refresh`; niri computes the timings itself — a separate `modeline`
+  node overrides that outright.
+- The niri wallpaper daemon is started, but `awww-daemon` takes no image argument: the image is
+  pushed imperatively with `awww img …` once the socket exists (startup race, not won).
+- `modules/desktops/desktop-shells/dms.nix` is **parked** — nothing includes it; it is kept so dms
+  can be swapped back in for noctalia. `modules/theming/declarative.nix` (build-time fallback theme)
+  is currently only reached through it, also parked. Noctalia, when present, owns the palette at
+  runtime and renders GTK/Qt/terminal/KDE theme files; nothing hardcodes colours in that path.
+
+### firefox
+
+- `<chimera/browser/pentest>` re-includes `base-firefox` and force-installs Wappalyzer + FoxyProxy.
+- Dark Reader lives only in the `Personal` profile, so base does not force-install it; it is merely
+  whitelisted (`installation_mode = "allowed"`) so the copy already in `Personal` keeps working.
+
+## Misc module notes
+
+- `modules/boot.nix` is shared basics included through the host role (`<chimera/boot>` in
+  `chimera.workstation`); hosts should not re-declare it.
+- `modules/programs/core.nix`: the second list is desktop-only add-ons — the bigger/duplicate CLIs
+  that only earn their closure cost on the laptop.
+- `modules/gaming.nix`: OpenTabletDriver needs write access to input devices, hence `uinput`.
+- `modules/virtualisation.nix`: `hostUserKey` is trusted on all guests so the host user can ssh in
+  as root or any user; it is a placeholder to replace, and per-host overrides use `mkDefault`.
+- `modules/hosts/overlord/default.nix`: display keys are output names copied from `niri msg
+  outputs`; `HDMI-A-5` is the projector and is deliberately left unpinned (`eDP-1` is the pinned
+  panel).
+
+## Parked code
+
+Commented-out blocks are deliberate parking, not leftovers: `boot.nix` (lanzaboote/secure boot),
+`networking.nix` (Wake-on-LAN link), `nix.nix` (flake registry), `xdg.nix` (XDG relocation
+variables), `syncthing.nix` (a device), `programs/{core,gui}.nix` and `pwn/*` (unused tools). Do not
+delete or re-enable them without asking.
+
+## Comments
+
+Keep the long *why* — mechanisms, observed failures, upstream gaps — in this file, not in Nix
+modules. In modules, write a short one-line comment wherever a lambda or helper's purpose is not
+obvious from its name (`mkCrxJson`, `crxSource`, `vendored`), or where the name alone would mislead.
+One line, no paragraphs; anything longer belongs here.

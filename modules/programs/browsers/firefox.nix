@@ -6,8 +6,7 @@
         config,
         ...
       }: {
-        # The browser aspect owns its own Mod+B bind, so a host reaches
-        # exactly one definition of it. bases.nix must not also define it.
+        # Mod+B is owned here, not by binds.nix
         wayland.windowManager.niri.settings.binds = {
           "Mod+B" = {
             _props.hotkey-overlay-title = "Open Browser";
@@ -115,9 +114,7 @@
 
       homeManager = {
         programs.firefox = {
-          # Dark Reader lives only in the Personal profile, so it is not
-          # force-installed from base; merely whitelisted to keep the copy
-          # already installed in Personal working.
+          # whitelisted only: the copy lives in the Personal profile
           policies.ExtensionSettings = {
             "addon@darkreader.org".installation_mode = "allowed";
           };

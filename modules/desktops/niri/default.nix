@@ -38,9 +38,7 @@
               _args = [
                 "${toString d.width}x${toString d.height}${lib.optionalString (d.refresh != null) "@${toString d.refresh}"}"
               ];
-              # custom=true asks for a mode the display never advertised; the
-              # refresh is mandatory then, and niri computes the timings itself
-              # (a separate `modeline` node would override this outright).
+              # custom mode: refresh is required, niri computes the timings
               _props = lib.optionalAttrs d.custom {
                 custom = true;
               };
@@ -68,15 +66,7 @@
         ];
         services = {
           cliphist.enable = true;
-          # Default wallpaper daemon. Desktop shells manage the wallpaper
-          # themselves and force-disable this (see desktop-shells common).
-          #
-          # Only the daemon is started. awww-daemon takes no image argument, so
-          # the image has to be pushed separately with `awww img` once the
-          # daemon's socket exists, which is a startup race this config doesn't
-          # win cleanly -- hence imperative, per host:
-          #
-          #   awww img /assets/rei.jpeg
+          # daemon only; the image is applied manually (see AGENTS.md)
           awww.enable = true;
         };
         wayland.windowManager.niri = {

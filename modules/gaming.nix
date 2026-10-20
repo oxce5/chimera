@@ -45,8 +45,7 @@
       };
     };
 
-    # Wacom tablet support: OpenTabletDriver needs write access to the input
-    # devices, which means the uinput kernel module.
+    # OpenTabletDriver needs write access to input devices
     tablet.nixos = {
       boot.kernelModules = ["uinput"];
       hardware = {

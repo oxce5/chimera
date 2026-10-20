@@ -3,9 +3,7 @@
   __findFile,
   ...
 }: {
-  # NOTE: aspects defined here reference each other by path (`<chimera/...>`),
-  # not via a `chimera` module argument. Taking `chimera` as an argument makes
-  # path lookup self-referential and it falls through to the NIX search path.
+  # reference siblings by path, never via a `chimera` arg (see AGENTS.md)
   chimera = {
     desktop-base = {
       includes = [
@@ -57,17 +55,12 @@
 
         <chimera/apps/coreutils-slim>
         <chimera/browser/pentest>
-        # homeManager half of pentest-helium (the package); its nixos half
-        # (/etc/chromium policies) comes via the vm host role. Mod+B stays
-        # on firefox-esr - helium is launched from the launcher.
+        # HM half of pentest-helium; its nixos half comes via the vm host role
         <chimera/browser/pentest-helium>
         <chimera/dev/base>
         <chimera/dev/sessions>
         <chimera/pwn>
-        # Only needed for its homeManager half (the niri portal trim): Den
-        # merges homeManager content reached through a *user* role aspect.
-        # `chimera.vm` is a host role, so its includes — including this one —
-        # contribute nixos content but their homeManager half is inert.
+        # only for its homeManager half; host-role HM content is inert
         <chimera/virt/headless>
       ];
     };

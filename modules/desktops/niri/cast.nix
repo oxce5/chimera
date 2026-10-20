@@ -18,11 +18,7 @@
         };
       };
 
-      # NOTE: a second window-rule block can only be expressed as a
-      # top-level _children singleton. A nested window-rule._children
-      # inlines into a single block (merging all matches, which forced
-      # cast windows to 1300x720), and a plain list renders as invalid
-      # `-` nodes.
+      # a second window-rule block needs a top-level _children singleton
       _children = [
         {
           window-rule = {

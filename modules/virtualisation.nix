@@ -15,9 +15,7 @@
       };
     };
     guest = let
-      # Host user's public key. Trusted by default on all guests so the host
-      # user can ssh in as root or any user. Replace the placeholder with
-      # the real key; per-host overrides remain possible via mkDefault.
+      # placeholder: trusted on all guests, override per host with mkDefault
       hostUserKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINAKxO4GG+Su881n6GAH2Evuo3BMaUlT3dHcWfiP87IR oxce5@overlord";
     in {
       nixos = {lib, ...}: {

@@ -40,12 +40,10 @@
     # Both the arrow and the hjkl spelling of every direction.
     arrowsAndVim = keys arrows vim;
 
-    # Monitor focus only spells the horizontal directions with arrows; the
-    # hjkl keys still cover all four.
+    # monitor focus: arrows only for horizontal, hjkl for all four
     horizontalArrowsAndVim = keys horizontalArrows vim;
 
-    # A navigation family: one action per direction, bound to every key
-    # spelling of that direction under one prefix.
+    # one action per direction, every key spelling under one prefix
     nav = prefix: spellings: actionFor:
       lib.foldl' (
         acc: dir:
@@ -122,8 +120,7 @@
           _props.hotkey-overlay-title = "Open Terminal";
           spawn = "kitty";
         };
-        # Mod+B is not here: the browser aspect (chimera.browser.provides.*)
-        # owns it, so the key follows whichever browser the host actually has.
+        # Mod+B is owned by the browser aspect, not here
 
         # === Security ===
         "Mod+Shift+E" = {quit = [];};

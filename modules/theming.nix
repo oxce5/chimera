@@ -48,9 +48,7 @@
     };
   };
 
-  # Noctalia-driven system-wide theming. Used only when the noctalia desktop
-  # shell is present: noctalia owns the palette at runtime and renders theme
-  # files for GTK/Qt/terminal/KDE apps, so nothing here hardcodes colors.
+  # only reached with the noctalia shell, which owns the palette (see AGENTS.md)
   chimera.theming.provides.noctalia = {
     includes = [chimera.theming.provides.desktop];
     homeManager = {
@@ -78,8 +76,7 @@
         };
       };
 
-      # GTK follows the noctalia-generated palette via the gtk3/gtk4 built-in
-      # templates (noctalia.css + adw-gtk3/color-scheme sync).
+      # GTK follows the noctalia palette
       home.packages = with pkgs; [
         adw-gtk3
         qt6Packages.qt6ct

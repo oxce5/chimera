@@ -27,10 +27,7 @@
     ];
   };
 
-  # guymager needs Qt5 + mono and propagates qttools' *dev* output into the
-  # closure, which costs ~2.6 GiB on its own. Disk *imaging* only, so it is
-  # opt-in: include <chimera/pwn/forensics/imaging> where you actually acquire
-  # images (libewf/sleuthkit above are enough to read the results).
+  # opt-in: guymager costs ~2.6 GiB (Qt5 + mono), see AGENTS.md
   chimera.pwn.provides.forensics.imaging.homeManager = {pkgs, ...}: {
     home.packages = with pkgs; [
       # Disk Imaging & Recovery

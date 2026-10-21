@@ -70,7 +70,7 @@
         <chimera/desktop-shells/noctalia>
 
         # <chimera/easyeffects>
-        # <chimera/tailscale>
+        <chimera/tailscale>
         # <chimera/flatpak>
         <chimera/xdg>
 
@@ -79,7 +79,7 @@
         <chimera/dev/min>
         <chimera/dev/ai>
         # <chimera/apps/coreutils/desktop>
-        # <chimera/apps/gui>
+        <chimera/apps/gui>
         <chimera/apps/git>
 
         <chimera/services/syncthing>

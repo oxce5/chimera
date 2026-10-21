@@ -1,7 +1,6 @@
 {
   chimera.apps._.yazi.homeManager = {
     pkgs,
-    config,
     ...
   }: {
     programs = {
@@ -20,12 +19,12 @@
           opener = {
             extract = [
               {
-                run = "ouch d -y \"%*\"";
+                run = "ouch d \"%*\"";
                 desc = "Extract here with ouch";
                 for = "windows";
               }
               {
-                run = "ouch d -y \"$@\"";
+                run = "ouch d \"$@\"";
                 desc = "Extract here with ouch";
                 for = "unix";
               }

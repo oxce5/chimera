@@ -2,7 +2,7 @@
   perSystem = {pkgs, ...}: let
     libs = [pkgs.wayland pkgs.libdecor pkgs.libx11 pkgs.libxi pkgs.libxxf86vm pkgs.libxfixes pkgs.libxrender pkgs.libxkbcommon pkgs.libGLU pkgs.libglvnd pkgs.numactl pkgs.SDL2 pkgs.libdrm pkgs.ocl-icd pkgs.stdenv.cc.cc.lib pkgs.openal pkgs.alsa-lib pkgs.pulseaudio pkgs.libsm pkgs.libice pkgs.zlib pkgs.vulkan-loader];
   in {
-    packages.blender-beta = pkgs.stdenv.mkDerivation rec {
+    packages.blender-beta = pkgs.stdenv.mkDerivation {
       pname = "blender-bin";
       version = "5.3.0";
 

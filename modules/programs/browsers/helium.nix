@@ -204,7 +204,7 @@ in {
     pentest-helium = {
       includes = [chimera.browser._.base-helium];
 
-      nixos = {config, ...}: {
+      nixos = {
         config.programs.helium.extensions = [
           {
             id = "gppongmhjkpfnbhagpmjfkannfbllamg";

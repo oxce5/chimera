@@ -2,7 +2,6 @@
   chimera.wayland._.base = {host, ...}: {
     nixos = {
       pkgs,
-      lib,
       ...
     }: {
       programs = {

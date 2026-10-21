@@ -1,6 +1,6 @@
 {inputs, ...}: {
   chimera.impermanence.provides = {
-    tmp.nixos = {lib, ...}: {
+    tmp.nixos = {
       fileSystems."/tmp" = {
         device = "tmpfs";
         fsType = "tmpfs";
@@ -18,7 +18,7 @@
         ];
       };
     };
-    root.nixos = {lib, ...}: {
+    root.nixos = {
       imports = [inputs.preservation.nixosModules.default];
 
       preservation = {

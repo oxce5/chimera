@@ -26,7 +26,6 @@
   chimera.theming.provides.desktop = {
     nixos = {
       pkgs,
-      lib,
       ...
     }: {
       fonts = {

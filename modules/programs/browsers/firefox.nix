@@ -142,7 +142,6 @@
 
       homeManager = {
         pkgs,
-        config,
         lib,
         ...
       }: {

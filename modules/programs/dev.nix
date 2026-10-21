@@ -25,25 +25,42 @@
         ];
       };
     };
-    baseWithLsp = {
-      includes = [chimera.dev._.base];
+    lsp = {
       homeManager = {pkgs, ...}: {
         programs.neovim.extraPackages = with pkgs; [
           tree-sitter
 
           bash-language-server
-          dockerfile-language-server
           yaml-language-server
-          jdt-language-server
           basedpyright
+          clang-tools
+        ];
+      };
+    };
+    nix-lsp = {
+      homeManager = {pkgs, ...}: {
+        programs.neovim.extraPackages = with pkgs; [
           nil
           nixd
-          clang-tools
-          lua-language-server
-          stylua
           alejandra
         ];
       };
+    };
+    general-lsp.homeManager = { pkgs, ... }: {
+      programs.neovim.extraPackages = with pkgs; [
+        dockerfile-language-server
+        jdt-language-server
+        lua-language-server
+        stylua
+      ];
+    };
+    baseWithLsp = {
+      includes = [
+        chimera.dev._.base
+        chimera.dev._.lsp
+        chimera.dev._.nix-lsp
+        chimera.dev._.general-lsp
+      ];
     };
     min = {
       includes = [chimera.dev._.baseWithLsp];
@@ -55,7 +72,7 @@
     };
     ai = {
       includes = [chimera.dev._.sessions];
-      homeManager = {pkgs, ...}: {
+      homeManager = {
         programs.opencode = {
           enable = true;
         };

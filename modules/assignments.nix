@@ -97,6 +97,7 @@
         # HM half of pentest-helium; its nixos half comes via the vm host role
         <chimera/browser/pentest-helium>
         <chimera/dev/base>
+        <chimera/dev/lsp>
         <chimera/dev/sessions>
         <chimera/pwn>
         # only for its homeManager half; host-role HM content is inert

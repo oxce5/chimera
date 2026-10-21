@@ -6,8 +6,8 @@ framework/library for NixOS, nix-Darwin and home-manager.
 - Source: https://den.denful.dev
 - Repo: https://github.com/denful/den
 - Docs pages are indexed at the end of this file.
-- Snapshot date: 2026-10-11, taken from the pinned inputs this repo actually evaluates:
-  `github:vic/den` @ `7594405b` (2026-09-28) and `github:vic/import-tree` @ `eb1b52e`
+- Snapshot date: 2026-10-21, taken from the pinned inputs this repo actually evaluates:
+  `github:vic/den` @ `6e5e4138` (2026-10-15) and `github:vic/import-tree` @ `eb1b52e`
   (2026-09-03). Den is pre-1.0 ("HeadsUp" / bleeding-edge) — verify API details against the
   live docs before relying on internals.
 - ⚠️ **Fork note.** Upstream is `denful/den`, but every Den template (and this repo) pins
@@ -218,10 +218,10 @@ consumes. Ignore them; they are not settable.
 | Path | Type | Purpose |
 |---|---|---|
 | `den.schema.conf` | deferredModule | applied to host, user **and** home |
-| `den.schema.host` | deferredModule | applied to all hosts (imports `conf`) |
-| `den.schema.user` | deferredModule | applied to all users (imports `conf`) |
-| `den.schema.home` | deferredModule | applied to all homes (imports `conf`) |
-| `den.schema.aspect` | deferredModule | applied to all aspects; where `den.lib.strict` is applied |
+| `den.schema.host` | deferredModule | applied to all hosts (inherits `conf`) |
+| `den.schema.user` | deferredModule | applied to all users (inherits `conf`) |
+| `den.schema.home` | deferredModule | applied to all homes (inherits `conf`) |
+| `den.schema.aspect` | deferredModule | applied to all aspects; set `isStrict` here for strict aspects |
 
 Per-schema-entry attributes:
 
@@ -231,11 +231,42 @@ Per-schema-entry attributes:
 | `excludes` | listOf raw | `[]` | suppressed for every entity of the kind |
 | `isEntity` | bool | computed | real entity (fan-out/policy target); set explicitly for content-free kinds |
 | `isolated` | bool | `false` | ancestors cannot collect into an isolated scope |
+| `isStrict` | bool | `false` | build this kind's instances closed (undeclared attrs throw); `den.lib.strict` is the entry `{ isStrict = true; }` |
+| `inherits` | listOf kind | `[]` | kinds whose declarations this kind includes, e.g. `den.schema.host.inherits = [ den.schema.conf ]` |
 | `parent` | nullOr str | `null` | enclosing entity kind (e.g. `user.parent = "host"`) |
 | `collisionPolicy` | nullOr enum | `null` | see collision policy below |
 
+Kind inheritance uses `inherits`, not `imports`: importing a kind value
+(`den.schema.host.imports = [ den.schema.conf ]`) still evaluates but is deprecated and warns.
+`imports` remains the normal spelling for ordinary modules on a schema entry (home's `system`
+option is declared that way).
+
 Element check: a bare **string** in `includes`/`excludes` throws at eval. String policies no
 longer work — use the attrset. A function (parametric aspect reference) is allowed.
+
+Entities also accept their own `includes`/`excludes` (`den.hosts.<sys>.<name>.includes`,
+`den.homes.<sys>.<name>.excludes`, …). They are declared on `den.schema.conf`, so they work even
+on a strict kind, and they are the most specific activation site: an instance's `includes` are
+appended after its kind's schema includes, and instance `excludes` apply to its subtree.
+
+### Strict mode
+
+Strictness is a property of a kind, not a global module switch:
+
+```nix
+{ den, ... }: {
+  den.schema.host = den.lib.strict;        # = { isStrict = true; }
+  # equivalently: den.schema.host.isStrict = true;
+}
+```
+
+A strict kind's instances replace the open freeform type with a closed one, so an undeclared
+attribute is refused instead of stored. Den reads `isStrict` for `host`, `user`, `home`, `aspect`
+and `flake`; `inputs.den.flakeModules.strict` sets all five. Custom registries follow the kind
+when they pass `strict = den.schema.<kind>.isStrict` to `den.lib.schema.mkInstanceType`.
+
+The older spelling `den.schema.<kind>.imports = [ den.lib.strict ]` still works but is deprecated
+and warns; only a direct `den.lib.strict` in the entry's `imports` is recognised.
 
 Built-in entity topology is pre-wired in `modules/options.nix`:
 `den.schema.user.parent = "host"` and `den.schema.home.parent = "host"`. That DAG is what the
@@ -273,6 +304,7 @@ the same thing.
 | `instantiate` | raw | `nixosSystem` / `darwinSystem` / `system-manager` per class |
 | `intoAttr` | listOf str | `[ "nixosConfigurations" name ]` / `darwinConfigurations` / `systemConfigs` |
 | `collisionPolicy` | null \| `error`\|`den-wins`\|`class-wins` | `null` |
+| `includes` / `excludes` | listOf raw | `[]` — aspects/policies for this instance only (`den.schema.conf` option) |
 | `home-manager.enable` / `.module` | bool / deferredModule | some user lists `homeManager`; `inputs.home-manager.<class>Modules.home-manager` |
 | `hjem.enable` / `.module` | same | same, for `hjem` |
 | `nix-maid.enable` / `.module` | same (NixOS only) | same, for `maid` |
@@ -291,6 +323,7 @@ the same thing.
 | `aspect` | raw | `den.aspects."<user>@<host>"` **and** `den.aspects.<user>` (both apply) |
 | `host` | raw | parent host |
 | `resolved`, `collisionPolicy` | | as host |
+| `includes` / `excludes` | listOf raw | `[]` — instance-only activation |
 | `*` | `den.schema.user` + freeform | |
 
 ### `den.homes` — `attrsOf homeSystemType`
@@ -303,7 +336,7 @@ Key `user@host` binds a home to a host user; a bare key is a standalone home.
 | `userName` | str | part before `@` |
 | `hostName` | nullOr str | part after `@`, `null` when standalone |
 | `host` / `user` | raw | bound entities or `null` |
-| `system` | str | parent key (identity key — declared via `den.schema.home.imports`) |
+| `system` | str | parent key (identity key — declared in `den.schema.home`'s own `imports`) |
 | `class` | str | `homeManager` |
 | `description` | str | `home.<userName>@<system>` |
 | `aspect` | raw | `den.aspects."<user>@<host>"` + `den.aspects.<user>` |
@@ -311,6 +344,7 @@ Key `user@host` binds a home to a host user; a bare key is a standalone home.
 | `instantiate` | raw | `inputs.home-manager.lib.homeManagerConfiguration` |
 | `intoAttr` | listOf str | `[ "homeConfigurations" name ]` |
 | `resolved`, `collisionPolicy` | | as host |
+| `includes` / `excludes` | listOf raw | `[]` — instance-only activation |
 | `*` | `den.schema.home` + freeform | |
 
 Every entity also gets `id_hash` (safe comparison; `==` is fragile across module boundaries).
@@ -384,7 +418,7 @@ alias `eg`. See §9.
 | `<class>` | module / function-module | config merged into entities of that class |
 | `includes` | listOf provider | providers (aspects, sub-aspects, functions) pulled in |
 | `excludes` | listOf provider | aspects/policies excluded from this subtree |
-| `provides` (alias `_`) | submodule | named sub-aspects → `den.aspects.<name>.<sub>` |
+| `provides` (alias `_`) | submodule | legacy sub-aspect namespace; `<aspect>.provides.<name>` is also reachable as `<aspect>.<name>`. Direct nesting is current, but `provides` is still required for the cross-entity keys `to-users`, `to-hosts` and `<host>` on a user aspect. `<aspect>._` includes every depth-1 child |
 | `policies` | policy registry | named policy functions, activated by placing in `includes` |
 | `meta` | freeform submodule | `handleWith`, `aspect-chain`, `collisionPolicy`; `guard`/`aspects` for conditional aspects; plus auto `name`/`loc`/`file`/`self` |
 | `classes` | lazyAttrsOf raw | class schemas declared by this aspect, merged into `den.classes` |
@@ -469,7 +503,7 @@ Every entity resolves in its own **scope**, and each scope only delivers *some* 
 |---|---|
 | host (`den.aspects.igloo` + its `includes` + `den.schema.host.includes`) | `nixos`, `darwin`, `os` |
 | user (`den.aspects.tux` + its `includes` + `den.schema.user.includes` + `den.default`) | `homeManager`, `user` |
-| `den.default` | walked in both, but content lands **once**, not once per scope |
+| `den.default` | walked in both: owned configs land **once**, parametric includes per matching scope (`{ host }` = host + each user) |
 
 A `homeManager` key the host scope walks is **dropped, silently** — there is no route from host
 scope into a user's home. Same for `user` at host scope.
@@ -584,8 +618,13 @@ den.default = {
 };
 ```
 
-Owned/static configs are deduplicated; **parametric functions in `den.default.includes` are
-evaluated at every context stage** — write them as bare functions and rely on dispatch.
+Owned/static configs are deduplicated across pipeline stages, so they land **once**. Parametric
+functions in `den.default.includes` are not deduplicated: every scope whose context has the
+function's arguments calls it, so `{ host }` runs at the host **and** at each user on that host,
+while `{ host, user }` runs only at users. A `{ host }` function that sets host options therefore
+defines them once per user as well and can fail with "is defined multiple times"; put host-only
+parametric aspects in `den.schema.host.includes`, or keep the aspect static and take `host` in the
+class module (`nixos = { host, ... }: { … };`). Write includes as bare functions —
 `den.lib.perHost`/`perUser`/`perHome` still exist but warn; `den.lib.take.exactly` is deprecated.
 
 ### Aspect settings (typed per-host tunables)
@@ -1211,18 +1250,63 @@ See §7 (`forward` / `route`). A class forwards its content into a target attrpa
 class. Use it for nested namespaces and integration layers (home-manager, hjem, maid, WSL,
 terranix, microvm guests, …).
 
-### Extending the pipeline with a new entity kind
+### Custom entity kinds
+
+Writing a key under `den.schema` registers a kind. Built-ins inherit `conf`; a custom kind should
+too, so shared options and `hasAspect` land on its instances:
 
 ```nix
-den.policies.my-kind-from-host = { host, ... }:
-  [ (den.lib.policy.resolve.to "my-kind" { inherit host; }) ];
-den.policies.my-kind-to-outputs = { my-kind, ... }:
-  [ (den.lib.policy.instantiate { name = …; class = "…"; instantiate = { modules, ... }: modules; intoAttr = [ … ]; }) ];
-den.schema.host.includes = [ den.policies.my-kind-from-host ];
-den.schema.my-kind.includes = [ den.policies.my-kind-to-outputs ];
+{ den, lib, ... }: {
+  den.schema.organization = {
+    inherits = [ den.schema.conf ];
+    options.label = lib.mkOption { type = lib.types.str; };
+  };
+}
 ```
 
-See https://den.denful.dev/tutorials/microvm/ for the worked example.
+Build the registry's element type with `den.lib.schema.mkInstanceType` — **options first, kind
+second**. Pass `strict = den.schema.<kind>.isStrict` so the registry follows the kind's strict
+mode; without it gen-schema reads the kind value's own `strict`, not den's `isStrict`:
+
+```nix
+options.den.organizations = lib.mkOption {
+  type = lib.types.attrsOf (den.lib.schema.mkInstanceType {
+    strict = den.schema.organization.isStrict;
+  } den.schema.organization);
+  default = { };
+};
+```
+
+Each instance gets `name` (the registry key), the kind's options, everything inherited from
+`conf`, and `hasAspect`. A plain `types.submodule { imports = [ den.schema.organization ]; }`
+still evaluates but warns and stays open even when the kind is strict. The kind-first call
+`mkInstanceType den.schema.organization { … }` is also deprecated and warns.
+
+Resolve each instance into the pipeline with a policy:
+
+```nix
+den.policies.to-organizations = _:
+  lib.mapAttrsToList (_: organization:
+    den.lib.policy.resolve.to "organization" { inherit organization; })
+    config.den.organizations;
+den.schema.flake.includes = [ den.policies.to-organizations ];
+
+den.schema.organization.includes = [ den.policies.collect-org ];
+den.policies.collect-org = { organization, ... }:
+  [ (den.lib.policy.instantiate {
+      name = "org-${organization.name}";
+      class = "org";
+      instantiate = { modules, ... }: modules;
+      intoAttr = [ "orgOutputs" organization.name ];
+    })
+  ];
+```
+
+The binding name is the kind name, so aspects and policies take `{ organization, ... }` the way
+they take `{ host, ... }`. For a kind nested under another entity, set
+`den.schema.site.parent = "organization"` and resolve it from the parent's scope instead of the
+flake. See https://den.denful.dev/guides/custom-entity-kinds/ for the full guide and
+https://den.denful.dev/tutorials/microvm/ for a worked custom class.
 
 ### `den.lib` surface
 
@@ -1244,8 +1328,9 @@ flake-parts. Public-ish entries worth knowing:
 | `den.lib.capture` (+ `den-diagram`) | `capture`, `captureAll`, `captureWithPaths`, `captureWithPathsWith`, `captureFleet` |
 | `den.lib.nh.{denPackages,denShell,denApps,hostApps,homeApps}` | nh wrappers |
 | `den.lib.fx` | `nix-effects` API (§10) |
-| `den.lib.strict` | applied through `den.schema.aspect` |
+| `den.lib.strict` | schema entry `{ isStrict = true; }` — assign to a kind (`den.schema.host = den.lib.strict`) |
 | `den.lib.nixModule` | the whole Den module set as one nix module (no flake) |
+| `den.lib.schema.mkInstanceType { extraModules, strict, specialArgs } kind` | build a registry's instance type; options first, kind second |
 | `den.lib.nsTypes` / `den.lib.schema` / `den.lib.schemaUtil` | namespace + gen-schema plumbing (mostly internal) |
 | `den.lib.synthesizePolicies` | policy synthesis helper |
 
@@ -1260,6 +1345,11 @@ flake-parts. Public-ish entries worth knowing:
 - `den.lib.perHost` / `perUser` / `perHome` — now thin aliases for `({ host, ... }: …)`. They no
   longer self-suppress: the binding-half rewrite means a config that relied on the old silent `{}`
   will now see the wrapped aspect bind.
+- `den.schema.<kind>.imports = [ den.lib.strict ]` — still makes the kind strict, but warns. Use
+  `den.schema.<kind> = den.lib.strict` or `.isStrict = true`. Only a direct `den.lib.strict` in
+  the entry's `imports` is recognised; one reached through a nested import is not.
+- `den.lib.schema.mkInstanceType kind options` — kind-first argument order still works and warns;
+  use `mkInstanceType options kind`.
 - `den.ctx` — compat shim; see https://den.denful.dev/guides/migrate-ctx/.
 
 **Removed**: `den.stages.<kind>.includes` now throws with a migration message. Use
@@ -1348,7 +1438,10 @@ host ──host-to-hm-users──> home-manager users
   `provides.to-hosts`.
 - `den.aspects.<host>.<username>` (host aspect child named after a user) reaches **every** user on
   that host, not just that one. Use `provides.<username>`.
-- `den.default` is walked in every scope, but its content lands **once**, not once per scope.
+- `den.default` owned configs are deduped and land once, but parametric functions in
+  `den.default.includes` run at every matching scope — `{ host }` runs at the host and each user,
+  so host-option definitions can collide (#694). Use `den.schema.host.includes` for host-only
+  parametric aspects.
 
 **Class modules / dispatch**
 - Flat-form class modules need `...`; aspect-level context wrappers should omit it.
@@ -1370,10 +1463,12 @@ host ──host-to-hm-users──> home-manager users
 - Host-side content (`provides.<user>`, `host-aspects`, host policies) does **not** reach a
   standalone `user@host` home — put it on the user side.
 - A bare **string** in `den.schema.<kind>.includes` / `.excludes` throws; use the attrset.
+- Strictness is per kind: `den.schema.<kind>.isStrict = true` (or `= den.lib.strict`). The old
+  `imports = [ den.lib.strict ]` spelling still works but warns.
+- Kind inheritance is `den.schema.<kind>.inherits = [ … ]`; importing a kind value in `imports`
+  still works but warns.
 - Files under `modules/` starting with `_` are skipped by `import-tree`.
 - `den.systems` (not hosts directly) drives the flake→system fan-out.
-- `den.default` owned configs are deduped, but parametric functions in `den.default.includes` run
-  at every context stage — write bare functions.
 
 **Pipes / quirks**
 - Quirk names must not collide with `den.classes` names (asserted at eval).
@@ -1477,7 +1572,7 @@ Verified live against https://den.denful.dev on 2026-10-11 — all of these retu
 `/guides/nixpkgs/` · `/guides/flake-outputs/` · `/guides/batteries/` · `/reference/batteries/`
 
 **Extend**: `/guides/custom-classes/` · `/guides/custom-class-examples/` · `/guides/namespaces/` ·
-`/guides/angle-brackets/`
+`/guides/angle-brackets/` · `/guides/custom-entity-kinds/`
 
 **Troubleshoot**: `/guides/debug/` · `/tutorials/bogus/`
 

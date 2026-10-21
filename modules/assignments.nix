@@ -12,7 +12,7 @@
         <chimera/networking>
         <chimera/theming>
         # nixos half; HM half arrives via the workstation-user role
-        <chimera/browser/base-helium>
+        # <chimera/browser/base-helium>
       ];
     };
 
@@ -64,22 +64,22 @@
 
         <chimera/shell/enhanced>
 
-        <chimera/wayland/mirror>
-        <chimera/wayland/screenshot>
-        <chimera/wayland/cast>
-        <chimera/desktop-shells/noctalia>
+        # <chimera/wayland/mirror>
+        # <chimera/wayland/screenshot>
+        # <chimera/wayland/cast>
+        # <chimera/desktop-shells/noctalia>
 
-        <chimera/easyeffects>
-        <chimera/tailscale>
-        <chimera/flatpak>
+        # <chimera/easyeffects>
+        # <chimera/tailscale>
+        # <chimera/flatpak>
         <chimera/xdg>
 
-        <chimera/gaming/max>
+        # <chimera/gaming/max>
 
-        <chimera/dev/min>
-        <chimera/dev/ai>
-        <chimera/apps/coreutils/desktop>
-        <chimera/apps/gui>
+        # <chimera/dev/min>
+        # <chimera/dev/ai>
+        # <chimera/apps/coreutils/desktop>
+        # <chimera/apps/gui>
         <chimera/apps/git>
 
         <chimera/services/syncthing>

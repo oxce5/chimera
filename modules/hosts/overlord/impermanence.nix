@@ -45,6 +45,14 @@
               mode = "0700";
             }
             {
+              directory = ".cache/rclone";
+              mode = "0700";
+            }
+            {
+              directory = "~/.cache/cliphist";
+              mode = "0700";
+            }
+            {
               directory = "share";
               mode = "0700";
             }

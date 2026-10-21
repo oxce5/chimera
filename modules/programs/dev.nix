@@ -37,6 +37,7 @@
           jdt-language-server
           basedpyright
           nil
+          nixd
           clang-tools
           lua-language-server
           stylua

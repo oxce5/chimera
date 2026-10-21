@@ -4,11 +4,11 @@
     config,
     ...
   }: {
-      programs = {
-        atuin = {
-          enable = true;
-          flags = ["--disable-up-arrow"];
-        };
+    programs = {
+      atuin = {
+        enable = true;
+        flags = ["--disable-up-arrow"];
+      };
 
       bash = {
         enable = true;

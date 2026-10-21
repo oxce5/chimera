@@ -40,8 +40,8 @@ nix repl                          # then :lf . ; .#den is the whole den config
 - `programs.nh` is pointed at `/home/oxce5/.flake` (`modules/programs/nh.nix`), which is a **symlink
   to this repo** — so `nh` works here. If that symlink ever changes, `nh` silently builds elsewhere.
 - `flake.nix:56-58` claims the `preservation` input is only used by "a skeleton" aspect. That is
-  stale — the real content is `modules/impermanence.nix`, wired in through the `vm` host role in
-  `modules/assignments.nix`.
+  stale — the real content is `modules/impermanence.nix`, wired in through the `vm` host role and
+  `overlord.includes` in `modules/assignments.nix`.
 
 ## Builds: substitution, not compilation
 

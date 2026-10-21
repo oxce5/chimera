@@ -113,6 +113,9 @@
       <chimera/apps/openrgb>
       <chimera/virt/host>
       <chimera/virt/docker>
+
+      <chimera/impermanence/tmp>
+      <chimera/impermanence/root>
     ];
 
     machina-mori.includes = [

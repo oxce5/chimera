@@ -1,9 +1,6 @@
 {...}: {
   den.aspects.machina-mori = {
     nixos = {
-      # This service is pointless, we have a persistent machine-id.
-      systemd.suppressedSystemUnits = ["systemd-machine-id-commit.service"];
-
       preservation.preserveAt."/persist".directories = [
         {
           directory = "/opt";

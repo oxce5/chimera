@@ -37,7 +37,7 @@
           };
         })
         (inputs.kopuz.packages.${pkgs.stdenv.hostPlatform.system}.default)
-        pear-desktop
+        # pear-desktop
         vesktop
       ];
     };

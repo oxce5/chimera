@@ -4,10 +4,10 @@
   ...
 }: {
   # parked; see AGENTS.md
-  chimera.desktop-shells.provides.dms = {
+  chimera.desktop-shells.dms = {
     includes = [
-      chimera.desktop-shells._.common
-      chimera.theming.provides.declarative
+      chimera.desktop-shells.common
+      chimera.theming.declarative
     ];
     nixos = {pkgs, ...}: {
       services.displayManager.dms-greeter = {

@@ -1,5 +1,5 @@
 {
-  chimera.apps._.gui = {
+  chimera.apps.gui = {
     homeManager = {
       programs.nh = {
         enable = true;

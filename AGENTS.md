@@ -91,10 +91,13 @@ All builds happen on the **host** (`overlord`); the VM only receives the built s
 Aspects live in the exported `chimera` namespace, keyed by file path:
 
 - `modules/networking.nix` → `chimera.networking` (≡ `den.aspects.networking`)
-- `modules/pwn/default.nix` → `chimera.pwn`; `modules/pwn/re.nix` → `chimera.pwn.provides.re` (≡ `chimera.pwn._.re`)
-- `modules/groups.nix` → `chimera.batteries._.privileged-user` (referenced as `<chimera/batteries/privileged-user>`)
+- `modules/pwn/default.nix` → `chimera.pwn`; `modules/pwn/re.nix` → `chimera.pwn.provides.re`
+  (≡ `chimera.pwn._.re`; the pwn tree keeps `provides` deliberately)
+- `modules/groups.nix` → `chimera.batteries.privileged-user` (referenced as `<chimera/batteries/privileged-user>`)
 - Class content goes under `nixos` / `darwin` / `homeManager` / `virt` keys; a bare
-  `chimera.<x>` key *is* the aspect itself, `provides.<y>` (or `_<y>`) the sub-aspect.
+  `chimera.<x>` key *is* the aspect itself; nested keys are sub-aspects
+  (`chimera.apps.coreutils.base` is `<chimera/apps/coreutils/base>`). `provides` is the legacy
+  alias, kept only for cross-entity keys (`to-users`, `to-hosts`, host/user names) and the pwn tree.
 
 Declaring an aspect does nothing on its own — it must be reached via `includes`:
 
@@ -210,9 +213,9 @@ the runCommand the CRX is a real build input. (Upstream HM's chromium module has
 it writes `external_crx` with `toJSON`.)
 
 Extension ids: `doojm…` NoScript, `jplg…` Proton VPN, `ghmb…` Proton Pass, `bmel…` Teto theme
-(`crx.path`), `gppong…` Wappalyzer, `gckn…` FoxyProxy. `pentest-helium` only appends the last two to
-the same list; `base-helium` folds the whole thing into one `ExtensionSettings` dict, so there is a
-single unconflicted managed file.
+(`crx.path`), `gppong…` Wappalyzer, `gckn…` FoxyProxy. `browser.helium.pentest` only appends the
+last two to the same list; `browser.helium.base` folds the whole thing into one `ExtensionSettings`
+dict, so there is a single unconflicted managed file.
 
 Teto theme: pre-packed by hand with `--pack-extension`. The pack key is deliberately not committed
 (it lives in `~/.local/share/helium-pack/pack.pem`); the id is sha256 of that key's SPKI DER with
@@ -240,9 +243,10 @@ hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stabl
   `/workspace`. If you add a tool that keeps state, add it there or lose it on reboot.
 - Pentest tooling is opted into deliberately to keep the closure small: `modules/pwn/core.nix`
   overrides `wordlists` down to `lists = [nmap]` (nixpkgs' default pulls `seclists`, ~2 GiB), with
-  the big lists behind `chimera.pwn.provides.wordlists`. `chimera.pwn._.forensics` and
-  `forensics.imaging` are likewise commented out of the default include list — `guymager` needs
-  Qt5 + mono and propagates `qttools`' *dev* output (~2.6 GiB on its own), and `libewf`/`sleuthkit`
+  the big lists behind `chimera.pwn.provides.wordlists`. `chimera.pwn.provides.forensics` and
+  `chimera.pwn.provides.forensics.imaging` are likewise commented out of the default include list —
+  `guymager` needs Qt5 + mono and propagates `qttools`' *dev* output (~2.6 GiB on its own), and
+  `libewf`/`sleuthkit`
   are enough to read E01 images and do timeline work. Don't "helpfully" re-enable them.
 - Never commit secrets. `sops-nix`/`age` are **not** wired up — there is no `modules/secrets/`
   directory (it was deleted in `9e31f62`); the only pre-existing secret shape is rei's inline
@@ -253,10 +257,11 @@ hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stabl
 - `modules/desktops/niri/binds.nix` groups one navigation action per direction and binds every key
   spelling of that direction under the same prefix (arrows + hjkl). Monitor focus only spells the
   horizontal directions with arrows; hjkl still covers all four.
-- **Mod+B is owned by the browser aspect, not by `binds.nix`.** `base-firefox` sets it
-  `mkDefault "firefox"`, `pentest` `mkForce`s `"firefox-esr"`, `base-helium`'s homeManager half sets
-  `"helium"`. On machina-mori both `pentest` and `pentest-helium` are included through the user role,
-  so firefox-esr wins and helium is launched from the launcher only.
+- **Mod+B is owned by the browser aspect, not by `binds.nix`.** `browser.firefox.base` sets it
+  `mkDefault "firefox"`, `browser.firefox.pentest` `mkForce`s `"firefox-esr"`, `browser.helium.base`
+  sets `"helium"`. `browser.firefox.pentest` is currently commented out of `pentest-user`, and `gui`
+  includes helium, so `"helium"` wins on both hosts; firefox-esr would win if that include were
+  re-enabled.
 - niri `window-rule._children`: a second window-rule block can only be expressed as a *top-level*
   `_children` singleton. A nested `window-rule._children` inlines into one block and merges all
   matches (observed: cast windows forced to 1300x720); a plain list renders invalid `-` nodes.
@@ -271,7 +276,8 @@ hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stabl
 
 ### firefox
 
-- `<chimera/browser/pentest>` re-includes `base-firefox` and force-installs Wappalyzer + FoxyProxy.
+- `<chimera/browser/firefox/pentest>` re-includes `browser.firefox.base` and force-installs
+  Wappalyzer + FoxyProxy.
 - Dark Reader lives only in the `Personal` profile, so base does not force-install it; it is merely
   whitelisted (`installation_mode = "allowed"`) so the copy already in `Personal` keeps working.
 

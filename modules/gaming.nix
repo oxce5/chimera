@@ -3,7 +3,7 @@
   inputs,
   ...
 }: {
-  chimera.gaming.provides = {
+  chimera.gaming = {
     min = {host, ...}: {
       nixos = {pkgs, ...}: let
         inherit (pkgs.stdenv.hostPlatform) system;
@@ -56,9 +56,9 @@
 
     max = {
       includes = [
-        chimera.gaming._.replays
-        chimera.gaming._.min
-        chimera.gaming._.tablet
+        chimera.gaming.replays
+        chimera.gaming.min
+        chimera.gaming.tablet
       ];
       nixos = {pkgs, ...}: {
         imports = [

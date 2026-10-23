@@ -64,7 +64,7 @@
     };
   };
 
-  chimera.shell.provides.enhanced.homeManager = {
+  chimera.shell.enhanced.homeManager = {
     programs = {
       nix-your-shell = {
         enable = true;

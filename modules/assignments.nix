@@ -12,7 +12,7 @@
         <chimera/networking>
         <chimera/theming>
         # nixos half; HM half arrives via the workstation-user role
-        <chimera/browser/base-helium>
+        <chimera/browser/helium/base>
       ];
     };
 
@@ -30,7 +30,7 @@
       includes = [
         # nixos halves; HM halves arrive via the pentest-user role
         <chimera/pwn>
-        <chimera/browser/pentest-helium>
+        <chimera/browser/helium/pentest>
         <chimera/workstation>
         <chimera/virt/headless>
         <chimera/virt/ephemeral-store>
@@ -53,7 +53,7 @@
         <chimera/wayland/niri>
         <chimera/wayland/vicinae>
 
-        <chimera/fish>
+        <chimera/shell/fish>
         <chimera/apps/yazi>
       ];
     };
@@ -100,10 +100,10 @@
       includes = [
         <chimera/desktop-base>
 
-        <chimera/apps/coreutils-slim>
+        <chimera/apps/coreutils/slim>
         # <chimera/browser/pentest>
         # HM half of pentest-helium; its nixos half comes via the vm host role
-        <chimera/browser/pentest-helium>
+        <chimera/browser/helium/pentest>
         <chimera/dev/base>
         <chimera/dev/sessions>
         <chimera/neovim>

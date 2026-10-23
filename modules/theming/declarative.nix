@@ -1,7 +1,7 @@
 {chimera, ...}: {
   # build-time fallback theme; only reached via dms, which is parked
-  chimera.theming.provides.declarative = {
-    includes = [chimera.theming.provides.desktop];
+  chimera.theming.declarative = {
+    includes = [chimera.theming.desktop];
     homeManager = {pkgs, ...}: {
       gtk = {
         theme = {

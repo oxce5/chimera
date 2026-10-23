@@ -1,5 +1,5 @@
 {chimera, ...}: {
-  chimera.wayland.provides.screenshot.homeManager = {
+  chimera.wayland.screenshot.homeManager = {
     wayland.windowManager.niri.settings.binds = {
       "Mod+P" = {screenshot = [];};
       "Mod+Alt+P" = {screenshot-screen = [];};

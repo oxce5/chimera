@@ -1,5 +1,5 @@
 {
-  chimera.batteries._.privileged-user = {user, ...}: {
+  chimera.batteries.privileged-user = {user, ...}: {
     nixos = {
       lib,
       config,

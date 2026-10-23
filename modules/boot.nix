@@ -5,7 +5,7 @@
     consoleLogLevel = 3;
   };
 
-  chimera.boot.provides = {
+  chimera.boot = {
     # secure.nixos = {
     #   imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
     #   boot = {

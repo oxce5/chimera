@@ -1,5 +1,5 @@
 {
-  chimera.wayland.provides.vicinae.homeManager = {
+  chimera.wayland.vicinae.homeManager = {
     programs.vicinae = {
       enable = true;
       systemd.enable = true;

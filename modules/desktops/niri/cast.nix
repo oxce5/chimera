@@ -1,5 +1,5 @@
 {chimera, ...}: {
-  chimera.wayland.provides.cast.homeManager = {
+  chimera.wayland.cast.homeManager = {
     wayland.windowManager.niri.settings = {
       binds = {
         "Ctrl+Shift+R" = {

@@ -3,8 +3,8 @@
   inputs,
   ...
 }: {
-  chimera.wayland.provides.niri = {
-    includes = [chimera.wayland._.base];
+  chimera.wayland.niri = {
+    includes = [chimera.wayland.base];
 
     nixos = {
       config,
@@ -143,7 +143,7 @@
     };
   };
 
-  chimera.wayland.provides.mirror = {
+  chimera.wayland.mirror = {
     homeManager = {pkgs, ...}: {
       home.packages = [pkgs.wl-mirror];
     };

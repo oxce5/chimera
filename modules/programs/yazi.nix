@@ -1,8 +1,5 @@
 {
-  chimera.apps._.yazi.homeManager = {
-    pkgs,
-    ...
-  }: {
+  chimera.apps.yazi.homeManager = {pkgs, ...}: {
     programs = {
       yazi = {
         package = pkgs.yazi;

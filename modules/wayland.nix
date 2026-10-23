@@ -1,9 +1,6 @@
 {
-  chimera.wayland._.base = {host, ...}: {
-    nixos = {
-      pkgs,
-      ...
-    }: {
+  chimera.wayland.base = {host, ...}: {
+    nixos = {pkgs, ...}: {
       programs = {
         dconf.enable = true;
         appimage = {

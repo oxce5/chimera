@@ -23,11 +23,8 @@
   };
 
   # Desktop-only fonts. The VM only gets iosevka-chimera globally.
-  chimera.theming.provides.desktop = {
-    nixos = {
-      pkgs,
-      ...
-    }: {
+  chimera.theming.desktop = {
+    nixos = {pkgs, ...}: {
       fonts = {
         packages = with pkgs; [
           maple-mono.NF
@@ -48,8 +45,8 @@
   };
 
   # only reached with the noctalia shell, which owns the palette (see AGENTS.md)
-  chimera.theming.provides.noctalia = {
-    includes = [chimera.theming.provides.desktop];
+  chimera.theming.noctalia = {
+    includes = [chimera.theming.desktop];
     homeManager = {
       config,
       pkgs,

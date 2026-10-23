@@ -1,5 +1,5 @@
 {lib, ...}: {
-  chimera.wayland.provides.niri.homeManager = let
+  chimera.wayland.niri.homeManager = let
     dirs = ["left" "down" "up" "right"];
 
     # Columns are laid out left/right; windows stack up/down inside one.

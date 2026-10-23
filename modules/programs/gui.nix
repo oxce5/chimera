@@ -4,7 +4,7 @@
   withSystem,
   ...
 }: {
-  chimera.apps._.gui = {
+  chimera.apps.gui = {
     includes = [
       # <chimera/browser/firefox>
       <chimera/browser/helium>

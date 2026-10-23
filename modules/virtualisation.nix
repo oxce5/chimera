@@ -1,5 +1,5 @@
 {chimera, ...}: {
-  chimera.virt.provides = {
+  chimera.virt = {
     host = {
       nixos = {pkgs, ...}: {
         users.privilegedGroups = ["libvirtd" "kvm"];

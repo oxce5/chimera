@@ -1,5 +1,5 @@
 {
-  chimera.fish = {user, ...}: {
+  chimera.shell.fish = {user, ...}: {
     nixos = {pkgs, ...}: {
       programs.fish.enable = true;
     };

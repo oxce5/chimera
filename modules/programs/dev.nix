@@ -1,5 +1,5 @@
 {chimera, ...}: {
-  chimera.dev.provides = {
+  chimera.dev = {
     base.homeManager.programs.uv.enable = true;
     min = {
       homeManager = {pkgs, ...}: {
@@ -9,7 +9,7 @@
       };
     };
     ai = {
-      includes = [chimera.dev._.sessions];
+      includes = [chimera.dev.sessions];
       homeManager = {
         programs.opencode = {
           enable = true;

@@ -1,5 +1,5 @@
 {inputs, ...}: {
-  chimera.impermanence.provides = {
+  chimera.impermanence = {
     tmp.nixos = {
       fileSystems."/tmp" = {
         device = "tmpfs";

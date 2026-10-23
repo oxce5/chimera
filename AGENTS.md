@@ -37,8 +37,9 @@ nix repl                          # then :lf . ; .#den is the whole den config
   it goes stale as soon as nixpkgs moves.
 - `den` and `import-tree` come from the **`vic` fork** (`github:vic/den`, `github:vic/import-tree`),
   not `denful` as `README.md:7` says. Don't "fix" the URLs to upstream.
-- `programs.nh` is pointed at `/home/oxce5/.flake` (`modules/programs/nh.nix`), which is a **symlink
-  to this repo** — so `nh` works here. If that symlink ever changes, `nh` silently builds elsewhere.
+- `programs.nh` points directly at `/home/oxce5/Projects/chimera` (`modules/programs/nh.nix`); it no
+  longer uses the `/home/oxce5/.flake` symlink. If the checkout moves, update that path or `nh`
+  silently builds elsewhere.
 - `flake.nix:56-58` claims the `preservation` input is only used by "a skeleton" aspect. That is
   stale — the real content is `modules/impermanence.nix`, wired in through the `vm` host role and
   `overlord.includes` in `modules/assignments.nix`.

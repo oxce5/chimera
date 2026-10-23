@@ -76,8 +76,10 @@
 
         # <chimera/gaming/max>
 
+        <chimera/dev/base>
         <chimera/dev/min>
         <chimera/dev/ai>
+        <chimera/neovim/baseWithLsp>
         # <chimera/apps/coreutils/desktop>
         <chimera/apps/gui>
         <chimera/apps/git>
@@ -97,8 +99,9 @@
         # HM half of pentest-helium; its nixos half comes via the vm host role
         <chimera/browser/pentest-helium>
         <chimera/dev/base>
-        <chimera/dev/lsp>
         <chimera/dev/sessions>
+        <chimera/neovim/base>
+        <chimera/neovim/lsp>
         <chimera/pwn>
         # only for its homeManager half; host-role HM content is inert
         <chimera/virt/headless>

@@ -7,8 +7,8 @@
       version = "5.3.0";
 
       src = pkgs.fetchurl {
-        url = "https://cdn.builder.blender.org/download/daily/blender-5.3.0-beta+v53.ecaf39c37b28-linux.x86_64-release.tar.xz";
-        hash = "sha256-E6uJ4YSgh1nfOOncaVF3m+Z06qFvQNF4DeAZOQFe8Do=";
+        url = "https://cdn.builder.blender.org/download/daily/blender-5.3.0-beta+v53.873fa9640966-linux.x86_64-release.tar.xz";
+        hash = "sha256-a6eVtPNgegf7OKxTpGSSX0qRKyxByPx1uEivNEC9wNc=";
       };
 
       buildInputs = [pkgs.makeWrapper];

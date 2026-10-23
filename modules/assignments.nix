@@ -79,7 +79,13 @@
         <chimera/dev/base>
         <chimera/dev/min>
         <chimera/dev/ai>
-        <chimera/neovim/baseWithLsp>
+        <chimera/neovim>
+        <chimera/neovim/lsp/common>
+        <chimera/neovim/lsp/nix>
+        <chimera/neovim/lsp/general>
+        <chimera/neovim/lint/common>
+        <chimera/neovim/lint/nix>
+        <chimera/neovim/lint/general>
         # <chimera/apps/coreutils/desktop>
         <chimera/apps/gui>
         <chimera/apps/git>
@@ -100,8 +106,8 @@
         <chimera/browser/pentest-helium>
         <chimera/dev/base>
         <chimera/dev/sessions>
-        <chimera/neovim/base>
-        <chimera/neovim/lsp>
+        <chimera/neovim>
+        <chimera/neovim/lsp/common>
         <chimera/pwn>
         # only for its homeManager half; host-role HM content is inert
         <chimera/virt/headless>

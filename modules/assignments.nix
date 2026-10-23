@@ -71,7 +71,7 @@
 
         # <chimera/easyeffects>
         <chimera/tailscale>
-        # <chimera/flatpak>
+        <chimera/flatpak>
         <chimera/xdg>
 
         # <chimera/gaming/max>
@@ -86,7 +86,7 @@
         <chimera/neovim/lint/common>
         <chimera/neovim/lint/nix>
         <chimera/neovim/lint/general>
-        # <chimera/apps/coreutils/desktop>
+        <chimera/apps/coreutils/desktop>
         <chimera/apps/gui>
         <chimera/apps/git>
 
@@ -140,7 +140,6 @@
 
     rei.includes = [
       den.batteries.primary-user
-      # <chimera/desktop-shells/noctalia>
       <chimera/pentest-user>
     ];
   };

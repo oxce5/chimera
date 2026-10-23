@@ -1,16 +1,5 @@
 {chimera, ...}: {
   chimera.pwn.provides.re.homeManager = {pkgs, ...}: let
-    cutter = pkgs.cutter.overrideAttrs (_: {
-      preBuild = ''
-        runtimePythonPath=$(
-          echo "$PYTHONPATH" |
-          tr ':' '\n' |
-          grep -v 'shiboken6-generator' |
-          paste -sd: -
-        )
-        qtWrapperArgs+=(--prefix PYTHONPATH : "$runtimePythonPath")
-      '';
-    });
   in {
     programs.rizin = {
       enable = true;
@@ -23,8 +12,8 @@
       };
     };
 
-    home.packages = [
-      cutter
-    ];
+    #home.packages = [
+    #  cutter
+    #];
   };
 }

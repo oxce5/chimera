@@ -17,7 +17,7 @@
         programs.herdr = {
           plugins = [pkgs.herdrPlugins.herdr-spreader];
           pluginSettings = {
-            herdr-spreader = import ./herdr-spreader.nix;
+            herdr-spreader = import ./_herdr-spreader.nix;
           };
         };
       };

@@ -61,8 +61,15 @@
       ];
       services = {
         cliphist.enable = true;
-        # daemon only; the image is applied manually (see AGENTS.md)
         awww.enable = true;
+      };
+      # Apply each display's wallpaper as soon as the daemon is up; the awww
+      # client retries the socket and ping-polls until outputs are configured,
+      # so ExecStartPost wins the startup race without a retry script.
+      systemd.user.services.awww = lib.mkIf config.services.awww.enable {
+        Service.ExecStartPost = lib.mapAttrsToList (
+          name: d: "${lib.getExe pkgs.awww} img -o ${name} ${d.wallpaper} -t none"
+        ) (lib.filterAttrs (_: d: d.wallpaper != null) host.displays);
       };
       wayland.windowManager.niri = {
         enable = true;

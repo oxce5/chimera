@@ -236,8 +236,10 @@ hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stabl
   (often a connector like `eDP-1`, but a display can also be named by its EDID, in which case the
   key is a longer string). Such a key must be quoted — unquoted it is a Nix parse error, not a
   module error. `transform` is an `enum` of strings, so `transform = "270";`.
-- `wallpaper` is recorded but **nothing applies it** (`awww` takes no image argument, and the
-  startup race is unwon). Apply it manually: `awww img /assets/rei.jpeg`.
+- `wallpaper` is applied declaratively: the `homeManager` half of `chimera.wayland.niri` appends
+  one `awww img -o <output> <store-path> -t none` per display to
+  `systemd.user.services.awww.Service.ExecStartPost`. Displays with `wallpaper = null` are
+  skipped, and hosts where noctalia `mkForce`s awww off never run it (no service, no post).
 - Root is fully volatile: tmpfs `/` + `/home`, a 15 G ext4 `/persist` LV, and a disposable btrfs
   `/nix` (`modules/hosts/machina-mori/_disk-layout.nix`). State that must survive is enumerated in
   `hosts/machina-mori/impermanence.nix` — Sliver client config, `.msf4`, nuclei templates, herdr,
@@ -268,8 +270,9 @@ hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stabl
   matches (observed: cast windows forced to 1300x720); a plain list renders invalid `-` nodes.
 - Display `custom = true` needs `refresh`; niri computes the timings itself — a separate `modeline`
   node overrides that outright.
-- The niri wallpaper daemon is started, but `awww-daemon` takes no image argument: the image is
-  pushed imperatively with `awww img …` once the socket exists (startup race, not won).
+- The awww wallpaper is set in the daemon service's `ExecStartPost` (one `awww img … -t none`
+  per display, niri/default.nix) — no spawn-at-startup needed: the awww client retries the
+  socket 5×100 ms and ping-polls until outputs are configured, so the race is won client-side.
 - `modules/desktops/desktop-shells/dms.nix` is **parked** — nothing includes it; it is kept so dms
   can be swapped back in for noctalia. `modules/theming/declarative.nix` (build-time fallback theme)
   is currently only reached through it, also parked. Noctalia, when present, owns the palette at
@@ -294,6 +297,16 @@ hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stabl
 - `modules/hosts/overlord/default.nix`: display keys are output names copied from `niri msg
   outputs`; `HDMI-A-5` is the projector and is deliberately left unpinned (`eDP-1` is the pinned
   panel).
+- **NEVER `lib.mkForce` `fileSystems.<path>.options` on an impermanent host.** `modules/hosts/
+  <host>/disko.nix` sets `neededForBoot = true` on `/`, `/home`, `/persist`, `/nix`, which adds
+  `x-initrd.mount` to that filesystem's options — that flag is what makes it mount in the initrd,
+  *before* stage-2 activation runs `update-users-groups.pl`, which `chown`s/chmod`s every
+  `createHome` home dir. `mkForce` replaces the whole option list, so `x-initrd.mount` silently
+  disappears and the mount moves under systemd: the chown then hits the hidden underlying
+  directory, systemd recreates `/home/<user>` as `root:root 0755`, and `~` is permission-denied at
+  login (reproduced: gen 9 broke it, gen 7 with the flag intact did not). Set tmpfs sizes in
+  `modules/hosts/<host>/_disk-layout.nix` (`disko.devices.nodev.<path>.mountOptions`) instead —
+  `/tmp` and `/var/tmp` are not `neededForBoot`, so `mkForce` is only safe there.
 
 ## Parked code
 

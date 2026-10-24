@@ -78,9 +78,9 @@
           default = null;
           description = ''
             Image to show behind the session, as a path relative to the flake
-            root. Recorded only: nothing applies it automatically, since every
-            wallpaper daemon here (awww, the desktop shells) wants the image at
-            runtime rather than at build time. See chimera.wayland's awww note.
+            root. Applied by awww via its service's ExecStartPost (see
+            chimera.wayland.niri); null means "let the desktop shell decide"
+            (noctalia owns the wallpaper on hosts that use it).
           '';
           apply = v:
             if v == null

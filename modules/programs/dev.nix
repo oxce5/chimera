@@ -9,16 +9,10 @@
       };
     };
     ai = {
-      includes = [chimera.dev.sessions];
       homeManager = {
         programs.opencode = {
           enable = true;
         };
-      };
-    };
-    sessions = {
-      homeManager = {
-        programs.herdr.enable = true;
       };
     };
   };

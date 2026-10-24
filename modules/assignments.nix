@@ -9,6 +9,7 @@
       includes = [
         <chimera/boot>
         <chimera/dev>
+        <chimera/herdr>
         <chimera/networking>
         <chimera/theming>
         # nixos half; HM half arrives via the workstation-user role
@@ -79,6 +80,7 @@
         <chimera/dev/base>
         <chimera/dev/min>
         <chimera/dev/ai>
+        <chimera/herdr/base>
         <chimera/neovim>
         <chimera/neovim/lsp/common>
         <chimera/neovim/lsp/nix>
@@ -105,7 +107,7 @@
         # HM half of pentest-helium; its nixos half comes via the vm host role
         <chimera/browser/helium/pentest>
         <chimera/dev/base>
-        <chimera/dev/sessions>
+        <chimera/herdr/base>
         <chimera/neovim>
         <chimera/neovim/lsp/common>
         <chimera/pwn>
@@ -132,6 +134,10 @@
       <chimera/virt/guest>
     ];
 
+    machina-mori.provides.to-users = {user, ...}: {
+      includes = [<chimera/herdr/machina-mori>];
+    };
+
     oxce5.includes = [
       den.batteries.primary-user
       <chimera/workstation-user>
@@ -141,6 +147,7 @@
     rei.includes = [
       den.batteries.primary-user
       <chimera/pentest-user>
+      <chimera/apps/git>
     ];
   };
 }

@@ -8,11 +8,11 @@
         "sliver": "sliver"
       },
       "locked": {
-        "lastModified": 1792304584,
-        "narHash": "sha256-232o15a99FIAJA91t9z4nC9pD5EIIni7WZ+IlpTrGHI=",
+        "lastModified": 1792815872,
+        "narHash": "sha256-SR/VNqIYrDxcFlJ71LWbF5O43d+vCZB3tq8c0y+ipbE=",
         "owner": "oxce5",
         "repo": "chimera-pkgs",
-        "rev": "68cfa2fce1d03677a5101b395a42bbe0d773dbdb",
+        "rev": "074ae0e82616fd8764967340c462df4ffcf501d1",
         "type": "github"
       },
       "original": {

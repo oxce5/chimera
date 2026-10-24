@@ -14,7 +14,12 @@
     machina-mori = {
       includes = [chimera.herdr.base];
       homeManager = {pkgs, ...}: {
-        programs.herdr.plugins = [pkgs.herdrPlugins.herdr-spreader];
+        programs.herdr = {
+          plugins = [pkgs.herdrPlugins.herdr-spreader];
+          pluginSettings = {
+            herdr-spreader = import ./herdr-spreader.nix;
+          };
+        };
       };
     };
   };

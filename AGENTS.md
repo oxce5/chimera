@@ -48,10 +48,10 @@ nix repl                          # then :lf . ; .#den is the whole den config
 
 All builds happen on the **host** (`overlord`); the VM only receives the built system.
 
-- Substituters come from two places that must stay in sync: `nixConfig` in `flake.nix` (applies to
-  whoever builds *this flake*) and `modules/cachix.nix` (pushes the same list into each built
-  host's `nix.conf`). Forgetting `nixConfig` means a builder that only knows cache.nixos.org and
-  starts compiling everything else locally.
+- Substituters live in one place: `flake.nix`'s `nixConfig` (applies to whoever builds *this
+  flake*). `modules/cachix.nix` imports `flake.nix` and pushes the same lists into each built
+  host's `nix.conf`, so the two cannot drift. `nixConfig` must stay a literal attrset — Nix's
+  flake parser rejects a `let`, import, or other thunk there.
 - These are **never** substituted — they always compile on the host, don't go bug-hunting:
   `burpsuite` (fhsenv + 700 MB jar), `metasploit-framework`, `rustscan`,
   `rizin.withPlugins [rz-ghidra]` (our override, base `rizin` *is* cached), `neovim`,

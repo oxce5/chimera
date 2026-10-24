@@ -14,6 +14,19 @@
           enable = true;
         };
       };
+      mcp.homeManager = {pkgs, ...}: {
+        programs.mcp = {
+          enable = true;
+          servers.nixos = {
+            command = "${pkgs.mcp-nixos}/bin/mcp-nixos";
+          };
+        };
+
+        programs.opencode = {
+          enable = true;
+          enableMcpIntegration = true;
+        };
+      };
     };
   };
 }

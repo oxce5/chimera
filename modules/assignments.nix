@@ -80,6 +80,7 @@
         <chimera/dev/base>
         <chimera/dev/min>
         <chimera/dev/ai>
+        <chimera/dev/ai/mcp>
         <chimera/herdr/base>
         <chimera/neovim>
         <chimera/neovim/lsp/common>

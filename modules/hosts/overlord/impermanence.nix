@@ -20,6 +20,22 @@
             mode = "0700";
           }
           "/var/lib/waydroid"
+          {
+            directory = "/persist/blender-cache";
+            user = "oxce5";
+          }
+          {
+            directory = "/persist/blender-scripts";
+            user = "oxce5";
+          }
+          {
+            directory = "/persist/tmp";
+            user = "oxce5";
+          }
+          {
+            directory = "/persist/cache";
+            user = "oxce5";
+          }
         ];
 
         users.oxce5 = {

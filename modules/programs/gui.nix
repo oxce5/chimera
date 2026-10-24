@@ -34,6 +34,10 @@
             __NV_PRIME_RENDER_OFFLOAD_PROVIDER.value = "NVIDIA-G0";
             __GLX_VENDOR_LIBRARY_NAME.value = "nvidia";
             __VK_LAYER_NV_optimus.value = "NVIDIA_only";
+            BLENDER_USER_CACHE.value = "/persist/blender-cache";
+            BLENDER_USER_SCRIPTS.value = "/persist/blender-scripts";
+            TMPDIR.value = "/persist/tmp";
+            XDG_CACHE_HOME.value = "/persist/cache";
           };
         })
         (inputs.kopuz.packages.${pkgs.stdenv.hostPlatform.system}.default)

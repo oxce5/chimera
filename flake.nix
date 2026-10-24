@@ -59,6 +59,12 @@
 
     chimera-pkgs.url = "github:oxce5/chimera-pkgs";
 
+    herdr-nix = {
+      url = "github:lorenzorapetti/herdr-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+
     nix-gaming = {
       url = "github:fufexan/nix-gaming";
       inputs.nixpkgs.follows = "nixpkgs";

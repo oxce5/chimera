@@ -51,7 +51,10 @@
         programs.neovim.extraPackages = [pkgs.ruff];
       };
       nix.homeManager = {pkgs, ...}: {
-        programs.neovim.extraPackages = [pkgs.alejandra];
+        programs.neovim.extraPackages = [
+          pkgs.alejandra
+          pkgs.statix
+        ];
       };
       general.homeManager = {pkgs, ...}: {
         programs.neovim.extraPackages = with pkgs; [

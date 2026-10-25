@@ -2,6 +2,7 @@
 
 Personal NixOS config flake: **flake-parts + [Den](docs/den.md) + import-tree**. Two hosts, both `x86_64-linux`:
 `overlord` (laptop, NVIDIA/zen kernel, user `oxce5`) and `machina-mori` (VM, user `rei`).
+Both are tmpfs-rooted and fully impermanent — see [Impermanence](#impermanence).
 
 ## Commands
 
@@ -41,8 +42,8 @@ nix repl                          # then :lf . ; .#den is the whole den config
   longer uses the `/home/oxce5/.flake` symlink. If the checkout moves, update that path or `nh`
   silently builds elsewhere.
 - `flake.nix:56-58` claims the `preservation` input is only used by "a skeleton" aspect. That is
-  stale — the real content is `modules/impermanence.nix`, wired in through the `vm` host role and
-  `overlord.includes` in `modules/assignments.nix`.
+  stale — the real content is `modules/impermanence.nix`, wired into both hosts through
+  `<chimera/impermanence/{tmp,root}>` (the `vm` host role, and `overlord.includes` directly).
 
 ## Builds: substitution, not compilation
 
@@ -222,6 +223,32 @@ Teto theme: pre-packed by hand with `--pack-extension`. The pack key is delibera
 (it lives in `~/.local/share/helium-pack/pack.pem`); the id is sha256 of that key's SPKI DER with
 hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stable.
 
+## Impermanence
+
+Both hosts are fully volatile: tmpfs `/` + `/home`, a real `/persist`, and a btrfs `/nix`
+(disposable on `machina-mori`, a plain partition on `overlord`). The layouts differ:
+
+- `overlord` (`modules/hosts/overlord/_disk-layout.nix`): `/` 4 G and `/home` 8 G tmpfs, `/persist`
+  is the rest of the 512 G NVMe (ext4 on `/dev/nvme0n1p3`), `/nix` a 120 G btrfs partition.
+  `/tmp` and `/var/tmp` are 4 G / 2 G tmpfs, `mkForce`d in `filesystems.nix`.
+- `machina-mori` (`modules/hosts/machina-mori/_disk-layout.nix`): `/` 512 M and `/home` 100 % tmpfs,
+  `/persist` a 15 G ext4 LVM LV, `/nix` a separate disposable `/dev/vdb` btrfs disk.
+
+Each host's `disko.nix` imports its `_disk-layout.nix` and sets `neededForBoot = true` on
+`/home`, `/persist`, `/nix` (the tmpfs root needs no entry). What survives is an allowlist:
+`modules/hosts/{overlord,machina-mori}/impermanence.nix`, plus the shared machine-id/ssh-key/
+random-seed/NetworkManager preservation in `modules/impermanence.nix`. `machina-mori` persists the
+Sliver client config, `.msf4`, nuclei templates, herdr and `/workspace`; `overlord` persists the
+user's `Projects`, `Documents`, `Blender`, etc. If you add a tool that keeps state, add it there or
+lose it on reboot.
+
+On `overlord`, `~/.cache` is **not** persisted — only `.cache/rclone` is on the allowlist, and the
+`.cache/cliphist` entry is broken by a literal `~` (it persists
+`/persist/home/oxce5/~/.cache/cliphist`, not `.cache/cliphist`). The Blender wrapper in
+`modules/programs/gui.nix` points `BLENDER_USER_CACHE`, `BLENDER_USER_SCRIPTS`, `TMPDIR` and
+`XDG_CACHE_HOME` at `/persist/{blender-cache,blender-scripts,tmp,cache}` for exactly that reason;
+other apps' caches live in the 8 G tmpfs `/home` while running and vanish on reboot.
+
 ## VM-specific conventions
 
 - `machina-mori` is a real guest built by this flake, but its **libvirt domain is created by hand in
@@ -240,10 +267,6 @@ hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stabl
   one `awww img -o <output> <store-path> -t none` per display to
   `systemd.user.services.awww.Service.ExecStartPost`. Displays with `wallpaper = null` are
   skipped, and hosts where noctalia `mkForce`s awww off never run it (no service, no post).
-- Root is fully volatile: tmpfs `/` + `/home`, a 15 G ext4 `/persist` LV, and a disposable btrfs
-  `/nix` (`modules/hosts/machina-mori/_disk-layout.nix`). State that must survive is enumerated in
-  `hosts/machina-mori/impermanence.nix` — Sliver client config, `.msf4`, nuclei templates, herdr,
-  `/workspace`. If you add a tool that keeps state, add it there or lose it on reboot.
 - Pentest tooling is opted into deliberately to keep the closure small: `modules/pwn/core.nix`
   overrides `wordlists` down to `lists = [nmap]` (nixpkgs' default pulls `seclists`, ~2 GiB), with
   the big lists behind `chimera.pwn.provides.wordlists`. `chimera.pwn.provides.forensics` and
@@ -298,7 +321,7 @@ hex digits mapped 0-f → a-p, so repacking with the same key keeps the id stabl
   outputs`; `HDMI-A-5` is the projector and is deliberately left unpinned (`eDP-1` is the pinned
   panel).
 - **NEVER `lib.mkForce` `fileSystems.<path>.options` on an impermanent host.** `modules/hosts/
-  <host>/disko.nix` sets `neededForBoot = true` on `/`, `/home`, `/persist`, `/nix`, which adds
+  <host>/disko.nix` sets `neededForBoot = true` on `/home`, `/persist`, `/nix`, which adds
   `x-initrd.mount` to that filesystem's options — that flag is what makes it mount in the initrd,
   *before* stage-2 activation runs `update-users-groups.pl`, which `chown`s/chmod`s every
   `createHome` home dir. `mkForce` replaces the whole option list, so `x-initrd.mount` silently

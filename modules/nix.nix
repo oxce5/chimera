@@ -1,9 +1,7 @@
 {inputs, ...}: {
   den.default = {
     nixos = {
-      imports = [inputs.nix-index-database.nixosModules.nix-index];
       nixpkgs.config.allowUnfree = true;
-      programs.nix-index-database.comma.enable = true;
       programs.nix-ld.enable = true;
       nix = {
         optimise.automatic = false;

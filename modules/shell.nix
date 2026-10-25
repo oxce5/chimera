@@ -1,3 +1,4 @@
+{inputs, ...}:
 {
   chimera.shell.homeManager = {
     pkgs,
@@ -35,42 +36,60 @@
       };
       bat = {
         enable = true;
-        config.style = "plain";
-        extraPackages = with pkgs.bat-extras; [
-          batwatch
-          batpipe
-          batman
-          # batgrep
-          batdiff
-        ];
+          config.style = "plain";
+          extraPackages = with pkgs.bat-extras; [
+            batwatch
+            batpipe
+            batman
+            # batgrep
+            batdiff
+          ];
+        };
+        bottom.enable = true;
+        eza = {
+          enable = true;
+          git = true;
+          icons = "auto";
+          enableNushellIntegration = false;
+        };
+        skim.enable = true;
+        tealdeer = {
+          enable = true;
+          settings.updates.auto_update = true;
+        };
+        zoxide.enable = true;
       };
-      bottom.enable = true;
-      direnv = {
-        enable = true;
-        nix-direnv.enable = true;
-      };
-      eza = {
-        enable = true;
-        git = true;
-        icons = "auto";
-        enableNushellIntegration = false;
-      };
-      skim.enable = true;
-      tealdeer = {
-        enable = true;
-        settings.updates.auto_update = true;
-      };
-      zoxide.enable = true;
     };
-  };
 
-  chimera.shell.enhanced.homeManager = {
-    programs = {
-      nix-your-shell = {
-        enable = true;
-        enableFishIntegration = true;
-        nix-output-monitor.enable = true;
+  chimera.shell.enhanced = {
+    nixos = { pkgs, ...}: {
+      imports = [inputs.nix-index-database.nixosModules.default];
+      programs = {
+        nix-index-database.comma.enable = true; 
+        nix-index.package = inputs.nix-index-database.packages.${pkgs.stdenv.hostPlatform.system}.nix-index-with-small-db;
       };
     };
+
+    homeManager = { pkgs, ...}: {
+      home.packages = with pkgs; [alejandra];
+      programs = {
+        command-not-found.enable = false;
+        direnv = {
+          enable = true;
+          nix-direnv.enable = true;
+        };
+        nix-your-shell = {
+          enable = true;
+          enableFishIntegration = true;
+          nix-output-monitor.enable = true;
+        };
+        pay-respects = {
+          enable = true;
+          enableBashIntegration = true;
+          enableFishIntegration = true;
+          options = ["--alias" "--nocnf"];
+        };
+      };
+    }; 
   };
 }

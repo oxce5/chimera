@@ -65,7 +65,7 @@
               mode = "0700";
             }
             {
-              directory = "~/.cache/cliphist";
+              directory = ".cache/cliphist";
               mode = "0700";
             }
             {

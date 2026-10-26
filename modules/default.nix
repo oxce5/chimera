@@ -22,18 +22,27 @@
         binsh = "${pkgs.dash}/bin/dash";
         defaultPackages = lib.mkForce [];
       };
-      documentation.doc.enable = false;
-      documentation.info.enable = false;
-      documentation.man.enable = false;
-      documentation.nixos.enable = false;
-      i18n.defaultLocale = "en_US.UTF-8";
-      i18n.supportedLocales = ["en_US.UTF-8/UTF-8"];
+      documentation = {
+        doc.enable = false;
+        info.enable = false;
+        man.enable = false;
+        nixos.enable = false;
+      };
+
+      i18n = {
+        defaultLocale = "en_US.UTF-8";
+        supportedLocales = ["en_US.UTF-8/UTF-8"];
+      };
+
       services.dbus.implementation = "broker";
       system.stateVersion = "22.05";
       time.timeZone = "Asia/Manila";
       zramSwap.enable = true;
-      home-manager.useUserPackages = true;
-      home-manager.useGlobalPkgs = true;
+      home-manager = {
+        useUserPackages = true;
+        useGlobalPkgs = true;
+      };
+
       boot.initrd.systemd.enable = true;
       nixpkgs.config.permittedInsecurePackages = [
         "electron-40.10.5"

@@ -79,9 +79,6 @@
         acpid.enable = true;
       };
 
-      programs.nix-index-database.comma.enable = lib.mkForce false;
-      programs.nix-index.package = lib.mkForce pkgs.nix-index; # drop the prebuilt ~180 MB database
-
       # just use termfilechooser bro
       xdg.portal.extraPortals = lib.mkForce (with pkgs; [
         xdg-desktop-portal-termfilechooser

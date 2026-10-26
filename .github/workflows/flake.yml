@@ -1,4 +1,5 @@
-name: Update flake lock, eval on commit
+# .github/workflows/flake.yml
+name: Update flake lock, build/eval on commit/PRs
 
 on:
   push:
@@ -9,7 +10,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: flake-${{ github.ref }}
+  group: flake-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -17,36 +18,33 @@ permissions:
   pull-requests: write
 
 jobs:
-  # Only runs on schedule/manual: update once, share the lock with other jobs
-  lock:
+  # Weekly / manual: update the lock and open a PR
+  update:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: nix flake update
-      - uses: actions/upload-artifact@v4
+      - uses: DeterminateSystems/update-flake-lock@main
         with:
-          name: flake-lock
-          path: flake.lock
+          token: ${{ secrets.FLAKE_UPDATE_TOKEN }}   # PAT or GitHub App token, see note
+          pr-title: "chore: update flake.lock"
+          pr-labels: |
+            dependencies
+            automated
 
+  # Push / PR: evaluate everything
   flake-check:
-    needs: lock
-    if: ${{ !cancelled() && (needs.lock.result == 'success' || needs.lock.result == 'skipped') }}
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        if: needs.lock.result == 'success'
-        with:
-          name: flake-lock
-          path: .
       - uses: DeterminateSystems/nix-installer-action@main
       - run: nix flake check --no-build
 
+  # Push / PR: per-host dry-run (and build) in parallel
   host:
-    needs: lock
-    if: ${{ !cancelled() && (needs.lock.result == 'success' || needs.lock.result == 'skipped') }}
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -58,18 +56,13 @@ jobs:
             build: true    # 12GB: real build as smoke test
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        if: needs.lock.result == 'success'
-        with:
-          name: flake-lock
-          path: .
 
       - name: Free disk space
         if: matrix.build
         uses: jlumbroso/free-disk-space@main
         with:
           tool-cache: true
-          large-packages: false   # slow to remove, rarely worth it
+          large-packages: false
 
       - uses: DeterminateSystems/nix-installer-action@main
 
@@ -82,24 +75,3 @@ jobs:
       - name: Build
         if: matrix.build
         run: nix build --no-link ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel"
-
-  # Only after every check above passed
-  pr:
-    needs: [lock, flake-check, host]
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: flake-lock
-          path: .
-      - uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: "chore: update flake.lock"
-          title: "chore: update flake.lock"
-          branch: update-flake-lock
-          delete-branch: true
-          labels: |
-            dependencies
-            automated

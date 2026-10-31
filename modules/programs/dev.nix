@@ -18,8 +18,11 @@
         programs.mcp = {
           enable = true;
           servers.nixos = {
-            command = "${pkgs.mcp-nixos}/bin/mcp-nixos";
-
+            command = "${pkgs.mcp-nixos.override {
+              python3Packages = pkgs.python3Packages.overrideScope (pyFinal: pyPrev: {
+                fastmcp-slim = pyPrev.fastmcp-slim.override {mcp = pyFinal.mcp_1;};
+              });
+            }}/bin/mcp-nixos";
           };
         };
 

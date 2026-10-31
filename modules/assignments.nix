@@ -69,6 +69,7 @@
         <chimera/wayland/screenshot>
         <chimera/wayland/cast>
         <chimera/desktop-shells/noctalia>
+        <chimera/theming/cursors/teto>
 
         # <chimera/easyeffects>
         <chimera/tailscale>

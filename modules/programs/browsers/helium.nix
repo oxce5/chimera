@@ -211,7 +211,7 @@ in {
           update_url = null;
           toolbar_pin = "force_pinned";
           crx.version = "6.12.7";
-          crx.hash = "1h6v4hr4n6adsdqg1nicmwrhycpzsxz1w1ml1nckryyc248cia74";
+          crx.hash = "0r2c2wc2mckmk1v1sx54hihh857n71nc03yxhjgbnhm2rnmnxnf4";
         }
         {
           id = "gcknhkkoolaabfmlnjonogaaifnjlfnp";

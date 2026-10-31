@@ -23,7 +23,6 @@
         theme = "tetos";
         themePackages = [inputs.chimera-pkgs.packages.x86_64-linux.plymouth-theme-tetos];
       };
-      initrd.verbose = false;
       kernelParams = [
         "quiet"
         "splash"

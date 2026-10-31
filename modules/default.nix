@@ -43,7 +43,6 @@
         useGlobalPkgs = true;
       };
 
-      boot.initrd.systemd.enable = true;
       nixpkgs.config.permittedInsecurePackages = [
         "electron-40.10.5"
       ];

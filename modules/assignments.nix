@@ -69,7 +69,6 @@
         <chimera/wayland/screenshot>
         <chimera/wayland/cast>
         <chimera/desktop-shells/noctalia>
-        <chimera/theming/cursors/teto>
 
         # <chimera/easyeffects>
         <chimera/tailscale>
@@ -83,13 +82,7 @@
         <chimera/dev/ai>
         <chimera/dev/ai/mcp>
         <chimera/herdr/base>
-        <chimera/neovim>
-        <chimera/neovim/lsp/common>
-        <chimera/neovim/lsp/nix>
-        <chimera/neovim/lsp/general>
-        <chimera/neovim/lint/common>
-        <chimera/neovim/lint/nix>
-        <chimera/neovim/lint/general>
+        <chimera/nvf/full>
         <chimera/apps/coreutils/desktop>
         <chimera/apps/gui>
         <chimera/apps/git>
@@ -110,8 +103,7 @@
         <chimera/browser/helium/pentest>
         <chimera/dev/base>
         <chimera/herdr/base>
-        <chimera/neovim>
-        <chimera/neovim/lsp/common>
+        <chimera/nvf/minimal>
         <chimera/pwn>
         # only for its homeManager half; host-role HM content is inert
         <chimera/virt/headless>
@@ -144,12 +136,14 @@
       den.batteries.primary-user
       <chimera/workstation-user>
       <chimera/storage>
+      <chimera/theming/cursors/teto>
     ];
 
     rei.includes = [
       den.batteries.primary-user
       <chimera/pentest-user>
       <chimera/apps/git>
+      <chimera/theming/cursors/rei>
     ];
   };
 }

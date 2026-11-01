@@ -1,0 +1,9 @@
+# Read by noctalia alongside its runtime settings.toml (the final overlay, in
+# ~/.local/state — this file is the declarative, dotfile-managed half).
+# The rendered module lands in the noctalia state dir: nvf's config is a store
+# package (NVIM_APPNAME=nvf), so ~/.config/nvim is no longer on the runtimepath.
+
+[theme.templates.user.nvim-matugen]
+input_path  = "$XDG_CONFIG_HOME/noctalia/templates/nvim.lua"
+output_path = "$XDG_STATE_HOME/noctalia/matugen.lua"
+post_hook   = "pkill -SIGUSR1 nvim"

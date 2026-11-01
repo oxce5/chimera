@@ -1,6 +1,3 @@
--- Rendered by noctalia+matugen (user template nvim-matugen), imperative by
--- design: rewritten on every wallpaper change, reloaded live via SIGUSR1.
--- nvf loads this module from the noctalia state dir (see nvf theme.nix).
 local M = {}
 
 function M.setup()
@@ -51,15 +48,38 @@ function M.setup()
   hi('MiniPickPromptCaret', { fg = '{{colors.primary.default.hex}}',             bg = '{{colors.surface_container_high.default.hex}}' })
   hi('MiniPickMatchRanges',       { fg = '{{colors.primary.default.hex}}',             bold = true })
 
-  -- Transparency runs last inside every apply, so it survives palette
-  -- re-renders (nvf itself can only apply highlights once, at build config time).
-  hi('Normal', { bg = 'none' })
-  hi('NormalFloat', { bg = 'none' })
+  -- clear backgrounds so a transparent terminal shows through.
+  local transparent_groups = {
+    'Normal', 'NormalNC', 'NormalFloat',
+    'Comment', 'Constant', 'Special', 'Identifier', 'Statement', 'PreProc',
+    'Type', 'Underlined', 'Todo', 'String', 'Function', 'Conditional',
+    'Repeat', 'Operator', 'Structure', 'LineNr', 'NonText', 'SignColumn',
+    'CursorLine', 'CursorLineNr', 'StatusLine', 'StatusLineNC', 'EndOfBuffer',
+  }
+  for _, g in ipairs(transparent_groups) do
+    local hl = vim.api.nvim_get_hl(0, { name = g, link = false })
+    hl.bg = nil
+    vim.api.nvim_set_hl(0, g, hl)
+  end
+
+  hi('NoiceCmdlinePopup',               { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.on_surface.default.hex}}' })
+  hi('NoiceCmdlinePopupBorder',         { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.outline.default.hex}}' })
+  hi('NoiceCmdlinePopupTitle',          { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.on_surface_variant.default.hex}}', bold = true })
+  hi('NoiceCmdlineIcon',                { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.primary.default.hex}}' })
+  hi('NoiceCmdlinePopupBorderSearch',   { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.primary_fixed_dim.default.hex}}' })
+  hi('NoiceCmdlinePopupTitleSearch',    { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.primary_fixed_dim.default.hex}}', bold = true })
+  hi('NoiceCmdlinePopupBorderSearchLeader', { bg = '{{colors.surface.default.hex}}',           fg = '{{colors.primary_fixed_dim.default.hex}}' })
+
+  hi('NoicePopup',                      { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.on_surface.default.hex}}' })
+  hi('NoicePopupBorder',                { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.outline.default.hex}}' })
+  hi('NoicePopupmenu',                  { bg = '{{colors.surface_container.default.hex}}',     fg = '{{colors.on_surface.default.hex}}' })
+  hi('NoicePopupmenuBorder',            { bg = '{{colors.surface_container.default.hex}}',     fg = '{{colors.outline.default.hex}}' })
+  hi('NoicePopupmenuSelected',          { bg = '{{colors.surface_container_high.default.hex}}', fg = '{{colors.on_background.default.hex}}' })
+  hi('NoicePopupmenuMatch',             { fg = '{{colors.primary_fixed_dim.default.hex}}',     bold = true })
+  hi('NoicePopupmenuSelectedMatch',     { fg = '{{colors.primary_fixed_dim.default.hex}}',     bold = true })
 end
 
--- Register a signal handler for SIGUSR1 (matugen updates).
--- The handler re-requires this module, which re-runs the code below, so the
--- previous handle is stopped first; otherwise handlers double on every signal.
+-- register a signal handler for SIGUSR1 (matugen updates).
 if _G.__matugen_signal then
   _G.__matugen_signal:stop()
   _G.__matugen_signal:close()

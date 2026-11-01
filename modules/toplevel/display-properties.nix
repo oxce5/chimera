@@ -5,6 +5,25 @@
 }: let
   inherit (lib) mkOption types;
 
+  # Remote wallpaper: URL plus the SRI sha256 of the file it serves (same hash
+  # shape as pkgs.fetchurl in e.g. modules/programs/blender.nix).
+  remoteWallpaperType = types.submodule {
+    options = {
+      url = mkOption {
+        type = types.str;
+        description = "Where to download the image from.";
+      };
+      hash = mkOption {
+        type = types.str;
+        description = ''
+          SRI sha256 of the file, e.g. "sha256-…". Get it with
+          `nix store prefetch-file --json <url>` (take the "hash" field), or
+          from a copy on disk with `nix hash file --sri <file>`.
+        '';
+      };
+    };
+  };
+
   displayType = types.submodule (
     {
       name,
@@ -74,17 +93,29 @@
           description = "Vertical monitors typically want \"90\" or \"270\".";
         };
         wallpaper = mkOption {
-          type = types.nullOr types.path;
+          type = types.nullOr (types.either types.path remoteWallpaperType);
           default = null;
           description = ''
-            Image to show behind the session, as a path relative to the flake
-            root. Applied by awww via its service's ExecStartPost (see
+            Image to show behind the session. Either a path relative to the
+            flake root (leading slash, e.g. "/assets/wall.png"), or a
+            { url = "https://…"; hash = "sha256-…"; } set that downloads the
+            file at eval time (SRI sha256 of the file, e.g. from
+            `nix store prefetch-file --json <url>`). Both end up as a store
+            path. Applied by awww via its service's ExecStartPost (see
             chimera.wayland.niri); null means "let the desktop shell decide"
             (noctalia owns the wallpaper on hosts that use it).
           '';
           apply = v:
             if v == null
             then null
+            else if builtins.isAttrs v
+            then
+              builtins.fetchurl {
+                inherit (v) url;
+                sha256 = v.hash;
+                # store name = URL basename without any ?query suffix
+                name = builtins.head (lib.splitString "?" (builtins.baseNameOf v.url));
+              }
             else builtins.path {path = self + v;};
         };
       };

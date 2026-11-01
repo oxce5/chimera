@@ -263,8 +263,12 @@ other apps' caches live in the 8 G tmpfs `/home` while running and vanish on reb
   (often a connector like `eDP-1`, but a display can also be named by its EDID, in which case the
   key is a longer string). Such a key must be quoted — unquoted it is a Nix parse error, not a
   module error. `transform` is an `enum` of strings, so `transform = "270";`.
-- `wallpaper` is applied declaratively: the `homeManager` half of `chimera.wayland.niri` appends
-  one `awww img -o <output> <store-path> -t none` per display to
+- `wallpaper` takes a flake-relative path string (`"/assets/rei.jpeg"`, leading slash) or
+  `{ url = "https://…"; hash = "sha256-…"; }`; the URL form goes through `builtins.fetchurl` in
+  the option's `apply`, so it fetches at *eval* time and needs the file in the store or network
+  once per hash (flat file hash — `nix store prefetch-file --json <url>`). Either way the value
+  becomes a store path, and the `homeManager` half of `chimera.wayland.niri` appends one
+  `awww img -o <output> <store-path> -t none` per display to
   `systemd.user.services.awww.Service.ExecStartPost`. Displays with `wallpaper = null` are
   skipped, and hosts where noctalia `mkForce`s awww off never run it (no service, no post).
 - Pentest tooling is opted into deliberately to keep the closure small: `modules/pwn/core.nix`

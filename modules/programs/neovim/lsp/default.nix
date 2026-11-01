@@ -2,7 +2,7 @@
 # plugins, LSP keymaps. Language sets split into ./light.nix and ./full.nix.
 {...}: {
   chimera.nvf.lsp = {
-    homeManager = {...}: {
+    homeManager = {pkgs, ...}: {
       programs.nvf.settings.vim = {
         lsp = {
           enable = true;
@@ -32,6 +32,11 @@
 
         diagnostics.nvim-lint.enable = true;
         formatter.conform-nvim.enable = true;
+
+        lazy.plugins."R.nvim" = {
+          package = pkgs.vimPlugins.R-nvim;
+          ft = ["r" "rmd" "quarto"];
+        };
 
         keymaps = [
           {

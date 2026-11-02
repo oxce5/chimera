@@ -1,11 +1,39 @@
 # chimera.nvf.git — gitsigns + the <leader>gh* / toggle keymaps.
 {...}: {
   chimera.nvf.git = {
-    homeManager = {...}: {
+    homeManager = {lib, ...}: {
       programs.nvf.settings.vim = {
         git = {
           enable = true;
-          gitsigns.enable = true;
+          gitsigns = {
+            enable = true;
+            setupOpts = {
+              signs = {
+                add.text = "+";
+                change.text = "~";
+                delete.text = "_";
+                topdelete.text = "‾";
+                changedelete.text = "~";
+              };
+              on_attach = lib.generators.mkLuaInline ''
+                function(bufnr)
+                  local gs = require 'gitsigns'
+                  local function map(mode, l, r, opts)
+                    opts = opts or {}
+                    opts.buffer = bufnr
+                    vim.keymap.set(mode, l, r, opts)
+                  end
+                  map('n', ']c', function()
+                    if vim.wo.diff then vim.cmd.normal { ']c', bang = true } else gs.nav_hunk 'next' end
+                  end, { desc = 'Jump to next git change' })
+                  map('n', '[c', function()
+                    if vim.wo.diff then vim.cmd.normal { '[c', bang = true } else gs.nav_hunk 'prev' end
+                  end, { desc = 'Jump to previous git change' })
+                  map({ 'o', 'x' }, 'ih', gs.select_hunk, { desc = 'Inside hunk' })
+                end
+              '';
+            };
+          };
         };
 
         keymaps = [

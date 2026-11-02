@@ -13,7 +13,7 @@
           enableLuaLoader = true;
 
           lineNumberMode = "relNumber";
-          clipboard.enable = true;
+          clipboard.providers.wl-copy.enable = true;
           searchCase = "smart";
           preventJunkFiles = true;
           bell = "on";
@@ -25,6 +25,7 @@
           };
 
           options = {
+            clipboard = "unnamedplus";
             mouse = "a";
             showmode = false;
             breakindent = true;
@@ -32,6 +33,7 @@
             softtabstop = 2;
             shiftwidth = 2;
             tabstop = 2;
+            number = true;
             signcolumn = "yes";
             updatetime = 250;
             timeoutlen = 300;
@@ -49,6 +51,8 @@
             confirm = true;
           };
 
+          undoFile.enable = true;
+
           diagnostics = {
             enable = true;
             config = {
@@ -58,9 +62,20 @@
                 border = "rounded";
                 source = "if_many";
               };
-              underline = {severity = {min = 3;};};
+              underline = {severity = {min = 2;};};
               virtual_text = true;
               virtual_lines = false;
+              jump = {
+                on_jump = lib.generators.mkLuaInline "function(_, bufnr) vim.diagnostic.open_float { bufnr = bufnr, scope = 'cursor', focus = false } end";
+              };
+            };
+          };
+
+          luaConfigRC = {
+            loader = {
+              data = "vim.loader.enable()";
+              before = [];
+              after = ["optionsScript"];
             };
           };
 

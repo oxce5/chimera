@@ -1,10 +1,14 @@
-# chimera.nvf.treesitter — packaged (prebuilt) grammars, no runtime compilation.
+# chimera.nvf.treesitter — packaged grammars + nvim-treesitter plugin with custom attach.
 {...}: {
   chimera.nvf.treesitter = {
-    homeManager = {pkgs, ...}: {
-      programs.nvf.settings.vim.treesitter = {
-        enable = true;
-        grammars = with pkgs.vimPlugins.nvim-treesitter.grammarPlugins; [
+    homeManager = {
+      pkgs,
+      lib,
+      ...
+    }: {
+      programs.nvf.settings.vim = {
+        treesitter.enable = true;
+        treesitter.grammars = with pkgs.vimPlugins.nvim-treesitter.grammarPlugins; [
           bash
           c
           cpp

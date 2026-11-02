@@ -1,3 +1,6 @@
+-- Rendered by noctalia+matugen (user template nvim-matugen), imperative by
+-- design: rewritten on every wallpaper change, reloaded live via SIGUSR1.
+-- nvf loads this module from the noctalia state dir (see nvf theme.nix).
 local M = {}
 
 function M.setup()
@@ -62,6 +65,7 @@ function M.setup()
     vim.api.nvim_set_hl(0, g, hl)
   end
 
+  -- autocmd never fired so putting it here means it actually re-applies on every palette re-render.
   hi('NoiceCmdlinePopup',               { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.on_surface.default.hex}}' })
   hi('NoiceCmdlinePopupBorder',         { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.outline.default.hex}}' })
   hi('NoiceCmdlinePopupTitle',          { bg = '{{colors.surface.default.hex}}',               fg = '{{colors.on_surface_variant.default.hex}}', bold = true })

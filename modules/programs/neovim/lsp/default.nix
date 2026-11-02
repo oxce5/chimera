@@ -2,7 +2,11 @@
 # plugins, LSP keymaps. Language sets split into ./light.nix and ./full.nix.
 {...}: {
   chimera.nvf.lsp = {
-    homeManager = {pkgs, ...}: {
+    homeManager = {
+      pkgs,
+      lib,
+      ...
+    }: {
       programs.nvf.settings.vim = {
         lsp = {
           enable = true;
@@ -31,12 +35,46 @@
         };
 
         diagnostics.nvim-lint.enable = true;
+        diagnostics.nvim-lint.linters_by_ft = {
+          python = ["ruff"];
+          java = ["checkstyle"];
+          nix = ["statix"];
+          c = ["clang_tidy"];
+          cpp = ["clang_tidy"];
+          lua = ["selene"];
+          sh = ["shellcheck"];
+          bash = ["shellcheck"];
+          fish = ["fish"];
+        };
+
         formatter.conform-nvim.enable = true;
+        formatter.conform-nvim.setupOpts = {
+          format_on_save = lib.generators.mkLuaInline ''
+            function(bufnr)
+              local enabled_filetypes = {
+                nix = true,
+                java = true,
+              }
+              if enabled_filetypes[vim.bo[bufnr].filetype] then
+                return { timeout_ms = 500 }
+              else
+                return nil
+              end
+            end
+          '';
+          formatters_by_ft = {
+            nix = ["alejandra"];
+            java = ["google-java-format"];
+          };
+        };
 
         lazy.plugins."R.nvim" = {
           package = pkgs.vimPlugins.R-nvim;
           ft = ["r" "rmd" "quarto"];
         };
+
+        # fidget.nvim — LSP status updates
+        visuals.fidget-nvim.enable = true;
 
         keymaps = [
           {
@@ -74,6 +112,22 @@
             action = "<cmd>LspLog<CR>";
             desc = "LSP Log";
           }
+          {
+            key = "<leader>cf";
+            mode = ["n" "v"];
+            silent = true;
+            lua = true;
+            action = "function() require('conform').format { async = true } end";
+            desc = "Format Buffer";
+          }
+          {
+            key = "<leader>cl";
+            mode = "n";
+            silent = true;
+            lua = true;
+            action = "function() require('lint').try_lint() end";
+            desc = "Lint Buffer";
+          }
 
           {
             key = "gd";
@@ -85,6 +139,7 @@
           {
             key = "gr";
             mode = "n";
+            silent = true;
             nowait = true;
             action = "vim.lsp.buf.references";
             desc = "References";
@@ -136,23 +191,11 @@
         # Buffer-local maps on LspAttach; telescope is in chimera.nvf.nav,
         # which both profiles include alongside this aspect.
         luaConfigRC = {
-          lsp-attach = ''
-            local builtin = require('telescope.builtin')
-            local map = vim.keymap.set
-            vim.api.nvim_create_autocmd('LspAttach', {
-              group = vim.api.nvim_create_augroup('lsp-attach-keymaps', { clear = true }),
-              callback = function(event)
-                local buf = event.buf
-                local opts = { buffer = buf, silent = true }
-                map('n', 'grr', builtin.lsp_references, vim.tbl_extend('force', opts, { desc = 'Goto References' }))
-                map('n', 'gri', builtin.lsp_implementations, vim.tbl_extend('force', opts, { desc = 'Goto Implementation' }))
-                map('n', 'grd', builtin.lsp_definitions, vim.tbl_extend('force', opts, { desc = 'Goto Definition' }))
-                map('n', 'gO', builtin.lsp_document_symbols, vim.tbl_extend('force', opts, { desc = 'Document Symbols' }))
-                map('n', 'gW', builtin.lsp_dynamic_workspace_symbols, vim.tbl_extend('force', opts, { desc = 'Workspace Symbols' }))
-                map('n', 'grt', builtin.lsp_type_definitions, vim.tbl_extend('force', opts, { desc = 'Goto Type Definition' }))
-              end,
-            })
-          '';
+          lsp-attach = {
+            data = builtins.readFile ./lsp-attach.lua;
+            before = [];
+            after = ["pluginConfigs"];
+          };
         };
       };
     };

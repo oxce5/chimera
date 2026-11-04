@@ -1,6 +1,4 @@
-# chimera.nvf.plugins — lazy-loaded extras for the full profile only.
-# grug-far and precognition remain here; tiny-glimmer/todo-comments moved to ui/,
-# guess-indent/ts-comments moved to code/, R.nvim moved to lsp/default.nix.
+# chimera.nvf.plugins search/replace and precognition, configured via NVF modules.
 {...}: {
   chimera.nvf.plugins = {
     homeManager = {pkgs, ...}: {

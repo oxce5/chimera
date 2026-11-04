@@ -1,5 +1,5 @@
-# chimera.nvf.code — editing aids: mini ai/surround/pairs, autopairs, comments,
-# guess-indent, ts-comments, dap.
+# chimera.nvf.code editing aids: mini ai/surround/pairs, guess-indent,
+# ts-comments, NVF-managed debugger wiring.
 {...}: {
   chimera.nvf.code = {
     homeManager = {
@@ -26,14 +26,9 @@
           };
         };
 
-        autopairs.nvim-autopairs.enable = true;
-        comments.comment-nvim.enable = true;
-
-        lazy.plugins."guess-indent.nvim" = {
-          package = pkgs.vimPlugins.guess-indent-nvim;
-          event = ["BufReadPost" "BufNewFile"];
-          setupModule = "guess-indent";
-          setupOpts = {};
+        utility.guess-indent-nvim = {
+          enable = true;
+          setupOpts.on_tab_options = {};
         };
 
         lazy.plugins."ts-comments.nvim" = {
@@ -43,6 +38,50 @@
           setupOpts = {};
         };
 
+        debugger.nvim-dap = {
+          enable = true;
+          ui = {
+            enable = true;
+            autoStart = true;
+            setupOpts = {
+              icons = {
+                expanded = "▾";
+                collapsed = "▸";
+                current_frame = "*";
+              };
+              controls.icons = {
+                pause = "⏸";
+                play = "▶";
+                step_into = "⏎";
+                step_over = "⏭";
+                step_out = "⏮";
+                step_back = "b";
+                run_last = "▶▶";
+                terminate = "⏹";
+                disconnect = "⏏";
+              };
+            };
+          };
+          mappings = {
+            continue = "<leader>dc";
+            restart = "<leader>dr";
+            terminate = "<leader>dq";
+            runLast = "<leader>d.";
+            toggleRepl = "<leader>dQ";
+            hover = "<leader>dh";
+            toggleBreakpoint = "<leader>db";
+            runToCursor = "<leader>dgc";
+            stepInto = "<F1>";
+            stepOver = "<F2>";
+            stepOut = "<F3>";
+            stepBack = "<leader>dgk";
+            goUp = "<leader>dvo";
+            goDown = "<leader>dvi";
+            toggleDapUI = "<leader>du";
+          };
+        };
+
+        # Two debug keys that do not map to NVF's fixed mapping slots.
         keymaps = [
           {
             key = "<leader>dc";

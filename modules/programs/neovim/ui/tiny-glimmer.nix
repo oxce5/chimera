@@ -1,4 +1,4 @@
-# chimera.nvf.ui.tiny-glimmer — yank/search/paste animation (full profile only).
+# chimera.nvf.ui.tiny-glimmer yank/search/paste animation
 {...}: {
   chimera.nvf.ui = {
     homeManager = {

@@ -1,12 +1,4 @@
 # chimera.nvf.theme — imperative base16 palette from noctalia+matugen.
-#
-# The palette must stay imperative: noctalia re-renders it on every wallpaper
-# change (user template in ./noctalia/, rendered to the noctalia state dir)
-# and signals running nvim via SIGUSR1. nvf owns the config as a store package
-# (NVIM_APPNAME=nvf), so nothing under ~/.config/nvim is on the runtimepath
-# anymore — the module is loaded from the state dir via package.path instead.
-# Transparency lives inside the template's setup() so it survives every
-# re-render, not in nvf (which would apply it once, then lose it).
 {...}: {
   chimera.nvf.theme = {
     homeManager = {pkgs, ...}: {

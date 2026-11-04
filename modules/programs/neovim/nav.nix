@@ -1,4 +1,4 @@
-# chimera.nvf.nav — navigation: telescope, neo-tree, flash.
+# chimera.nvf.nav navigation: telescope, neo-tree, flash.
 {...}: {
   chimera.nvf.nav = {
     homeManager = {

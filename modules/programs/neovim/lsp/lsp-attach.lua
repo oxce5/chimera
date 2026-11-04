@@ -1,5 +1,7 @@
 local builtin = require('telescope.builtin')
 local map = vim.keymap.set
+
+-- Telescope navigation maps (buffer-local)
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('lsp-attach-keymaps', { clear = true }),
   callback = function(event)
@@ -14,7 +16,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- LSP document highlighting + inlay hints
+-- document highlighting + inlay hints on attach
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
   callback = function(event)

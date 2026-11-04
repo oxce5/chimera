@@ -1,4 +1,4 @@
-# chimera.nvf.git — gitsigns + the <leader>gh* / toggle keymaps.
+# chimera.nvf.git gitsigns + the <leader>gh* / toggle keymaps.
 {...}: {
   chimera.nvf.git = {
     homeManager = {lib, ...}: {

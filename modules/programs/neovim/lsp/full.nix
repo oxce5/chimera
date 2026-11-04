@@ -1,5 +1,4 @@
-# chimera.nvf.lsp.full — heavy languages for the full profile (overlord).
-# Adds to whatever chimera.nvf.lsp.light already enabled; the profiles merge.
+# chimera.nvf.lsp.full heavy languages for the full profile (overlord).
 {...}: {
   chimera.nvf.lsp.full = {
     homeManager = {
@@ -12,12 +11,14 @@
         languages = {
           nix.enable = true;
           rust.enable = true;
-          go.enable = true;
+          go = {
+            enable = true;
+            dap.enable = true;
+          };
           java = {
             enable = true;
-            lsp.enable = false; # nvim-jdtls starts/owns the jdtls client itself (below)
+            lsp.enable = false; # nvim-jdtls has custom attach logic, ignore
           };
-          # no separate javascript module — typescript covers JS tooling
           typescript.enable = true;
           html.enable = true;
           css.enable = true;
@@ -25,7 +26,7 @@
         };
 
         lsp.servers = {
-          # Scope nixd to the chimera flake only; everything else falls to nil_ls.
+          # scope nixd to the chimera flake only, everything else falls to nil_ls
           nixd = {
             root_dir = lib.generators.mkLuaInline ''
               function(bufnr, on_dir)
@@ -45,9 +46,7 @@
             };
           };
 
-          # Not an nvf nix default — added as its own LSP entry, with the
-          # inverse root_dir condition so it never competes with nixd inside
-          # chimera.
+          # inverse path, attach on any nix file except chimera
           nil_ls = {
             cmd = [(lib.getExe pkgs.nil)];
             filetypes = ["nix"];
@@ -90,13 +89,12 @@
           };
         };
 
-        # jdtls rides along with the java language; only the full profile pays for it.
+        # TODO: Rework as a real lazy custom plugin
         lazy.plugins."nvim-jdtls" = {
           package = pkgs.vimPlugins.nvim-jdtls;
           ft = ["java"];
         };
 
-        # jdtls configuration (self-managed LSP, started imperatively on FileType)
         luaConfigRC = {
           jdtls = {
             data = ''

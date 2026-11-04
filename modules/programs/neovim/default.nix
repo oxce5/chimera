@@ -1,5 +1,4 @@
-# chimera.nvf — base editor: core options, autocmds, plugin-independent keymaps.
-# Everything else layers on top; profiles live in ./profiles.nix.
+# chimera.nvf base editor: core options, autocmds, plugin-independent keymaps.
 {inputs, ...}: {
   chimera.nvf = {
     homeManager = {lib, ...}: {

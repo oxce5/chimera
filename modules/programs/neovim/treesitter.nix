@@ -1,4 +1,4 @@
-# chimera.nvf.treesitter — packaged grammars + nvim-treesitter plugin with custom attach.
+# chimera.nvf.treesitter declarative packaged grammars.
 {...}: {
   chimera.nvf.treesitter = {
     homeManager = {

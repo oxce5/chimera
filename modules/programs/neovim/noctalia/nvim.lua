@@ -1,6 +1,4 @@
--- Rendered by noctalia+matugen (user template nvim-matugen), imperative by
--- design: rewritten on every wallpaper change, reloaded live via SIGUSR1.
--- nvf loads this module from the noctalia state dir (see nvf theme.nix).
+-- rendered by noctalia+matugen 
 local M = {}
 
 function M.setup()

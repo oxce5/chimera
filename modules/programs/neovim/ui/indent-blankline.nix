@@ -1,3 +1,5 @@
+# chimera.nvf.ui.indent-blankline indent guide + scope line, using NVF's
+# declarative highlights and setup options (no ibl hooks).
 {...}: {
   chimera.nvf.ui = {
     homeManager = {lib, ...}: {

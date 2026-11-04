@@ -1,5 +1,5 @@
-# chimera.nvf.lsp — shared LSP plumbing: completion, snippets, format/lint
-# plugins, LSP keymaps. Language sets split into ./light.nix and ./full.nix.
+# chimera.nvf.lsp shared LSP plumbing: completion, snippets, format/lint,
+# R.nvim, LSP keymaps. language sets split into ./light.nix and ./full.nix.
 {...}: {
   chimera.nvf.lsp = {
     homeManager = {
@@ -26,8 +26,7 @@
           luasnip.enable = true;
         };
 
-        # Language plumbing shared by every enabled language below/above.
-        # (No global enableLSP in this rev — languages.<x>.enable implies its LSP.)
+        # enable essentials for every enabled lang
         languages = {
           enableFormat = true;
           enableTreesitter = true;

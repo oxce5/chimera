@@ -19,6 +19,7 @@
         remmina
         # (bottles.override { removeWarningPopup = true; })
         varia
+        figma-linux
         # proton-pass
         # element-desktop
         # obsidian

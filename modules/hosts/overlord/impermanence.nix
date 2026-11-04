@@ -15,6 +15,8 @@
           "/var/lib/flatpak"
           "/var/lib/libvirt"
           "/var/lib/nixos"
+          "/var/log"
+          "/var/lib/systemd/pstore"
           {
             directory = "/var/lib/tailscale";
             mode = "0700";

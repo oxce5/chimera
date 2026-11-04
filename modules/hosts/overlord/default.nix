@@ -40,7 +40,17 @@
       };
     };
 
-    services.dnsmasq.settings.server = lib.mkAfter ["192.168.1.1"];
+    services = {
+      dnsmasq.settings.server = lib.mkAfter ["192.168.1.1"];
+      journald.storage = "persistent";
+
+      journald.settings.Journal = {
+        SystemMaxUse = "500M"; # hard cap on total journal size
+        SystemKeepFree = "1G"; # never fill the disk
+        MaxRetentionSec = "2weeks"; # delete entries older than this
+        MaxFileSec = "1day"; # rotate daily so old data can actually be dropped
+      };
+    };
 
     users.privilegedGroups = ["audio" "docker"];
     hardware.nvidia-container-toolkit.enable = true;

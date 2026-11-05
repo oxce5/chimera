@@ -143,6 +143,7 @@ Per-host HM: `den.aspects.<host>.nixos.home-manager.extraSpecialArgs.*`; HM sees
 Read `docs/den.md` (§4 aspects, §12 gotchas checklist) before writing aspects — full reference
 in-repo, and §12 is a dense list worth skimming in full.
 
+- **Never use `lib.mkForce` without asking.** `mkForce` interferes with Den merging and modules in unpredictable ways. Always ask the user for permission before using `mkForce` on any attribute.
 - **A `homeManager` key written at host scope is silently dropped.** Not an error, no warning.
   This is live in the repo: the fish `vpn` function at `modules/hosts/machina-mori/default.nix`
   is a `homeManager` key on `den.aspects.machina-mori`, so it does not exist —

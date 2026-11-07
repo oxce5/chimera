@@ -13,7 +13,7 @@
           # Launchers
           # cartridges
           heroic
-          (inputs.elyprism-launcher.packages.${system}.default)
+          # (inputs.elyprism-launcher.packages.${system}.default)
         ];
         hardware.graphics.enable32Bit = true;
         programs = {
@@ -42,6 +42,19 @@
         inherit (pkgs.stdenv.hostPlatform) system;
       in {
         home.file.".local/share/Steam/compatibilitytools.d/DW-Proton".source = inputs.dw-proton.packages.${system}.dw-proton.steamcompattool;
+      };
+    };
+
+    roblox.nixos = {
+      imports = [inputs.quadra.nixosModules.default];
+      programs.quadrahq = {
+        enable = true;
+        runtime = "ciderdarling"; # Or "regular" or "rosemary"
+        withStudio = false; # Also include Wine for Roblox Studio
+      };
+      xdg.mime.defaultApplications = {
+        "x-scheme-handler/roblox" = "org.quadrahq.Quadra.URI.desktop";
+        "x-scheme-handler/roblox-player" = "org.quadrahq.Quadra.URI.desktop";
       };
     };
 

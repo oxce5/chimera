@@ -76,6 +76,7 @@
         <chimera/xdg>
 
         # <chimera/gaming/max>
+        <chimera/gaming/roblox>
 
         <chimera/dev/base>
         <chimera/dev/min>

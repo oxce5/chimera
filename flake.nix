@@ -80,6 +80,7 @@
     kopuz.url = "github:temidaradev/kopuz";
     elyprism-launcher.url = "github:elyprismlauncher/elyprismlauncher";
     dw-proton.url = "github:imaviso/dwproton-flake";
+    quadra.url = "github:QuadraHQ/Quadra";
   };
 
   nixConfig = {

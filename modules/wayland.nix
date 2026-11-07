@@ -5,7 +5,7 @@
         dconf.enable = true;
         appimage = {
           enable = true;
-          binfmt = true;
+          # binfmt = true;
         };
       };
       environment = {

@@ -31,6 +31,7 @@
     facter.reportPath = ./_facter.json;
     boot = {
       kernelPackages = pkgs.linuxPackages_zen;
+      kernelParams = ["mem_sleep_default=deep" "usbcore.autosuspend=1"];
       # /dev/fuse, for the rclone mount in <chimera/storage>.
       kernelModules = ["fuse"];
     };

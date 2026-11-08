@@ -1,5 +1,5 @@
-# chimera.nvf.lsp shared LSP plumbing: completion, snippets, format/lint,
-# R.nvim, LSP keymaps. language sets split into ./light.nix and ./full.nix.
+# chimera.nvf.lsp shared LSP plumbing: completion, snippets, UI, R.nvim,
+# LSP keymaps. Language LSPs split into ./light.nix and ./full.nix
 {...}: {
   chimera.nvf.lsp = {
     homeManager = {
@@ -47,40 +47,6 @@
           enableExtraDiagnostics = true;
         };
 
-        diagnostics.nvim-lint.enable = true;
-        diagnostics.nvim-lint.linters_by_ft = {
-          python = ["ruff"];
-          java = ["checkstyle"];
-          nix = ["statix"];
-          c = ["clang_tidy"];
-          cpp = ["clang_tidy"];
-          lua = ["selene"];
-          sh = ["shellcheck"];
-          bash = ["shellcheck"];
-          fish = ["fish"];
-        };
-
-        formatter.conform-nvim.enable = true;
-        formatter.conform-nvim.setupOpts = {
-          format_on_save = lib.generators.mkLuaInline ''
-            function(bufnr)
-              local enabled_filetypes = {
-                nix = true,
-                java = true,
-              }
-              if enabled_filetypes[vim.bo[bufnr].filetype] then
-                return { timeout_ms = 500 }
-              else
-                return nil
-              end
-            end
-          '';
-          formatters_by_ft = {
-            nix = ["alejandra"];
-            java = ["google-java-format"];
-          };
-        };
-
         lazy.plugins."R.nvim" = {
           package = pkgs.vimPlugins.R-nvim;
           ft = ["r" "rmd" "quarto"];
@@ -119,22 +85,6 @@
             silent = true;
             action = "<cmd>LspLog<CR>";
             desc = "LSP Log";
-          }
-          {
-            key = "<leader>cf";
-            mode = ["n" "v"];
-            silent = true;
-            lua = true;
-            action = "function() require('conform').format { async = true } end";
-            desc = "Format Buffer";
-          }
-          {
-            key = "<leader>cl";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "function() require('lint').try_lint() end";
-            desc = "Lint Buffer";
           }
           {
             key = "<c-k>";

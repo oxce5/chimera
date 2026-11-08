@@ -12,6 +12,8 @@
       chimera.nvf.git
       chimera.nvf.lsp
       chimera.nvf.lsp.light
+      chimera.nvf.lint
+      chimera.nvf.lint.light
     ];
   };
 
@@ -19,6 +21,7 @@
     includes = [
       chimera.nvf.minimal
       chimera.nvf.lsp.full
+      chimera.nvf.lint.full
       chimera.nvf.code
       chimera.nvf.plugins
     ];

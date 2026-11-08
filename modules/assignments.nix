@@ -66,7 +66,6 @@
         <chimera/shell/enhanced>
 
         <chimera/wayland/mirror>
-        <chimera/wayland/screenshot>
         <chimera/wayland/cast>
         <chimera/desktop-shells/noctalia>
 

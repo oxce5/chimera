@@ -9,70 +9,84 @@
           icons.mappings = lib.generators.mkLuaInline "vim.g.have_nerd_font";
           spec = [
             {
-              "@1" = "<leader>f";
-              group = "File/Find";
-              mode = ["n" "v"];
-            }
-            {
-              "@1" = "<leader>s";
-              group = "Search";
-              mode = ["n" "v"];
-            }
-            {
-              "@1" = "<leader>g";
-              group = "Git";
-              mode = ["n" "v"];
-            }
-            {
-              "@1" = "<leader>gh";
-              group = "Git Hunk";
-              mode = ["n" "v"];
-            }
-            {
-              "@1" = "<leader>c";
-              group = "Code";
-              mode = ["n" "v"];
-            }
-            {
-              "@1" = "<leader>d";
-              group = "Debug";
-              mode = ["n" "v"];
-            }
-            {
-              "@1" = "<leader>u";
-              group = "UI";
-              mode = ["n" "v"];
-            }
-            {
-              "@1" = "<leader>x";
-              group = "Diagnostics/Quickfix";
+              "@1" = "<leader><tab>";
+              group = "tabs";
               mode = ["n" "v"];
             }
             {
               "@1" = "<leader>b";
-              group = "Buffer";
+              group = "buffer";
+              mode = ["n" "v"];
+            }
+            {
+              "@1" = "<leader>c";
+              group = "code";
+              mode = ["n" "v"];
+            }
+            {
+              "@1" = "<leader>d";
+              group = "debug";
+              mode = ["n" "v"];
+            }
+            {
+              "@1" = "<leader>f";
+              group = "file/find";
+              mode = ["n" "v"];
+            }
+            {
+              "@1" = "<leader>g";
+              group = "git";
+              mode = ["n" "v"];
+            }
+            {
+              "@1" = "<leader>gh";
+              group = "hunks";
+              mode = ["n" "v"];
+            }
+            {
+              "@1" = "<leader>q";
+              group = "quit/session";
+              mode = ["n" "v"];
+            }
+            {
+              "@1" = "<leader>s";
+              group = "search";
               mode = ["n" "v"];
             }
             {
               "@1" = "<leader>t";
-              group = "Toggle";
+              group = "toggle";
+              mode = ["n" "v"];
+            }
+            {
+              "@1" = "<leader>u";
+              group = "ui";
+              mode = ["n" "v"];
+            }
+            {
+              "@1" = "<leader>x";
+              group = "diagnostics/quickfix";
               mode = ["n" "v"];
             }
             {
               "@1" = "[";
-              group = "Prev";
+              group = "prev";
             }
             {
               "@1" = "]";
-              group = "Next";
+              group = "next";
             }
             {
               "@1" = "g";
-              group = "Goto";
+              group = "goto";
             }
             {
               "@1" = "gs";
-              group = "Surround";
+              group = "surround";
+            }
+            {
+              "@1" = "z";
+              group = "fold";
             }
           ];
         };

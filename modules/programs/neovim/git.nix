@@ -9,11 +9,12 @@
             enable = true;
             setupOpts = {
               signs = {
-                add.text = "+";
-                change.text = "~";
-                delete.text = "_";
-                topdelete.text = "‾";
-                changedelete.text = "~";
+                add.text = "";
+                change.text = "";
+                delete.text = "";
+                topdelete.text = "";
+                changedelete.text = "";
+                untracked.text = "┆";
               };
               on_attach = lib.generators.mkLuaInline ''
                 function(bufnr)
@@ -23,13 +24,15 @@
                     opts.buffer = bufnr
                     vim.keymap.set(mode, l, r, opts)
                   end
-                  map('n', ']c', function()
+                  map('n', ']h', function()
                     if vim.wo.diff then vim.cmd.normal { ']c', bang = true } else gs.nav_hunk 'next' end
-                  end, { desc = 'Jump to next git change' })
-                  map('n', '[c', function()
+                  end, { desc = 'Next Hunk' })
+                  map('n', '[h', function()
                     if vim.wo.diff then vim.cmd.normal { '[c', bang = true } else gs.nav_hunk 'prev' end
-                  end, { desc = 'Jump to previous git change' })
-                  map({ 'o', 'x' }, 'ih', gs.select_hunk, { desc = 'Inside hunk' })
+                  end, { desc = 'Prev Hunk' })
+                  map('n', ']H', function() gs.nav_hunk('last') end, { desc = 'Last Hunk' })
+                  map('n', '[H', function() gs.nav_hunk('first') end, { desc = 'First Hunk' })
+                  map({ 'o', 'x' }, 'ih', gs.select_hunk, { desc = 'GitSigns Select Hunk' })
                 end
               '';
             };
@@ -76,15 +79,15 @@
             key = "<leader>ghp";
             mode = "n";
             silent = true;
-            action = "<cmd>Gitsigns preview_hunk<CR>";
-            desc = "Preview Hunk";
-          }
-          {
-            key = "<leader>ghi";
-            mode = "n";
-            silent = true;
             action = "<cmd>Gitsigns preview_hunk_inline<CR>";
             desc = "Preview Hunk Inline";
+          }
+          {
+            key = "<leader>ghP";
+            mode = "n";
+            silent = true;
+            action = "<cmd>Gitsigns preview_hunk<CR>";
+            desc = "Preview Hunk";
           }
           {
             key = "<leader>ghb";

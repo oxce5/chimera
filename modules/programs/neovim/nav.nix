@@ -7,35 +7,53 @@
       ...
     }: {
       programs.nvf.settings.vim = {
-        telescope.enable = true;
-        telescope.extensions = [
-          {
-            name = "fzf";
-            packages = [pkgs.vimPlugins.telescope-fzf-native-nvim];
-            setup = {};
-          }
-          {
-            name = "ui-select";
-            packages = [];
-            setup = lib.generators.mkLuaInline ''
-              {
-                ["ui-select"] = require('telescope.themes').get_dropdown()
-              }
-            '';
-          }
-        ];
-        filetree.neo-tree.enable = true;
-        filetree.neo-tree.setupOpts = {
-          filesystem.window.mappings = {
-            "\\" = "close_window";
+        telescope = {
+          enable = true;
+
+          mappings = {
+            findFiles = "<leader>ff";
+            liveGrep = "<leader>/";
+            buffers = "<leader>fb";
+            helpTags = "<leader>fh";
+            resume = "<leader>sR";
+            gitFiles = "<leader>fg";
+            open = "<leader>ft";
+          };
+          extensions = [
+            {
+              name = "fzf";
+              packages = [pkgs.vimPlugins.telescope-fzf-native-nvim];
+              setup = {};
+            }
+            {
+              name = "ui-select";
+              packages = [];
+              setup = lib.generators.mkLuaInline ''
+                {
+                  ["ui-select"] = require('telescope.themes').get_dropdown()
+                }
+              '';
+            }
+          ];
+        };
+        filetree = {
+          neo-tree = {
+            enable = true;
+            setupOpts = {
+              filesystem.window.mappings = {
+                "\\" = "close_window";
+              };
+            };
           };
         };
-        # flash moved from vim.motions to vim.utility.motion in this rev
-        utility.motion.flash-nvim.enable = true;
-        utility.motion.flash-nvim.mappings.toggle = "<c-s>";
+        utility.motion.flash-nvim = {
+          # flash moved from vim.motions to vim.utility.motion in this rev
+          enable = true;
+          mappings.toggle = "<c-s>";
+        };
 
         keymaps = [
-          # NeoTree
+          # NeoTree (LazyVim feel: <leader>e explorer; Herdr handles splits)
           {
             key = "\\";
             mode = "n";
@@ -48,24 +66,17 @@
             mode = "n";
             silent = true;
             action = "<cmd>Neotree toggle<CR>";
-            desc = "Toggle NeoTree";
+            desc = "Explorer NeoTree";
           }
           {
             key = "<leader>E";
             mode = "n";
             silent = true;
             action = "<cmd>Neotree float<CR>";
-            desc = "NeoTree Float";
-          }
-          {
-            key = "<leader>gg";
-            mode = "n";
-            silent = true;
-            action = "<cmd>Neotree float git_status<CR>";
-            desc = "Git Status";
+            desc = "Explorer NeoTree (Float)";
           }
 
-          # Flash — treesitter incremental selection (custom actions)
+          # Flash (LazyVim feel); NVF provides s/S/r/R/<c-s> defaults.
           {
             key = "<c-space>";
             mode = ["n" "o" "x"];
@@ -135,14 +146,20 @@
             desc = "Next Trouble/Quickfix Item";
           }
 
-          # Telescope extras (nvf defaults cover <leader>ff/fg/fb/fh/fr)
+          # Telescope (LazyVim feel). NVF handles ff/fb/fh/ft/fg(git)/ '/' / sR via mappings above.
           {
-            key = "<leader>fn";
+            key = "<leader><space>";
             mode = "n";
             silent = true;
-            lua = true;
-            action = "function() require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config', follow = true } end";
-            desc = "Neovim Config Files";
+            action = "<cmd>Telescope find_files<CR>";
+            desc = "Find Files";
+          }
+          {
+            key = "<leader>,";
+            mode = "n";
+            silent = true;
+            action = "<cmd>Telescope buffers<CR>";
+            desc = "Buffers";
           }
           {
             key = "<leader><leader>";
@@ -150,6 +167,29 @@
             silent = true;
             action = "<cmd>Telescope buffers<CR>";
             desc = "Find Buffers";
+          }
+          {
+            key = "<leader>fc";
+            mode = "n";
+            silent = true;
+            lua = true;
+            action = "function() require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config', follow = true } end";
+            desc = "Find Config File";
+          }
+          {
+            key = "<leader>fr";
+            mode = "n";
+            silent = true;
+            action = "<cmd>Telescope oldfiles<CR>";
+            desc = "Recent";
+          }
+          {
+            key = "<leader>sb";
+            mode = "n";
+            silent = true;
+            lua = true;
+            action = "function() require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown { winblend = 10, previewer = false }) end";
+            desc = "Buffer Lines";
           }
           {
             key = "<leader>sw";
@@ -165,13 +205,6 @@
             silent = true;
             action = "<cmd>Telescope diagnostics<CR>";
             desc = "Search Diagnostics";
-          }
-          {
-            key = "<leader>sR";
-            mode = "n";
-            silent = true;
-            action = "<cmd>Telescope resume<CR>";
-            desc = "Resume Search";
           }
           {
             key = "<leader>s.";
@@ -201,14 +234,6 @@
             silent = true;
             action = "<cmd>Telescope keymaps<CR>";
             desc = "Keymaps";
-          }
-          {
-            key = "<leader>/";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "function() require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown { winblend = 10, previewer = false }) end";
-            desc = "Search in Buffer";
           }
 
           # Git telescope keymaps (original <leader>g* prefix)

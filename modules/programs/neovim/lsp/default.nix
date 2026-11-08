@@ -146,6 +146,29 @@
           }
         ];
 
+        augroups = [
+          {
+            name = "lsp-inlay-hints";
+            clear = true;
+          }
+        ];
+
+        autocmds = [
+          {
+            event = ["LspAttach"];
+            group = "lsp-inlay-hints";
+            desc = "Always enable inlay hints";
+            callback = lib.generators.mkLuaInline ''
+              function(event)
+                local client = vim.lsp.get_client_by_id(event.data.client_id)
+                if client and client:supports_method("textDocument/inlayHint", { bufnr = event.buf }) then
+                  vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
+                end
+              end
+            '';
+          }
+        ];
+
         # Buffer-local maps on LspAttach; telescope is in chimera.nvf.nav,
         # which both profiles include alongside this aspect.
         luaConfigRC = {

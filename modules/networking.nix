@@ -6,7 +6,10 @@
     # };
     nixos = {
       networking = {
-        networkmanager.enable = true;
+        networkmanager = {
+          enable = true;
+          wifi.powersave = false;
+        };
         nftables.enable = true;
         wireguard.enable = true;
         firewall.trustedInterfaces = [
@@ -22,16 +25,11 @@
         settings = {
           listen-address = "127.0.0.1";
           bind-interfaces = true;
-          no-resolv = true;
-          strict-order = true;
           cache-size = 10000;
-
+          dns-forward-max = 1000;
           server = [
             "/chimera.moe/100.97.28.65"
             "/chimera.moe/192.168.1.21"
-
-            "100.97.28.65"
-            "192.168.1.21"
           ];
         };
       };

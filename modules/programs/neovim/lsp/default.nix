@@ -22,9 +22,7 @@
           };
         };
 
-        snippets = {
-          luasnip.enable = true;
-        };
+        snippets.luasnip.enable = true;
 
         # enable essentials for every enabled lang
         languages = {

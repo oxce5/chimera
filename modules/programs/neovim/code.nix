@@ -81,24 +81,8 @@
           };
         };
 
-        # Two debug keys that do not map to NVF's fixed mapping slots.
+        # debug actions NVF's nvim-dap.mappings does not cover.
         keymaps = [
-          {
-            key = "<leader>dc";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "function() require('dap').continue() end";
-            desc = "Continue/Start";
-          }
-          {
-            key = "<leader>db";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "function() require('dap').toggle_breakpoint() end";
-            desc = "Toggle Breakpoint";
-          }
           {
             key = "<leader>dB";
             mode = "n";
@@ -106,22 +90,6 @@
             lua = true;
             action = "function() require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ') end";
             desc = "Breakpoint Condition";
-          }
-          {
-            key = "<leader>dr";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "function() require('dap').restart() end";
-            desc = "Restart";
-          }
-          {
-            key = "<leader>du";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "function() require('dapui').toggle() end";
-            desc = "Toggle DAP UI";
           }
           {
             key = "<leader>de";
@@ -138,30 +106,6 @@
             lua = true;
             action = "function() require('dap').continue() end";
             desc = "Debug: Start/Continue";
-          }
-          {
-            key = "<F1>";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "function() require('dap').step_into() end";
-            desc = "Debug: Step Into";
-          }
-          {
-            key = "<F2>";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "function() require('dap').step_over() end";
-            desc = "Debug: Step Over";
-          }
-          {
-            key = "<F3>";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "function() require('dap').step_out() end";
-            desc = "Debug: Step Out";
           }
           {
             key = "<F7>";

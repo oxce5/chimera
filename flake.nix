@@ -81,6 +81,11 @@
     elyprism-launcher.url = "github:elyprismlauncher/elyprismlauncher";
     dw-proton.url = "github:imaviso/dwproton-flake";
     quadra.url = "github:QuadraHQ/Quadra";
+
+    # NVF parsing support; ships its own fastmcp4 stack (scoped, no set-wide breakage).
+    # Uses the fork's pinned nixpkgs: its fastmcp4 extension conflicts with this
+    # flake's nixpkgs python layout (infinite recursion in mcp-types).
+    mcp-nixos.url = "github:schonfinkel/mcp-nixos/e6d4baf7a8e13d25f85f2d13a74ec62bce4b41d9";
   };
 
   nixConfig = {

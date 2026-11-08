@@ -1,4 +1,8 @@
-{chimera, ...}: {
+{
+  inputs,
+  chimera,
+  ...
+}: {
   chimera.dev = {
     base.homeManager.programs.uv.enable = true;
     min = {
@@ -23,11 +27,7 @@
         programs.mcp = {
           enable = true;
           servers.nixos = {
-            command = "${pkgs.mcp-nixos.override {
-              python3Packages = pkgs.python3Packages.overrideScope (pyFinal: pyPrev: {
-                fastmcp-slim = pyPrev.fastmcp-slim.override {mcp = pyFinal.mcp_1;};
-              });
-            }}/bin/mcp-nixos";
+            command = "${inputs.mcp-nixos.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/mcp-nixos";
           };
         };
 

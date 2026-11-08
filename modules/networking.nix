@@ -28,6 +28,7 @@
           cache-size = 10000;
           dns-forward-max = 1000;
           server = [
+            "1.1.1.1"
             "/chimera.moe/100.97.28.65"
             "/chimera.moe/192.168.1.21"
           ];

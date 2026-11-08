@@ -70,14 +70,6 @@
             };
           };
 
-          luaConfigRC = {
-            loader = {
-              data = "vim.loader.enable()";
-              before = [];
-              after = ["optionsScript"];
-            };
-          };
-
           autocmds = [
             {
               event = ["TextYankPost"];

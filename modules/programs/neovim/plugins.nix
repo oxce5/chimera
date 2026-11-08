@@ -1,15 +1,11 @@
-# chimera.nvf.plugins search/replace and precognition, configured via NVF modules.
-{...}: {
+# chimera.nvf.plugins search/replace and precognition.
+{
   chimera.nvf.plugins = {
     homeManager = {pkgs, ...}: {
-      programs.nvf.settings.vim.lazy.plugins = {
-        "grug-far.nvim" = {
-          package = pkgs.vimPlugins.grug-far-nvim;
-          cmd = ["GrugFar" "GrugFarWithin"];
-          setupModule = "grug-far";
-          setupOpts = {};
-        };
-        "precognition.nvim" = {
+      programs.nvf.settings.vim = {
+        utility.grug-far-nvim.enable = true;
+
+        lazy.plugins."precognition.nvim" = {
           package = pkgs.vimPlugins.precognition-nvim;
           event = ["BufReadPost" "BufNewFile"];
           setupModule = "precognition";

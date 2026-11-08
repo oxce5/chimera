@@ -12,6 +12,22 @@
           enable = true;
           formatOnSave = false;
           trouble.enable = true;
+          lspsaga = {
+            enable = true;
+            setupOpts.code_action.keys.quit = ["q" "<Esc>"];
+          };
+          lightbulb.enable = true;
+
+          mappings = {
+            renameSymbol = "<leader>cr";
+            openDiagnosticFloat = "<leader>cd";
+            goToDefinition = "gd";
+            listImplementations = "gI";
+            goToType = "gy";
+            goToDeclaration = "gD";
+            hover = "K";
+            signatureHelp = "gK";
+          };
         };
 
         autocomplete = {
@@ -78,25 +94,17 @@
             key = "<leader>ca";
             mode = ["n" "x"];
             silent = true;
-            lua = true;
-            action = "vim.lsp.buf.code_action";
+            action = "<cmd>Lspsaga code_action<CR>";
             desc = "Code Action";
           }
           {
-            key = "<leader>cr";
+            key = "gr";
             mode = "n";
             silent = true;
+            nowait = true;
             lua = true;
-            action = "vim.lsp.buf.rename";
-            desc = "Rename";
-          }
-          {
-            key = "<leader>cd";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "vim.diagnostic.open_float";
-            desc = "Line Diagnostics";
+            action = "vim.lsp.buf.references";
+            desc = "References";
           }
           {
             key = "<leader>ci";
@@ -127,64 +135,6 @@
             lua = true;
             action = "function() require('lint').try_lint() end";
             desc = "Lint Buffer";
-          }
-
-          {
-            key = "gd";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "vim.lsp.buf.definition";
-            desc = "Goto Definition";
-          }
-          {
-            key = "gr";
-            mode = "n";
-            silent = true;
-            nowait = true;
-            lua = true;
-            action = "vim.lsp.buf.references";
-            desc = "References";
-          }
-          {
-            key = "gI";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "vim.lsp.buf.implementation";
-            desc = "Goto Implementation";
-          }
-          {
-            key = "gy";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "vim.lsp.buf.type_definition";
-            desc = "Goto Type Definition";
-          }
-          {
-            key = "gD";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "vim.lsp.buf.declaration";
-            desc = "Goto Declaration";
-          }
-          {
-            key = "K";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "vim.lsp.buf.hover";
-            desc = "Hover";
-          }
-          {
-            key = "gK";
-            mode = "n";
-            silent = true;
-            lua = true;
-            action = "vim.lsp.buf.signature_help";
-            desc = "Signature Help";
           }
           {
             key = "<c-k>";

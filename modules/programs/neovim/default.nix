@@ -141,12 +141,14 @@
             {
               key = "[d";
               mode = "n";
+              lua = true;
               action = "vim.diagnostic.goto_prev";
               desc = "Previous Diagnostic";
             }
             {
               key = "]d";
               mode = "n";
+              lua = true;
               action = "vim.diagnostic.goto_next";
               desc = "Next Diagnostic";
             }
@@ -196,6 +198,7 @@
               key = "<leader>xd";
               mode = "n";
               silent = true;
+              lua = true;
               action = "vim.diagnostic.setloclist";
               desc = "Quickfix Diagnostics";
             }

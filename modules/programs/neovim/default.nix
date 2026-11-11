@@ -1,7 +1,11 @@
 # chimera.nvf base editor: core options, autocmds, plugin-independent keymaps.
 {inputs, ...}: {
   chimera.nvf = {
-    homeManager = {lib, ...}: {
+    homeManager = {
+      pkgs,
+      lib,
+      ...
+    }: {
       imports = [inputs.nvf.homeManagerModules.default];
 
       programs.nvf = {
@@ -9,6 +13,9 @@
         defaultEditor = true;
 
         settings.vim = {
+          # neovim-nightly (unwrapped): native multicursor support (0.13+)
+          package = inputs.neovim-nightly-overlay.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
           enableLuaLoader = true;
 
           lineNumberMode = "relNumber";
@@ -63,8 +70,30 @@
                 border = "rounded";
                 source = "if_many";
               };
+              signs = lib.generators.mkLuaInline ''
+                {
+                  text = {
+                    [vim.diagnostic.severity.ERROR] = "󰅚",
+                    [vim.diagnostic.severity.WARN] = "󰀪",
+                    [vim.diagnostic.severity.INFO] = "󰋽",
+                    [vim.diagnostic.severity.HINT] = "󰌶",
+                  },
+                }
+              '';
               underline = {severity = {min = 2;};};
-              virtual_text = true;
+              virtual_text = lib.generators.mkLuaInline ''
+                {
+                  prefix = function(diagnostic)
+                    local icons = {
+                      [vim.diagnostic.severity.ERROR] = "󰅚",
+                      [vim.diagnostic.severity.WARN] = "󰀪",
+                      [vim.diagnostic.severity.INFO] = "󰋽",
+                      [vim.diagnostic.severity.HINT] = "󰌶",
+                    }
+                    return icons[diagnostic.severity] or "●"
+                  end,
+                }
+              '';
               virtual_lines = false;
               jump = {
                 on_jump = lib.generators.mkLuaInline "function(_, bufnr) vim.diagnostic.open_float { bufnr = bufnr, scope = 'cursor', focus = false } end";

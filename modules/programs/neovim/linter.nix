@@ -5,19 +5,25 @@
       programs.nvf.settings.vim = {
         formatter.conform-nvim = {
           enable = true;
-          setupOpts.format_on_save = lib.generators.mkLuaInline ''
-            function(bufnr)
-              local enabled_filetypes = {
-                nix = true,
-                python = true,
-                java = true,
-              }
-              local ft = vim.bo[bufnr].filetype
-              if enabled_filetypes[ft] then
-                return { timeout_ms = 500, lsp_format = "fallback" }
+          setupOpts = {
+            default_format_opts = {
+              timeout_ms = 5000;
+              lsp_format = "fallback";
+            };
+            format_on_save = lib.generators.mkLuaInline ''
+              function(bufnr)
+                local enabled_filetypes = {
+                  nix = true,
+                  python = true,
+                  java = true,
+                }
+                local ft = vim.bo[bufnr].filetype
+                if enabled_filetypes[ft] then
+                  return { timeout_ms = 5000, lsp_format = "fallback" }
+                end
               end
-            end
-          '';
+            '';
+          };
         };
 
         keymaps = [
@@ -35,8 +41,17 @@
   };
 
   chimera.nvf.lint.light = {
-    homeManager = {
+    homeManager = {pkgs, ...}: {
       programs.nvf.settings.vim = {
+        # lint.light owns Python lint/format; prevent NVF's python language module
+        # from injecting black (default format.type) or mypy (extraDiagnostics).
+        languages.python = {
+          format.enable = false;
+          extraDiagnostics.enable = false;
+        };
+
+        extraPackages = [pkgs.ruff];
+
         diagnostics.nvim-lint.enable = true;
         diagnostics.nvim-lint.linters_by_ft = {
           python = ["ruff"];

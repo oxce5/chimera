@@ -26,8 +26,10 @@
         };
 
         lsp.servers = {
-          # scope nixd to the chimera flake only, everything else falls to nil_ls
+          # scope nixd to the chimera flake only, everything else falls to nil.
           nixd = {
+            cmd = [(lib.getExe pkgs.nixd)];
+            filetypes = ["nix"];
             root_dir = lib.generators.mkLuaInline ''
               function(bufnr, on_dir)
                 local chimera = vim.fs.normalize '~/Projects/chimera'
@@ -46,10 +48,13 @@
             };
           };
 
-          # inverse path, attach on any nix file except chimera
-          nil_ls = {
-            cmd = [(lib.getExe pkgs.nil)];
-            filetypes = ["nix"];
+          # inverse path, attach on any nix file except chimera.
+          # key must be `nil`, not lspconfig's `nil_ls`: nvf's nix language module +
+          # nil preset already enable `nil` (cmd, filetypes, autoArchive) — that
+          # entry attaches everywhere unless root_dir scopes it, so we override it
+          # here instead of adding a second server. Do not set cmd/filetypes: the
+          # preset already does and list options would concatenate.
+          nil = {
             root_dir = lib.generators.mkLuaInline ''
               function(bufnr, on_dir)
                 local chimera = vim.fs.normalize '~/Projects/chimera'
@@ -59,7 +64,9 @@
                 end
               end
             '';
-            settings."nil".formatting.command = ["alejandra" "--quiet" "-"];
+            # absolute path: nil spawns this as a subprocess and alejandra is not
+            # otherwise on nvim's PATH (conform wires it by absolute path only)
+            settings."nil".formatting.command = ["${lib.getExe pkgs.alejandra}" "--quiet" "-"];
           };
 
           lua_ls = {

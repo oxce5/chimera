@@ -87,7 +87,7 @@
 
             "Mod+P" = {
               _props.hotkey-overlay-title = "Screenshot: Region";
-              spawn = msg ["screenshot-region"];
+              spawn = msg ["screenshot-annotate"];
             };
             Print = {
               _props.hotkey-overlay-title = "Screenshot: Region";
@@ -108,10 +108,6 @@
             "Alt+Print" = {
               _props.hotkey-overlay-title = "Screenshot: Window";
               spawn = msg ["screenshot-window"];
-            };
-            "Shift+Print" = {
-              _props.hotkey-overlay-title = "Screenshot: Annotate";
-              spawn = msg ["screenshot-annotate"];
             };
 
             # Media
